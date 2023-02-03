@@ -18,6 +18,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     public VisionSubsystem() {
         camera = new PhotonCamera("photonPi"); 
+       
     }
 
     @Override
@@ -50,6 +51,10 @@ public class VisionSubsystem extends SubsystemBase {
 
     public boolean getHasTarget() {
         return hasTarget; 
+    }
+
+    public PhotonCamera getCam() {
+        return camera;
     }
 
 }

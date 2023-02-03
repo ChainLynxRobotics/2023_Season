@@ -45,6 +45,10 @@ public class RobotContainer {
         return drivetrain;
     }
 
+    public VisionSubsystem getVision() {
+        return vision;
+    }
+
     public AutoUtils getAutoPath() {
         return autoUtils;
     }
