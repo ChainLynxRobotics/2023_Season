@@ -8,19 +8,25 @@ import frc.robot.Commands.SimpleDriveCommand;
 import frc.robot.PathPlanningCode.AutoUtils;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.VisionSubsystem;
 
 public class RobotContainer {
     private Joystick joystick = new Joystick(Constants.JOYSTICK_PORT1);
     private Joystick armJoystick = new Joystick(Constants.JOYSTICK_PORT2);
 
-    private final Drivetrain drivetrain = new Drivetrain();
-    private final ArmSubsystem arm = new ArmSubsystem();
+    private final Drivetrain drivetrain;
+    private final ArmSubsystem arm;
+    private final VisionSubsystem vision;
 
     private final PowerDistribution powerDistribution = new PowerDistribution();
     private final AutoUtils autoUtils = new AutoUtils();
     
     public RobotContainer() {
         powerDistribution.clearStickyFaults();
+
+        drivetrain = new Drivetrain();
+        arm = new ArmSubsystem();
+        vision = new VisionSubsystem();
 
         startDefaultCommands();
 
