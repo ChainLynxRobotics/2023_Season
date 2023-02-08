@@ -1,3 +1,5 @@
+package Approximations;
+
 import DoubleFunction;
 public class ApproximateIntegral {
     private double x1;
@@ -50,7 +52,7 @@ public class ApproximateIntegral {
         this.reset(x, y);
         f = new Zero();
     }
-    
+
     public ApproximateIntegral(DoubleFunction f, double x, double y) {
         this.reset(f, x, y);
     }

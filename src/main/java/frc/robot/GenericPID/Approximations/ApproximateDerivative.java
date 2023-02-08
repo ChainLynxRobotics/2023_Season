@@ -1,3 +1,5 @@
+package Approximations;
+
 public class ApproximateDerivative {
     //a sometimes static class which takes the derivative of a certain point of a function
     //just use the derivative method, and a double function
