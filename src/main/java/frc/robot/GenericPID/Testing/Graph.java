@@ -6,27 +6,33 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.BasicStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.lang.Math;
 
-import java.util.ArrayList; 
+import java.util.ArrayList;
+import java.util.Scanner; 
 
 
 class Pointp {
-    public double x;
-    public double y;
+    public final double x;
+    public final double y;
+    public Pointp(double X, double Y) {
+        x = X;
+        y = Y;
+    }
 }
 
 
 public class Graph extends JPanel {
     //a 2d cartesian graph object that also drives graphics to represent it. use init and disp to render.
     private GraphConfig config;
-    private ArrayList<Pointp> graph;
+    private ArrayList<ArrayList<Pointp>> graph;
     
     private JFrame frame;
-    private Color color;
+    private ArrayList<Color> colors;
     private int pxw;
     private int pxh;
 
@@ -38,7 +44,8 @@ public class Graph extends JPanel {
         public double xScale;
         public double yScale;
         public double minpps = 5; //minimum pixels per scale
-        
+        public int thickness = 3;
+
         public GraphConfig(double x1, double x2, double y1, double y2, double xScale, double yScale, double minpps) {
             this.x1 = x1;
             this.x2 = x2;
@@ -46,6 +53,8 @@ public class Graph extends JPanel {
             this.y2 = y2;
             this.xScale = xScale;
             this.yScale = yScale;
+            // this.xCenter = mapx(0) 
+            // this.yCenter = mapy(0)
         }
         public GraphConfig() {
             this(-10., 10., -10., 10., 1., 1., 5.);
@@ -54,17 +63,21 @@ public class Graph extends JPanel {
 
     public Graph(GraphConfig c) { //scale only represents the lines in the back showing the values
         this.config = c;
-        this.graph = new ArrayList<Pointp>();
+        this.graph = new ArrayList<ArrayList<Pointp>>();
+        this.colors = new ArrayList<Color>();
         this.frame = null;
         this.pxw = 500;
         this.pxh = 500;
     }
 
-    public void addPoint(double x, double y, double eb, double sb) {
-        Pointp p = new Pointp();
-        p.x = x;
-        p.y = y;
-        graph.add(p);
+    public void addPlot(Color color) {
+        graph.add(new ArrayList<Pointp>());
+        colors.add(color);
+    }
+
+    public void addPoint(double x, double y, int plotNumber, double eb, double sb) {
+        Pointp p = new Pointp(x, y);
+        graph.get(plotNumber).add(p);
         if (p.x > config.x2) {
             extendBy(eb);
         }
@@ -82,8 +95,8 @@ public class Graph extends JPanel {
         }
     }
 
-    public void addPoint(double x, double y) {
-        addPoint(x, y, 5., 2.);
+    public void addPoint(double x, double y, int plotNumber) {
+        addPoint(x, y, plotNumber, 5., 2.);
     }
 
     public void extendBy(double x) {
@@ -108,7 +121,7 @@ public class Graph extends JPanel {
         return (int)map(config.x1, config.x2, 0, pxw, n);
     }
     public int mapy(double n) {
-        return (int)map(config.y1, config.y2, 0, pxh, n); //todo fix this it's upside down but if i upside down it fills :((
+        return (int)map(config.y1, config.y2, pxh, 0, n); //todo fix this it's upside down but if i upside down it fills :((
     }
 
 
@@ -117,6 +130,7 @@ public class Graph extends JPanel {
         drawGraph(g);
     }
     public void drawGraph(Graphics g) {
+        //TODO: make stroke thickness somehow
         double x1 = config.x1;
         double x2 = config.x2;
         double y1 = config.y1;
@@ -154,18 +168,20 @@ public class Graph extends JPanel {
         g.setColor(Color.BLACK);
         g.drawLine(center.x, 0, center.x, pxh);
         g.drawLine(0, center.y, pxw, center.y);
-
-        g.setColor(color);
-        for (int i = 1; i < graph.size(); i++) {
-            g.drawLine(mapx(graph.get(i-1).x), mapy(graph.get(i-1).y), mapx(graph.get(i).x), mapx(graph.get(i).y));
+        for (int j = 0; j < graph.size(); j++) {
+            g.setColor(colors.get(j));
+            for (int i = 1; i < graph.get(j).size(); i++) {
+                g.drawLine(mapx(graph.get(j).get(i-1).x), mapy(graph.get(j).get(i-1).y), mapx(graph.get(j).get(i).x), mapy(graph.get(j).get(i).y));
+                // System.out.printf("Unmapped #%d : (%f,%f) (%f,%f)\n",i, graph.get(j).get(i-1).x, graph.get(j).get(i-1).y, graph.get(j).get(i).x, graph.get(j).get(i).y);
+                // System.out.printf("Mapped #%d : (%d,%d) (%d,%d)\n",i, mapx(graph.get(j).get(i-1).x), mapy(graph.get(j).get(i-1).y), mapx(graph..get(j).get(i).x), mapy(graph.get(j).get(i).y));
+            }
         }
     }
 
-    public void init(int pxw, int pxh, String name, Color c) {
+    public void init(int pxw, int pxh, String name) {
         this.pxw = pxw;
         this.pxh = pxh;
         this.frame = new JFrame(name);
-        this.color = c;
         this.frame.setSize(pxw, pxh);
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.getContentPane().add(this, BorderLayout.CENTER);
@@ -179,10 +195,11 @@ public class Graph extends JPanel {
         GraphConfig conf = new Graph.GraphConfig();
         Graph example = new Graph(conf);
         double dt = 0.01;
+        example.addPlot(Color.RED);
         for(double t = -3*3.14159; t < 3*3.14159; t+=dt) {
-            example.addPoint(t, Math.sin(t));
+            example.addPoint(t, Math.sin(t), 0);
         }
-        example.init(500, 500, "Graph", Color.RED); //TODO: Address that this doesn't include the head of the graph
+        example.init(500, 500, "Graph"); //TODO: Address that this doesn't include the head of the graph
     }
 }
 

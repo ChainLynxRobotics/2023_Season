@@ -34,8 +34,11 @@ public class ApproximateDerivative {
         ylast = fx;
         return ret;
     }
-    public ApproximateDerivative (DoubleFunction f, double x) {
+    public ApproximateDerivative(DoubleFunction f, double x) {
         this.reset(f, x);
+        ylast = 0;
+    }
+    public ApproximateDerivative() {
         ylast = 0;
     }
 }
