@@ -1,4 +1,4 @@
-package Approximations;
+package frc.robot.GenericPID.Approximations;
 
 public class ApproximateDerivative {
     //a sometimes static class which takes the derivative of a certain point of a function
@@ -12,10 +12,10 @@ public class ApproximateDerivative {
         return (f.eval(x) - f.eval(x - dx)) / dx;
     }
     //static instant non fancy version
-    public static double derivative(x1, y1, x, y) {
-        return (y - y1) / (x - x1);
+    public static double derivative(double x1, double y1, double x, double y) {
+        return (y - y1) / (x - x1); //hehe
     }
-    public static double derivative(y1, y2, dx) {
+    public static double derivative(double y1, double y2, double dx) {
         return (y2 - y1) / dx;
     }
     public void reset(DoubleFunction f, double x) {
@@ -29,7 +29,7 @@ public class ApproximateDerivative {
     }
     public double nextDerivative(double x, double fx) {
         double dx = x - xlast;
-        double ret = derivative(ylast, fx, dx)
+        double ret = derivative(ylast, fx, dx);
         xlast += dx;
         ylast = fx;
         return ret;

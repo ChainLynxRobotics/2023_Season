@@ -1,6 +1,6 @@
-package Approximations;
+package frc.robot.GenericPID.Approximations;
+// package Approximations;
 
-import DoubleFunction;
 public class ApproximateIntegral {
     private double x1;
     private double x;
@@ -23,15 +23,15 @@ public class ApproximateIntegral {
     //unfortunately integrals can't exactly be staic like derivatives so this is how it looks
     public void reset(double x, double y) {
         this.x = x;
-        this.y = y;
         this.x1 = x;
         this.y1 = y;
+        this.Y = y;
     }
     public void reset(DoubleFunction f, double x, double y) {
         this.x = x;
-        this.y = y;
         this.x1 = x;
         this.y1 = y;
+        this.Y = y;
         this.f = f;
     }
     public void next(double fx, double dx) {
@@ -43,8 +43,9 @@ public class ApproximateIntegral {
         Y += f.eval(x1) * dx;
     }
     public void integrate(DoubleFunction f, double dx, double x2) {
+        this.f = f;
         while (x < x2) {
-            next(f, dx);
+            next(dx);
         }
     }
 
