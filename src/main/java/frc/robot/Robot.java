@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -19,6 +21,10 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+	private NetworkTableInstance inst;
+	private NetworkTable USB2;
+	public static final boolean OPEN_TAG_WINDOW = false;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -28,7 +34,31 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+		// register subsystems into a list to minimize redundancy if logging
+		// inputs/outputs for all
+		inst = NetworkTableInstance.create();
+
+		// start a NT4 client
+		inst.startClient4("robot network table client");
+
+		// connect to a roboRIO with team number TEAM
+		inst.setServerTeam(8248);
+
+		// connect to a specific host/port
+		inst.setServer("10.0.0.2", NetworkTableInstance.kDefaultPort4);
+		USB2 = inst.getTable("photonvision").getSubTable("USB2.0_PC_CAMERA");
+		if (OPEN_TAG_WINDOW) {
+			VisionWindow.startWindow(this);
+		}
   }
+
+	public double[] getPose() {
+		if (USB2.getEntry("hasTarget").getBoolean(false)) {
+			return USB2.getEntry("targetPose").getDoubleArray(new double[] { 0.0, 0.0, 0.0 });
+		}
+		System.out.println("tried to get pose but not connected to photon vision!");
+		return null;
+	}
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
