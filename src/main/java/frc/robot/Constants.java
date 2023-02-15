@@ -24,6 +24,17 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final int TEAM_NUMBER = 8248;
+  public static final String NETWORK_TABLES_SERVER = "10.0.0.2";
+  public static final String NETWORK_TABLE_CLIENT = "robot network table client";
+  
+  public static final class PhotonVisionConstants {
+    public static final String PHOTON_NETWORK_TABLES_NAME = "photonvision";
+    public static final String PHOTON_CAMERA_NAME = "USB2.0_PC_CAMERA";
+	  public static final boolean OPEN_TAG_WINDOW = false;
+    public static final double[] DEFAULT_POSE = null;
+  }
+
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds

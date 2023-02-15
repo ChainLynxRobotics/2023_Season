@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.lib;
 
 import java.awt.Graphics;
 
@@ -6,9 +6,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import frc.robot.Robot;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+//ui for viewing the pose of the detected april tag
+//used for testing the getPose function
 public class VisionWindow extends JPanel implements ActionListener {
     public static JFrame frame;
     public static VisionWindow window;

@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.lib.VisionWindow;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -23,7 +24,6 @@ public class Robot extends TimedRobot {
 
 	private NetworkTableInstance inst;
 	private NetworkTable USB2;
-	public static final boolean OPEN_TAG_WINDOW = false;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -39,25 +39,28 @@ public class Robot extends TimedRobot {
 		inst = NetworkTableInstance.create();
 
 		// start a NT4 client
-		inst.startClient4("robot network table client");
+		inst.startClient4(Constants.NETWORK_TABLE_CLIENT);
 
 		// connect to a roboRIO with team number TEAM
-		inst.setServerTeam(8248);
+		inst.setServerTeam(Constants.TEAM_NUMBER);
 
 		// connect to a specific host/port
-		inst.setServer("10.0.0.2", NetworkTableInstance.kDefaultPort4);
-		USB2 = inst.getTable("photonvision").getSubTable("USB2.0_PC_CAMERA");
-		if (OPEN_TAG_WINDOW) {
+		inst.setServer(Constants.NETWORK_TABLES_SERVER, NetworkTableInstance.kDefaultPort4);
+		USB2 = inst.getTable(Constants.PhotonVisionConstants.PHOTON_NETWORK_TABLES_NAME).getSubTable(Constants.PhotonVisionConstants.PHOTON_CAMERA_NAME);
+		//
+    if (Constants.PhotonVisionConstants.OPEN_TAG_WINDOW) {
 			VisionWindow.startWindow(this);
 		}
   }
 
 	public double[] getPose() {
+    //checks if there is a current target
 		if (USB2.getEntry("hasTarget").getBoolean(false)) {
-			return USB2.getEntry("targetPose").getDoubleArray(new double[] { 0.0, 0.0, 0.0 });
+      //returns the pose of the current target
+			return USB2.getEntry("targetPose").getDoubleArray(Constants.PhotonVisionConstants.DEFAULT_POSE);
 		}
-		System.out.println("tried to get pose but not connected to photon vision!");
-		return null;
+    //there is either no detected tags or photonvision is not connected
+    return Constants.PhotonVisionConstants.DEFAULT_POSE;
 	}
 
   /**
