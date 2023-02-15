@@ -8,7 +8,8 @@ import frc.robot.GenericPID.PathSegmentBase;
 import frc.robot.GenericPID.Testing.Graph;
 
 class GenericPath {
-    private ArrayList<PathSegmentBase> path; //is private, and should contain back to back segments, non overlapping or gapping, in order.
+    private boolean debug = Debug.debug_GenericPath;
+    private ArrayList<PathSegmentBase> path = new ArrayList<PathSegmentBase>(); //is private, and should contain back to back segments, non overlapping or gapping, in order.
     //Then can search for segments in O(lg n) time.
 
     private Double cachea;
@@ -23,18 +24,23 @@ class GenericPath {
 
     private class f implements DoubleFunction {
         public double eval(double x) {
-            return y(x);
+            Double ret = y(x);
+            if (ret == null) {
+                return 0;
+            } else {
+                return ret;
+            }
         }
     }
 
     public static void test() {
         Graph g = new Graph(new Graph.GraphConfig());
-        g.init(1000, 1000, "Path");
         g.addPlot(Color.BLUE);
         GenericPath p = new GenericPath();
         f ff = p.new f();
         p.insertSegment(new LinearSegment(5,6,10,3));
-        g.plot(5,10, ff, 0.01, 0);
+        g.plot(5, 10, ff, 0.01, 0);
+        g.init(1000, 1000, "Path");
     }
 
     private boolean epEquals(double a, double b) {
@@ -51,9 +57,11 @@ class GenericPath {
             return cachei;
         }
         if (x >= path.get(path.size() - 1).x2) {
+            System.out.println("x is greater than the last segment");
             return path.size();
         }
         if (x < path.get(0).x2) {
+            System.out.println("x is less than the first segment");
             return -1;
         }
         while (true) {
@@ -65,9 +73,11 @@ class GenericPath {
             } else if (path.get(lastPivot).x2 < x) {
                 lastPivot = (lastPivot + dpivot) / 2;
                 dpivot = (dpivot + 1) / 2;
+                if (debug) System.out.printf("pivot up +%d to %d", dpivot, lastPivot);
             } else if (path.get(lastPivot).x1 >= x) {
                 lastPivot = (lastPivot - dpivot) / 2;
                 dpivot = (dpivot + 1) / 2;
+                if (debug) System.out.printf("pivot down +%d to %d", dpivot, lastPivot);
             } else {
                 return lastPivot;
             }
@@ -157,6 +167,7 @@ class GenericPath {
 
     public Double y(double x) {
         int i = findJunction(x);
+        System.out.printf("bucket: %d\n", i);
         if (i == -1) {
             return null;
         }
