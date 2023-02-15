@@ -8,6 +8,10 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.BasicStroke;
 import javax.swing.SwingUtilities;
+
+import frc.robot.GenericPID.Debug;
+import frc.robot.GenericPID.Approximations.DoubleFunction;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.lang.Math;
@@ -28,6 +32,10 @@ class Pointp {
 
 public class Graph extends JPanel {
     //a 2d cartesian graph object that also drives graphics to represent it. use init and disp to render.
+    //todo: add more display features
+
+    private static final boolean debug = Debug.debug_Graph;
+
     private GraphConfig config;
     private ArrayList<ArrayList<Pointp>> graph;
     
@@ -36,43 +44,23 @@ public class Graph extends JPanel {
     private int pxw;
     private int pxh;
 
-    public static class GraphConfig {
-        public double x1; //currently UB if x1 > x2, same with y
-        public double x2;
-        public double y1;
-        public double y2;
-        public double xScale;
-        public double yScale;
-        public double minpps = 5; //minimum pixels per scale
-        public int thickness = 3;
-
-        public GraphConfig(double x1, double x2, double y1, double y2, double xScale, double yScale, double minpps) {
-            this.x1 = x1;
-            this.x2 = x2;
-            this.y1 = y1;
-            this.y2 = y2;
-            this.xScale = xScale;
-            this.yScale = yScale;
-            // this.xCenter = mapx(0) 
-            // this.yCenter = mapy(0)
+    public static void main(String[] args) {
+        test();
+    }
+    public static void test() {
+        GraphConfig conf = new Graph.GraphConfig();
+        Graph example = new Graph(conf);
+        double dt = 0.01;
+        example.addPlot(Color.RED);
+        for(double t = -3*3.14159; t < 3*3.14159; t+=dt) {
+            example.addPoint(t, Math.sin(t), 0);
         }
-        public GraphConfig() {
-            this(-10., 10., -10., 10., 1., 1., 5.);
-        }
+        example.init(500, 500, "Graph"); //TODO: Address that this doesn't include the head of the graph
     }
 
-    public Graph(GraphConfig c) { //scale only represents the lines in the back showing the values
-        this.config = c;
-        this.graph = new ArrayList<ArrayList<Pointp>>();
-        this.colors = new ArrayList<Color>();
-        this.frame = null;
-        this.pxw = 500;
-        this.pxh = 500;
-    }
-
-    public void addPlot(Color color) {
+    public void addPlot(Color blue) {
         graph.add(new ArrayList<Pointp>());
-        colors.add(color);
+        colors.add(blue);
     }
 
     public void addPoint(double x, double y, int plotNumber, double eb, double sb) {
@@ -97,6 +85,12 @@ public class Graph extends JPanel {
 
     public void addPoint(double x, double y, int plotNumber) {
         addPoint(x, y, plotNumber, 5., 2.);
+    }
+
+    public void plot(double x1, double x2, DoubleFunction f, double dt, int plotNumber) {
+        for (double x = x1; x < x2; x += dt) {
+            addPoint(x, f.eval(x), plotNumber);
+        }
     }
 
     public void extendBy(double x) {
@@ -129,6 +123,15 @@ public class Graph extends JPanel {
         super.paintComponent(g);
         drawGraph(g);
     }
+
+    public void drawagain() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                frame.repaint();
+            }
+        });
+    }
+
     public void drawGraph(Graphics g) {
         //TODO: make stroke thickness somehow
         double x1 = config.x1;
@@ -172,8 +175,8 @@ public class Graph extends JPanel {
             g.setColor(colors.get(j));
             for (int i = 1; i < graph.get(j).size(); i++) {
                 g.drawLine(mapx(graph.get(j).get(i-1).x), mapy(graph.get(j).get(i-1).y), mapx(graph.get(j).get(i).x), mapy(graph.get(j).get(i).y));
-                // System.out.printf("Unmapped #%d : (%f,%f) (%f,%f)\n",i, graph.get(j).get(i-1).x, graph.get(j).get(i-1).y, graph.get(j).get(i).x, graph.get(j).get(i).y);
-                // System.out.printf("Mapped #%d : (%d,%d) (%d,%d)\n",i, mapx(graph.get(j).get(i-1).x), mapy(graph.get(j).get(i-1).y), mapx(graph..get(j).get(i).x), mapy(graph.get(j).get(i).y));
+                if(debug) System.out.printf("Unmapped #%d : (%f,%f) (%f,%f)\n",i, graph.get(j).get(i-1).x, graph.get(j).get(i-1).y, graph.get(j).get(i).x, graph.get(j).get(i).y);
+                if(debug) System.out.printf("Mapped #%d : (%d,%d) (%d,%d)\n",i, mapx(graph.get(j).get(i-1).x), mapy(graph.get(j).get(i-1).y), mapx(graph.get(j).get(i).x), mapy(graph.get(j).get(i).y));
             }
         }
     }
@@ -186,20 +189,93 @@ public class Graph extends JPanel {
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.getContentPane().add(this, BorderLayout.CENTER);
         this.frame.setVisible(true);
+    }    
+
+    public static class GraphConfig {
+        public double x1; //currently UB if x1 > x2, same with y
+        public double x2;
+        public double y1;
+        public double y2;
+        public double xScale;
+        public double yScale;
+        public double minpps = 5; //minimum pixels per scale
+        public int thickness = 3;
+
+        public GraphConfig(double x1, double x2, double y1, double y2, double xScale, double yScale, double minpps) {
+            this.x1 = x1;
+            this.x2 = x2;
+            this.y1 = y1;
+            this.y2 = y2;
+            this.xScale = xScale;
+            this.yScale = yScale;
+            // this.xCenter = mapx(0) 
+            // this.yCenter = mapy(0)
+        }
+        public GraphConfig() {
+            this(-10., 10., -10., 10., 1., 1., 5.);
+        }
+        public static class Builder {
+            private double x1; //currently UB if x1 > x2, same with y
+            private double x2;
+            private double y1;
+            private double y2;
+            private double xScale;
+            private double yScale;
+            private double minpps = 5; //minimum pixels per scale
+            private int thickness = 3;
+            public Builder() {
+                this.x1 = -10.;
+                this.x2 = 10.;
+                this.y1 = -10.;
+                this.y2 = 10.;
+                this.xScale = 1.;
+                this.yScale = 1.;
+            }
+            public Builder x1(double x1) {
+                this.x1 = x1;
+                return this;
+            }
+            public Builder x2(double x2) {
+                this.x2 = x2;
+                return this;
+            }
+            public Builder y1(double y1) {
+                this.y1 = y1;
+                return this;
+            }
+            public Builder y2(double y2) {
+                this.y2 = y2;
+                return this;
+            }
+            public Builder xScale(double xScale) {
+                this.xScale = xScale;
+                return this;
+            }
+            public Builder yScale(double yScale) {
+                this.yScale = yScale;
+                return this;
+            }
+            public Builder minpps(double minpps) {
+                this.minpps = minpps;
+                return this;
+            }
+            public Builder thickness(int thickness) {
+                this.thickness = thickness;
+                return this;
+            }
+            public GraphConfig build() {
+                return new GraphConfig(x1, x2, y1, y2, xScale, yScale, minpps);
+            }
+        }
     }
 
-    /**
-     * A little driver in case you want a stand-alone application.
-     */
-    public static void main(String[] args) {
-        GraphConfig conf = new Graph.GraphConfig();
-        Graph example = new Graph(conf);
-        double dt = 0.01;
-        example.addPlot(Color.RED);
-        for(double t = -3*3.14159; t < 3*3.14159; t+=dt) {
-            example.addPoint(t, Math.sin(t), 0);
-        }
-        example.init(500, 500, "Graph"); //TODO: Address that this doesn't include the head of the graph
+    public Graph(GraphConfig c) { //scale only represents the lines in the back showing the values
+        this.config = c;
+        this.graph = new ArrayList<ArrayList<Pointp>>();
+        this.colors = new ArrayList<Color>();
+        this.frame = null;
+        this.pxw = 500;
+        this.pxh = 500;
     }
 }
 
