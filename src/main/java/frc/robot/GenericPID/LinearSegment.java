@@ -17,4 +17,11 @@ public class LinearSegment extends PathSegmentBase {
         super.x1 = x1;
         super.x2 = x2;
     }
+
+    public LinearSegment(LinearSegment other) {
+        this.m = other.m;
+        this.b = other.b;
+        this.x1 = other.x1;
+        this.x2 = other.x2;
+    }
 }

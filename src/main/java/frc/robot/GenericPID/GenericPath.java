@@ -9,6 +9,7 @@ import frc.robot.GenericPID.Testing.Graph;
 
 class GenericPath {
     private final static boolean debug = Debug.debug_GenericPath;
+    private final static boolean debug2 = Debug.debug_GenericPath2;
     private ArrayList<PathSegmentBase> path = new ArrayList<PathSegmentBase>(); //is private, and should contain back to back segments, non overlapping or gapping, in order.
     //Then can search for segments in O(lg n) time.
 
@@ -22,17 +23,7 @@ class GenericPath {
         test();
     }
 
-    private class f implements DoubleFunction {
-        public double eval(double x) {
-            Double ret = y(x);
-            if (ret == null) {
-                return 0;
-            } else {
-                return ret;
-            }
-        }
-    }
-
+    
     public static void test() {
         Graph.GraphConfig gc = new Graph.GraphConfig();
         gc.x1 = 0;
@@ -45,7 +36,7 @@ class GenericPath {
             throw new RuntimeException("failed to insert segment 1");
         };
         if(debug) p.debugPath();
-        if (!p.insertSegment(new LinearSegment(9,3,15,3))) {
+        if (!p.insertSegment(new LinearSegment(9,3,15,7))) {
             throw new RuntimeException("failed to insert segment 2");
         };
         if(debug) p.debugPath();
@@ -63,6 +54,17 @@ class GenericPath {
         g.init(1000, 1000, "Path");
     }
 
+    private class f implements DoubleFunction {
+        public double eval(double x) {
+            Double ret = y(x);
+            if (ret == null) {
+                return 0;
+            } else {
+                return ret;
+            }
+        }
+    }
+    
     private boolean epEquals(double a, double b) {
         return Math.abs(a - b) < gapepsilon;
     }
@@ -73,13 +75,16 @@ class GenericPath {
 
         //O(n) cause i don't feel like debugging
         if (x < path.get(0).x1) {
+            if(debug2) System.out.printf("underjunction on %f\n", x);
             return -1;
         }
         if (x > path.get(path.size() - 1).x2) {
+            if(debug2) System.out.printf("overjunction on %f\n", x);
             return path.size();
         }
         for (int i = 0; i < path.size(); i++) {
-            if (x >= path.get(i).x1) {
+            if (x < path.get(i).x2) {
+                if(debug2) System.out.printf("normal junction %d on %f\n", i, x);
                 return i;
             }
         }
@@ -188,7 +193,7 @@ class GenericPath {
             path.add(segment);
         } else {
             if (debug) System.out.printf("in normal bucket %d\n", i);
-            path.set(i, path.get(i).chopEnd(segment.x2));
+            path.set(i, path.get(i).chopEnd(segment.x1));
             if (i + 1 < path.size()) {
                 int j;
                 for (j = i + 1; j < path.size() && segment.x2 > path.get(j).x2;) {
@@ -198,7 +203,7 @@ class GenericPath {
                 }
                 path.set(i + 1, path.get(i + 1).chopBeginning(segment.x2));
             }
-            path.add(i, segment);
+            path.add(i + 1, segment);
         }
 
         cachea = null;
@@ -224,7 +229,7 @@ class GenericPath {
 
     public Double y(double x) {
         int i = findJunction(x);
-        //if(debug) System.out.printf("bucket: %d\n", i);
+        if (debug2) System.out.printf("bucket: %d\n", i);
         if (i == -1) {
             return null;
         }
