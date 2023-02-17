@@ -14,5 +14,7 @@ public class LinearSegment extends PathSegmentBase {
     public LinearSegment(double x1, double y1, double x2, double y2) {
         this.m = (y2 - y1) / (x2 - x1);
         this.b = y1 - m * x1;
+        super.x1 = x1;
+        super.x2 = x2;
     }
 }

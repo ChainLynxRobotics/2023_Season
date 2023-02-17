@@ -11,6 +11,21 @@ public class ApproximateDerivative {
     private double xlast;
     private double ylast;
     private DoubleFunction f;
+    
+
+    public ApproximateDerivative(DoubleFunction f, double x) {
+        this.reset(f, x);
+        ylast = 0;
+    }
+    public ApproximateDerivative(double x, double y) {
+        this.xlast = x;
+        this.ylast = y;
+    }
+    public ApproximateDerivative() {
+        this.xlast = 0;
+        ylast = 0;
+    }
+
     //static instant version
     public static double derivative(DoubleFunction f, double dx, double x) {
         return (f.eval(x) - f.eval(x - dx)) / dx;
@@ -42,17 +57,5 @@ public class ApproximateDerivative {
         xlast = x;
         ylast = fx;
         return ret;
-    }
-    public ApproximateDerivative(DoubleFunction f, double x) {
-        this.reset(f, x);
-        ylast = 0;
-    }
-    public ApproximateDerivative(double x, double y) {
-        this.xlast = x;
-        this.ylast = y;
-    }
-    public ApproximateDerivative() {
-        this.xlast = 0;
-        ylast = 0;
     }
 }

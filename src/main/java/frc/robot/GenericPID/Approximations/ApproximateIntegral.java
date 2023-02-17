@@ -7,6 +7,17 @@ public class ApproximateIntegral {
     private double y1;
     private double Y;
     private DoubleFunction f;
+
+
+    public ApproximateIntegral(double x, double y) {
+        this.reset(x, y);
+        f = new Zero();
+    }
+    
+    public ApproximateIntegral(DoubleFunction f, double x, double y) {
+        this.reset(f, x, y);
+    }
+
     public double x() {
         return x;
     }
@@ -47,14 +58,5 @@ public class ApproximateIntegral {
         while (x < x2) {
             next(dx);
         }
-    }
-
-    public ApproximateIntegral(double x, double y) {
-        this.reset(x, y);
-        f = new Zero();
-    }
-
-    public ApproximateIntegral(DoubleFunction f, double x, double y) {
-        this.reset(f, x, y);
     }
 }

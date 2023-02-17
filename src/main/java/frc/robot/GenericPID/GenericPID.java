@@ -35,6 +35,7 @@ public class GenericPID {
         c.kD = 0.06;
         GenericPID p = new GenericPID(c);
         ArtificialMotor m = new ArtificialMotor(2, 0.1, 0, 2, 0, 0, 0);
+        ArtificialMotor m2 = new ArtificialMotor.Builder().v0(2).build();
         double dt = 0.001;
         double target = 2;
         // Graph g = new Graph(new Graph.GraphConfig.Builder.y2(100).build());
