@@ -58,9 +58,9 @@ public class Graph extends JPanel {
         example.init(500, 500, "Graph"); //TODO: Address that this doesn't include the head of the graph
     }
 
-    public void addPlot(Color blue) {
+    public void addPlot(Color awtcolor) {
         graph.add(new ArrayList<Pointp>());
-        colors.add(blue);
+        colors.add(awtcolor);
     }
 
     public void addPoint(double x, double y, int plotNumber, double eb, double sb) {

@@ -50,8 +50,8 @@ public class ApproximateIntegral {
         Y += fx * dx;
     }
     public void next(double dx) {
+        Y += f.eval(x) * dx;
         x += dx;
-        Y += f.eval(x1) * dx;
     }
     public void integrate(DoubleFunction f, double dx, double x2) {
         this.f = f;

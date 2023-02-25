@@ -3,11 +3,12 @@ package frc.robot.GenericPID.Approximations;
 import frc.robot.GenericPID.Debug;
 
 public class ApproximateDerivative {
-    private static final boolean debug = Debug.debug_Approximations;
     //a sometimes static class which takes the derivative of a certain point of a function
     //just use the derivative method, and a double function
     //or track ongoing derivative by using nextDerivative()
     //use either DoubleFunction unit or manual evaluation, either f or ylast
+    private static final boolean debug = Debug.debug_Approximations;
+    
     private double xlast;
     private double ylast;
     private DoubleFunction f;

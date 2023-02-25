@@ -32,24 +32,26 @@ class GenericPath {
         g.addPlot(Color.BLUE);
         GenericPath p = new GenericPath();
         f F = p.new f();
-        if (!p.insertSegment(new LinearSegment(5,6,10,3))) {
+        if (!p.insertSegment(new LinearSegment(5,6,9,3))) {
             throw new RuntimeException("failed to insert segment 1");
         };
-        if(debug) p.debugPath();
+        if(debug)p.debugPath();
         if (!p.insertSegment(new LinearSegment(9,3,15,7))) {
             throw new RuntimeException("failed to insert segment 2");
         };
+        if(debug)p.debugPath();
+        if (!p.insertSegment(new LinearSegment(7,4,9.5,-2))) {
+            throw new RuntimeException("failed to insert segment 3");
+        };
+        if(debug)p.debugPath();
+        if (!p.insertSegment(new LinearSegment(0,4,5,-2))) {
+            throw new RuntimeException("failed to insert segment 3");
+        };
+        if(debug)p.debugPath();
+        if (!p.insertSegment(new LinearSegment(1,4,14,-2))) {
+            throw new RuntimeException("failed to insert segment 3");
+        };
         if(debug) p.debugPath();
-
-        // assert(p.insertSegment(new LinearSegment(11,6,15,3)));
-        // p.insertSegment(new LinearSegment(5,7,10,3));
-        // p.insertSegment(new LinearSegment(9,5,14,9));
-        // p.insertSegment(new LinearSegment(10,4,15,6));
-        // p.insertSegment(new LinearSegment(5,6,10,3));
-        // p.insertSegment(new LinearSegment(6,3,15,3));
-        // p.insertSegment(new LinearSegment(15,3,20,10));
-        // p.insertSegment(new LinearSegment(20,10,25,10));
-        // p.insertSegment(new LinearSegment(25,10,30,3));
         g.plot(0, 30, F, 0.01, 0);
         g.init(1000, 1000, "Path");
     }
@@ -75,19 +77,20 @@ class GenericPath {
 
         //O(n) cause i don't feel like debugging
         if (x < path.get(0).x1) {
-            if(debug2) System.out.printf("underjunction on %f\n", x);
+            if(debug2) System.out.printf("underjunction on %f < %f, so\n", x, path.get(0).x1);
             return -1;
         }
-        if (x > path.get(path.size() - 1).x2) {
-            if(debug2) System.out.printf("overjunction on %f\n", x);
+        if (x >= path.get(path.size() - 1).x2) {
+            if(debug2) System.out.printf("overjunction on %f > %f, so\n", x, path.get(path.size() -1 ).x2);
             return path.size();
         }
         for (int i = 0; i < path.size(); i++) {
             if (x < path.get(i).x2) {
-                if(debug2) System.out.printf("normal junction %d on %f\n", i, x);
+                if(debug2) System.out.printf("normal junction %d on %f, so\n", i, x);
                 return i;
             }
         }
+        if(debug) System.out.println("No junction?!");
         return -1;
 
         // //O(lg n)
@@ -130,31 +133,38 @@ class GenericPath {
         //returns false if not possible to add without gap
 
         if (path.size() == 0) {
+            if (debug) System.out.println("Segment initialized");
             path.add(segment);
             return true;
         }
+
+        //we can assume the path is at least one big now
 
         //find spot
         int i = findJunction(segment.x1);
         if (debug) System.out.printf("Insert Junction is located at %d\n" , i);
         
         //if it's before the beginning
+        if (debug) System.out.println("Time to add segment");
         if (i == -1) {
             if (segment.x2 < path.get(0).x1) { //gap check
                 return false;
             }
             //insert
             path.add(0, segment);
-            int j;
+            int j; //view last clause for explanation of this
             for (j = 1; j < path.size() && segment.x2 > path.get(j).x2;) {
-                //remove all segments that are completely contained within the new segment
                 path.set(j, null);
+                if (debug) System.out.println("eaten segment : beginning");
                 j++;
             }
 
             //chop the next one if it's partially contained, won't ever be non-contained because the gap is 
             //always checked, and then it would be the last one that would be chopped.
-            path.set(j, path.get(j).chopBeginning(segment.x2));
+            //the only weird case is that there was definitely at least one there, but if j is now at the end, we dont chop next
+            if (j < path.size()) {
+                path.set(j, path.get(j).chopBeginning(segment.x2));
+            }
             return true;
         }
         if (i == path.size()) {
@@ -181,29 +191,30 @@ class GenericPath {
                 path.set(i, segment);
                 int j;
                 if (debug) System.out.printf("chopping next: %b\n", i + 1 < path.size());
-                if (i + 1 < path.size()) {
+                if (i + 1 < path.size()) { //view } else { for the explanation of this
                     for (j = i + 1; j < path.size() && segment.x2 > path.get(j).x2;) {
-                        //remove all segments that are completely contained within the new segment
                         path.set(j, null);
+                        if (debug) System.out.println("eaten segment : right on");
                         j++;
                     }
-                    path.set(i + 1, path.get(i + 1).chopBeginning(segment.x2));
+                    path.set(j, path.get(j).chopBeginning(segment.x2));
                 }
             }
             path.add(segment);
-        } else {
+        } else { //normal segments, x1 lays in i of an existing segment
             if (debug) System.out.printf("in normal bucket %d\n", i);
-            path.set(i, path.get(i).chopEnd(segment.x1));
+            path.set(i, path.get(i).chopEnd(segment.x1)); //chop existing
             if (i + 1 < path.size()) {
                 int j;
-                for (j = i + 1; j < path.size() && segment.x2 > path.get(j).x2;) {
+                for (j = i + 1; j < path.size() && segment.x2 > path.get(j).x2;) { //first checked "eaten" segment is the one directly after one it's inside; no insertion yet
                     //remove all segments that are completely contained within the new segment
-                    path.set(j, null);
+                    path.set(j, null); //set all the eatens to null; if the current segment has a higher x2, it's def eaten, due to smart placement of i of x1
+                    if (debug) System.out.println("eaten segment : normal");
                     j++;
                 }
-                path.set(i + 1, path.get(i + 1).chopBeginning(segment.x2));
+                path.set(j, path.get(j).chopBeginning(segment.x2)); //chop last not replaced
             }
-            path.add(i + 1, segment);
+            path.add(i + 1, segment); //put it in right after the one it chopped back, before the nulls, but it doesn't matter
         }
 
         cachea = null;
@@ -222,7 +233,9 @@ class GenericPath {
         }
         while (path.size() > index) {
             path.remove(path.size() - 1);
+            if (debug) System.out.println("eaten segment removed");
         }
+        if (debug) System.out.println("done \n");
         return true;
     }
     
