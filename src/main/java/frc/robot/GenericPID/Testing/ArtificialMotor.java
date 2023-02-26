@@ -59,7 +59,7 @@ public class ArtificialMotor {
             g.addPlot(c[i]);
             double dt = 0.01;
             while (m[i].t() < 10) {
-                m[i].go(dt);
+                m[i].exert(0.5, dt);
                 g.addPoint(m[i].t(), m[i].p(), i);
             }
             // while (m[i].t() < 10) {
@@ -82,28 +82,6 @@ public class ArtificialMotor {
     public double t() {
         return t;
     }
-        
-    public void go(double dt) {
-        double fnet = force - kdrag * velocity.val() - kkdrag * velocity.val() * Math.abs(velocity.val());
-        velocity.next( fnet / mass, dt); //subtracts kdrag times velocity and kkdrag times directional velocity squared, always drags in right direction
-        position.next(velocity.val(), dt);
-        if(debug) System.out.printf("motor-side t up by %f!, v is now %f\n", dt, velocity.val());
-        t += dt;
-    }
-    public void slow(double dt) {
-        double fnet = -force - kdrag * velocity.val() - kkdrag * velocity.val() * Math.abs(velocity.val());
-        velocity.next( fnet / mass, dt);
-        position.next(velocity.val(), dt);
-        if(debug) System.out.printf("motor-side t up by %f!, v is now %f\n", dt, velocity.val());
-        t += dt;
-    }
-    public void active(double dt) {
-        double fnet = -kdrag * velocity.val() - kkdrag * velocity.val() * Math.abs(velocity.val());
-        velocity.next( (fnet) / mass, dt);
-        position.next(velocity.val(), dt);
-        if(debug) System.out.printf("motor-side t up by %f!, v is now %f\n", dt, velocity.val());
-        t += dt;
-    }
     public void exert(double F, double dt) {
         if (Math.abs(F) > force) { //cap it
             F = force * Math.abs(F) / F;
@@ -111,18 +89,9 @@ public class ArtificialMotor {
         double fnet = F - kdrag * velocity.val() - kkdrag * velocity.val() * Math.abs(velocity.val());
         velocity.next( (fnet) / mass, dt);
         position.next(velocity.val(), dt);
+        if(debug) System.out.printf("motor-side t up by %f!, v is now %f\n", dt, velocity.val());
         t += dt;
     }
-    public void sustain(double v, double dt) {
-        if (velocity.val() < v) {
-            go(dt);
-        } else if (velocity.val() > v) {
-            slow(dt);
-        } else {
-            active(dt);
-        }
-    }
-
     //all constructors
     public ArtificialMotor() {
         this(2,0.2,0.1,2);

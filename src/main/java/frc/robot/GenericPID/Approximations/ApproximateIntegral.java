@@ -1,6 +1,8 @@
 package frc.robot.GenericPID.Approximations;
 // package Approximations;
 
+import frc.robot.GenericPID.Approximations.Implementations.Zero;
+
 public class ApproximateIntegral {
     private double x1;
     private double x;

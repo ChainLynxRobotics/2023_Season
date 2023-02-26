@@ -7,7 +7,7 @@ import frc.robot.GenericPID.Approximations.DoubleFunction;
 import frc.robot.GenericPID.PathSegmentBase;
 import frc.robot.GenericPID.Testing.Graph;
 
-class GenericPath {
+class Path {
     private final static boolean debug = Debug.debug_GenericPath;
     private final static boolean debug2 = Debug.debug_GenericPath2;
     private ArrayList<PathSegmentBase> path = new ArrayList<PathSegmentBase>(); //is private, and should contain back to back segments, non overlapping or gapping, in order.
@@ -30,8 +30,8 @@ class GenericPath {
         gc.x2 = 30;
         Graph g = new Graph(gc);
         g.addPlot(Color.BLUE);
-        GenericPath p = new GenericPath();
-        f F = p.new f();
+        Path p = new Path();
+        pathf F = p.new pathf();
         if (!p.insertSegment(new LinearSegment(5,6,9,3))) {
             throw new RuntimeException("failed to insert segment 1");
         };
@@ -56,7 +56,7 @@ class GenericPath {
         g.init(1000, 1000, "Path");
     }
 
-    private class f implements DoubleFunction {
+    private class pathf implements DoubleFunction {
         public double eval(double x) {
             Double ret = y(x);
             if (ret == null) {
@@ -75,7 +75,7 @@ class GenericPath {
         //takes the x value and returns where it would lie in the path; the index of the segment that it would be in. 
         //it will always round up the segment.
 
-        //O(n) cause i don't feel like debugging
+        //O(n), someone could change this to O(lg n) by using divide and conquer
         if (x < path.get(0).x1) {
             if(debug2) System.out.printf("underjunction on %f < %f, so\n", x, path.get(0).x1);
             return -1;
@@ -92,46 +92,15 @@ class GenericPath {
         }
         if(debug) System.out.println("No junction?!");
         return -1;
-
-        // //O(lg n)
-        // int rangeBeginning = 0;
-        // int rangeEnd = path.size() - 1; //these should converge to the same value
-        // int dpivot = (rangeEnd - rangeBeginning + 1) / 2;
-        // if (cachea != null && cachea < x && cacheb > x) {
-        //     return cachei;
-        // }
-        // if (x >= path.get(path.size() - 1).x2) {
-        //     if(debug) System.out.println("x is greater than the last segment");
-        //     return path.size();
-        // }
-        // if (x < path.get(0).x1) {
-        //     if(debug) System.out.println("x is less than the first segment");
-        //     return -1;
-        // }
-        // while (true) {
-        //     if (debug) System.out.printf("pivot %d %d, we are not exiting\n", rangeBeginning, rangeEnd);
-        //     if (dpivot == 0) {
-        //         cachei = rangeBeginning;
-        //         cachea = path.get(rangeBeginning).x1;
-        //         cacheb = path.get(rangeBeginning).x2;
-        //         return rangeBeginning;
-        //     } else if (path.get(rangeBeginning + dpivot).x2 < x) {
-        //         rangeBeginning += dpivot;
-        //         dpivot = (rangeEnd - rangeBeginning + 1) / 2;
-        //         if (debug) System.out.printf("pivot up   +%d to %d %d", dpivot, rangeBeginning, rangeEnd);
-        //     } else if (path.get(rangeEnd - dpivot).x1 >= x) {
-        //         rangeEnd -= dpivot;
-        //         dpivot = (rangeEnd - rangeBeginning + 1) / 2;
-        //         if (debug) System.out.printf("pivot down +%d to %d %d", dpivot, rangeBeginning, rangeEnd);
-        //     } else {
-        //         return rangeBeginning;
-        //     }
-        // }
     }
 
-    public boolean insertSegment(PathSegmentBase segment) { //index not needed, they are held within the bounds of the segment
-        //returns false if not possible to add without gap
+    public boolean insertSegment(PathSegmentBase segment) { 
+        //This is probably the sketchiest function in the entire library, 
+        //but it seems to work; may need to deploy more unit tests though
 
+        //index not needed, they are held within the bounds of the segment
+        //returns false if not possible to add without gap
+        
         if (path.size() == 0) {
             if (debug) System.out.println("Segment initialized");
             path.add(segment);

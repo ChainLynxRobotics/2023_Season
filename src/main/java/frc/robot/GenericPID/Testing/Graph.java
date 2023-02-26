@@ -140,7 +140,7 @@ public class Graph extends JPanel {
         double y2 = config.y2;
         double xratio = x1 / (x1 - x2);
         double yratio = y1 / (y1 - y2);
-        var center = new Point((int)(pxw * xratio), (int)(pxh * yratio));
+        var center = new Point((int)(pxw * xratio), pxh - (int)(pxh * yratio));
         
         g.setColor(Color.GRAY.brighter());
         if (x2 > 0) {

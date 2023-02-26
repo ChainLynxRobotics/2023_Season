@@ -4,7 +4,7 @@ import java.awt.Color;
 import frc.robot.GenericPID.Approximations.*;
 import frc.robot.GenericPID.Testing.*;
 
-public class GenericPID {
+public class PID {
     //a basic pid controller class, that lets the motor handle tracking position, velocity, and max of these. 
     //for this functionality, extend this class (could override controlEffect)
     //the max effective target velocity should be implicitly in line with the tuning, and the motor should cap itself. This object is quite basic.
@@ -17,69 +17,68 @@ public class GenericPID {
     //   i0        i1       i2   (internal)
     //   p0        p1       p2   (internal)
     
-    //todo: maybe genericPID Profile that can use any derivative sorta function? it is generic, but would be kinda useless
+    //todo: maybe PID Profile that can use any derivative sorta function? it is generic, but would be kinda useless
 
     private static final boolean debug = Debug.debug_GenericPID;
-
-
 
     private PIDConfig conf;
     private double t;
     private ApproximateDerivative dedt;
     private ApproximateIntegral E;
-
-    public static void test() {
-        PIDConfig c = new PIDConfig();
-        c.kP = 1.7;
-        c.kI = 0.0001;
-        c.kD = 0.06;
-        GenericPID p = new GenericPID(c);
-        ArtificialMotor m = new ArtificialMotor(2, 0.1, 0, 2, 0, 0, 0);
-        ArtificialMotor m2 = new ArtificialMotor.Builder().v0(2).build();
-        double dt = 0.001;
-        double target = 2;
-        // Graph g = new Graph(new Graph.GraphConfig.Builder.y2(100).build());
-        Graph.GraphConfig gc = new Graph.GraphConfig();
-        gc.x1 = 0;
-        gc.x2 = 20;
-        gc.y2 = 3;
-        gc.y1 = -3;
-        Graph g = new Graph(gc);
-        g.addPlot(Color.BLUE);
-        class f implements DoubleFunction {
-            public double eval(double x) {
-                //first the control effect is updated (including with the derivative of currrent to last),
-                //then the motor is directed towards this velocity, and the motor updates its position and known time.
-                //then the pid updates its known time, should be in sync with the motor's known time
-                //see graph atop this class
-                if (x == 0) {
-                    m.sustain(p.firstEffect(target, m.p()), dt);
-                    p.next_t(dt);
-                }
-                m.sustain(p.controlEffect(target, m.p(), dt), dt); 
-                p.next_t(dt);
-                assert p.synced_exact(m.t());
-                if(debug)System.out.printf("t:%f p:%f x:%f\n", m.t(), m.p(), x);
-                return m.p();
-            }
-        }
-        g.plot(0, 20, new f(), dt, 0);
-        g.init(1000,1000,"PID Test");
-    }
     public static void main(String[] args) {
         test();
     }
+    
+    public static void test() {
+        final double l = 3;
+        PIDConfig c = new PIDConfig();
+        c.kP = 1.0;//1.7;
+        c.kI = 0.0;//0.0001;
+        c.kD = 0.01;//0.06;
+        PID p = new PID(c);
+        //ArtificialMotor m = new ArtificialMotor(2, 0.1, 0, 2, 0, 0, 0);
+        ArtificialMotor m2 = new ArtificialMotor.Builder().v0(2).build();
+        ArtificialMotor m = new ArtificialMotor(1, 0.00, 0, 100);
+        double dt = 0.005;
+        double target = 5;//2;
+        // Graph g = new Graph(new Graph.GraphConfig.Builder.y2(100).build());
+        Graph.GraphConfig gc = new Graph.GraphConfig();
+        gc.x1 = 0;
+        gc.x2 = l;//20;
+        gc.y1 = -1;//-3;
+        gc.y2 = 7;//3;
+        Graph g = new Graph(gc);
+        g.addPlot(Color.BLUE);
+        g.addPlot(Color.RED);
+        g.addPlot(Color.GREEN);
+        for (double ti = 0; ti < l; ti+=dt) {
+            //first the control effect is updated (including with the derivative of currrent to last),
+            //then the motor is directed towards this velocity, and the motor updates its position and known time.
+            //then the pid updates its known time, should be in sync with the motor's known time
+            //see graph atop this class
+            
+            //assume this will just be in sync, use reset if needed
+            int n = m.sustain(p.controlEffect(target, m.p(), dt), dt); 
+            p.next_t(dt);
+            assert p.synced_exact(m.t());
+            if(debug)System.out.printf("t:%f p:%f v:%f n:%d\n", ti, m.p(), m.v(), n);
+            g.addPoint(ti, m.p(), 0);
+            g.addPoint(ti, m.v(), 1);
+            // g.addPoint(ti, n, 2);
+        }
+        g.init(1000,1000,"PID Test");
+    }
 
-    public GenericPID(PIDConfig config) {
+    public PID(PIDConfig config) {
         this.conf = config;
         this.t = 0;
         this.dedt = new ApproximateDerivative(0, 0);
         this.E = new ApproximateIntegral(0, 0);
     }
-    public double firstEffect(double target, double current) {
+    private double firstEffect(double target, double current) {
         return firstEffect(target, current, 0); //literally dt doesnt matter, just a placebo
     }
-    public double firstEffect(double target, double current, double dt) {
+    private double firstEffect(double target, double current, double dt) {
         double curre = target - current;
         dedt.reset(0, curre);
         double eff = conf.kP * curre; //no accumulation, unknown derivative
@@ -87,6 +86,12 @@ public class GenericPID {
         return eff;
     }
     public double controlEffect(double target, double current, double dt) {
+        //if we haven't evaluated a controleffect yet, we will use firstEffect
+        // which ignores derivative and integral which are useless
+        if (t == 0) {
+            return firstEffect(target, current);
+        }
+
         double curre = target - current; //error term, in direction of target, positive means below
         //need positive P to make motor go that way
         double currdedt = dedt.nextDerivative(t + dt, curre); //derivative term, derivative of error in direction of target - means going towards
@@ -103,7 +108,8 @@ public class GenericPID {
     public void next_t(double dt) {
         t += dt;
     }
-    public boolean synced_exact(double t) {
+    public boolean synced_exact(double t) { 
+        //time for pid always starts at zero and should be relatively handled so it stays staggered around real time
         return (t == this.t);
     }
     public boolean synced_range(double t, double range) { //range is usually equal to dt but depends on checking situation
