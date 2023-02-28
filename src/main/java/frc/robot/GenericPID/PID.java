@@ -29,6 +29,13 @@ public class PID {
         test();
     }
     
+    public PID(PIDConfig config) {
+        this.conf = config;
+        this.t = 0;
+        this.dedt = new ApproximateDerivative(0, 0);
+        this.E = new ApproximateIntegral(0, 0);
+    }
+
     public static void test() {
         final double l = 3;
         PIDConfig c = new PIDConfig();
@@ -58,23 +65,25 @@ public class PID {
             //see graph atop this class
             
             //assume this will just be in sync, use reset if needed
-            int n = m.sustain(p.controlEffect(target, m.p(), dt), dt); 
+            double ce = p.controlEffect(target, m.p(), dt);
+            double f; //manual handling with PID, PIDMotorFollow includes this abstraction for you
+            if (ce > m.v()) {
+                f = m.maxF();
+            } else if (ce < m.v()) {
+                f = -m.maxF();
+            } else {
+                f = 0;
+            }
+            m.exert(f ,dt); 
             p.next_t(dt);
             assert p.synced_exact(m.t());
-            if(debug)System.out.printf("t:%f p:%f v:%f n:%d\n", ti, m.p(), m.v(), n);
+            if(debug)System.out.printf("t:%f p:%f v:%f\n", ti, m.p(), m.v());
             g.addPoint(ti, m.p(), 0);
             g.addPoint(ti, m.v(), 1);
-            // g.addPoint(ti, n, 2);
         }
         g.init(1000,1000,"PID Test");
     }
 
-    public PID(PIDConfig config) {
-        this.conf = config;
-        this.t = 0;
-        this.dedt = new ApproximateDerivative(0, 0);
-        this.E = new ApproximateIntegral(0, 0);
-    }
     private double firstEffect(double target, double current) {
         return firstEffect(target, current, 0); //literally dt doesnt matter, just a placebo
     }

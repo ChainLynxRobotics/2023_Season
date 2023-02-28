@@ -6,19 +6,26 @@ import frc.robot.GenericPID.ControlStrategy;
 import frc.robot.GenericPID.MotorControlProfile.ControlLevel;
 import frc.robot.GenericPID.MotorControlProfile.UnknownControlStrategyException;
 
-public class FullForce implements ControlStrategy {
+public class DtFullForce implements ControlStrategy {
     private double F;
-    public FullForce(double maxForce) {
+    private double dt;
+    private double m;
+    public DtFullForce(double maxForce, double dt, double m) {
         F = maxForce;
+        this.dt = dt;
     }
     public double calculate(double effectv, ControlLevel given, ControlLevel needed, double currv) throws UnknownControlStrategyException{
         if (given.ordinal() + 1 != needed.ordinal()) {
             throw new UnknownControlStrategyException("Conversion not compatible with this control strategy");
         }
+        double betterF = F;
+        if (Math.abs(currv - effectv) < dt * F / m) {
+            betterF = Math.abs(currv - effectv) / dt * m;
+        }
         if (effectv < currv) {
-            return F;
+            return betterF;
         } else if (effectv > currv) {
-            return -F;
+            return -betterF;
         } else {
             return 0;
         }

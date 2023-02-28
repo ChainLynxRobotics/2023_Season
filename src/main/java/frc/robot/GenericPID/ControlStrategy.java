@@ -2,11 +2,13 @@ package frc.robot.GenericPID;
 
 import java.util.ArrayList;
 
-import frc.robot.GenericPID.ControlEffectProfile.ControlLevel;
-import frc.robot.GenericPID.ControlEffectProfile.UnknownControlStrategyException;
+import frc.robot.GenericPID.MotorControlProfile.ControlLevel;
+import frc.robot.GenericPID.MotorControlProfile.UnknownControlStrategyException;
 
 public interface ControlStrategy {
-    public double determine(double effect, ControlLevel given, ControlLevel needed, ArrayList<Double> contextInfo) throws UnknownControlStrategyException;
+    //to do: need a way of getting information to this determine in some sender box because it doesn't seem like there's a good way to pass the arbitrary information without
+    //"collecting it all"
+    //i need to give up this is fine
+    public double calculate(double effect, ControlLevel given, ControlLevel needed, double curreffect) throws UnknownControlStrategyException;
     //given the control effect and context info and a conversion requiremen, determine how to output to the motor.
-    //Context info is formatted as the control strategy wants it to be.
 }

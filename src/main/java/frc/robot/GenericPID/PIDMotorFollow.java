@@ -2,7 +2,9 @@ package frc.robot.GenericPID;
 
 import frc.robot.GenericPID.Approximations.DoubleFunction;
 import frc.robot.GenericPID.Implementations.FullCatchUp;
+import frc.robot.GenericPID.Implementations.FullForce;
 import frc.robot.GenericPID.Implementations.LinearSegment;
+import frc.robot.GenericPID.MotorControlProfile.ControlLevel;
 import frc.robot.GenericPID.Testing.ArtificialMotor;
 import frc.robot.GenericPID.Testing.Graph;
 
@@ -10,11 +12,14 @@ import java.awt.Color;
 import java.util.Random;
 
 public class PIDMotorFollow {
+    //an object which drives together a pid controller with a path and a controleffect profile for fully driving the motor.
+    //todo: split into motor on top of lower level version connects path and pid??
+    //todo: maybe make this more similar to frc code and compiles down?
     boolean debug = Debug.debug_MotorFollow;
     
     private Path path;
     private PID pid;
-    private ControlEffectProfile pidusage;
+    private MotorControlProfile motor;
 
     public CatchUpFunction catchUpDt; //customize this if you want by just swapping its value with another CatchUpFunction
     private int timesBehind = 0;
@@ -22,8 +27,16 @@ public class PIDMotorFollow {
     
     private double lastEffect = 0;
 
+    
     public static void main(String[] args) {
         test();
+    }
+
+    public PIDMotorFollow(Path path, PIDConfig config, MotorControlProfile motorprofile, double dt) {
+        this.path = path;
+        this.pid = new PID(config);
+        this.catchUpDt = new FullCatchUp();
+        this.dt = dt;
     }
     
     public static void test() {
@@ -40,7 +53,9 @@ public class PIDMotorFollow {
         p.insertSegment(new LinearSegment(10,5,30,5));
 
         //simulation for the motor
-        var m = new ArtificialMotor(1, 0.01, 0, 100);
+        double maxf = 100;
+        var m = new ArtificialMotor(1, 0.01, 0, maxf);
+        var mc = new MotorControlProfile(ControlLevel.VELOCITY, ControlLevel.ACCELERATION, new FullForce(maxf));
 
         //target control effect grain
         double dt = 0.005;
@@ -49,7 +64,7 @@ public class PIDMotorFollow {
         double kP = 1;
         double kI = 0.00;
         double kD = 0.01; 
-        var g = new PIDMotorFollow(p, new PIDConfig(kP,kI,kD), dt);
+        var g = new PIDMotorFollow(p, new PIDConfig(kP,kI,kD), mc, dt);
 
         //realtime simulation variable
         double t = 0;
@@ -105,7 +120,7 @@ public class PIDMotorFollow {
             if(debug) System.out.printf("PID time behind, using catchupfunction to catchup! timebehind %f timesbehind %d dt %f to catch up!\n", timeBehind, timesBehind, newdt);
             double effect = nextControlEffect(x, newdt);
             lastEffect = effect;
-            return effect;
+            return motor.mEffect(effect, effect);
         }
 
         if (t > pid.t()) {
@@ -126,12 +141,5 @@ public class PIDMotorFollow {
         double ret = pid.controlEffect(path.y(pid.t()), x, dt);
         pid.next_t(dt);
         return ret;
-    }
-    
-    public PIDMotorFollow(Path path, PIDConfig config, double dt) {
-        this.path = path;
-        this.pid = new PID(config);
-        this.catchUpDt = new FullCatchUp();
-        this.dt = dt;
     }
 }

@@ -1,4 +1,4 @@
-package frc.robot.GenericPID;
+package frc.robot.GenericPID.Implementations;
 
 public class LinearSegment extends PathSegmentBase {
     public double m;

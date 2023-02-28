@@ -2,6 +2,8 @@ package frc.robot.GenericPID;
 
 import java.util.ArrayList;
 
+import frc.robot.GenericPID.Implementations.PathSegmentBase;
+
 public class PolynomialSegment extends PathSegmentBase {
     ArrayList<Double> coeffs; //the index represents the x degree, so [1,2,3] = 3x^2 + 2x + 1
     public double y(double x) {

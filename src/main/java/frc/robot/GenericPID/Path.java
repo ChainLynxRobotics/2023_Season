@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import java.awt.Color;
 import frc.robot.GenericPID.Approximations.DoubleFunction;
-import frc.robot.GenericPID.PathSegmentBase;
+import frc.robot.GenericPID.Implementations.LinearSegment;
+import frc.robot.GenericPID.Implementations.PathSegmentBase;
 import frc.robot.GenericPID.Testing.Graph;
 
 class Path {

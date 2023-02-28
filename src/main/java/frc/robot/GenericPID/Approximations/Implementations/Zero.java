@@ -1,4 +1,6 @@
-package frc.robot.GenericPID.Approximations;
+package frc.robot.GenericPID.Approximations.Implementations;
+
+import frc.robot.GenericPID.Approximations.DoubleFunction;
 
 public class Zero implements DoubleFunction {
     public double eval(double x) {

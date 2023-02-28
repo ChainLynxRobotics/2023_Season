@@ -2,18 +2,18 @@ package frc.robot.GenericPID;
 
 import java.util.ArrayList;
 
-import frc.robot.GenericPID.ControlEffectProfile.ControlLevel;
-import frc.robot.GenericPID.ControlEffectProfile.UnknownControlStrategyException;
+import frc.robot.GenericPID.MotorControlProfile.ControlLevel;
+import frc.robot.GenericPID.MotorControlProfile.UnknownControlStrategyException;
 
 public class ControlEffect {
     //a class that holds a control effect with the adapter
 
-    private ControlEffectProfile c;
+    private MotorControlProfile c;
     private double effect;
 
-    public Double motorOutput(ControlLevel motorEffect, ArrayList<Double> contextInfo) {
+    public Double motorEffect(double currEffect) {
         try {
-            return c.determine(effect, motorEffect, contextInfo);
+            return c.mEffect(effect, currEffect);
         }
         catch (UnknownControlStrategyException e) {
             return null;

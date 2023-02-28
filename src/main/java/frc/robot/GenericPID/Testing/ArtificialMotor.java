@@ -82,6 +82,9 @@ public class ArtificialMotor {
     public double t() {
         return t;
     }
+    public double maxF() {
+        return force;
+    }
     public void exert(double F, double dt) {
         if (Math.abs(F) > force) { //cap it
             F = force * Math.abs(F) / F;
