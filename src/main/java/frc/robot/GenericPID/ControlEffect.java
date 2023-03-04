@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import frc.robot.GenericPID.MotorControlProfile.ControlLevel;
 import frc.robot.GenericPID.MotorControlProfile.UnknownControlStrategyException;
 
+/**A class that holds a control effect with the adapter*/
 public class ControlEffect {
-    //a class that holds a control effect with the adapter
 
     private MotorControlProfile c;
     private double effect;

@@ -1,23 +1,25 @@
 package frc.robot.GenericPID;
 
 import java.awt.Color;
-import frc.robot.GenericPID.Approximations.*;
-import frc.robot.GenericPID.Testing.*;
 
-public class PID {
-    //a basic pid controller class, that lets the motor handle tracking position, velocity, and max of these. 
-    //for this functionality, extend this class (could override controlEffect)
-    //the max effective target velocity should be implicitly in line with the tuning, and the motor should cap itself. This object is quite basic.
-    //the motor should listen to pid after each control effect, and keep track of its own time value too (this can be a real life time value)
-    //graph of how the pid time should update
-    //t .          .          .
-    //   |________| |________|
-    //    motor i0   motor i1    (you handle)
-    //  di0  di1        di2      (internal) 
-    //   i0        i1       i2   (internal)
-    //   p0        p1       p2   (internal)
-    
-    //todo: maybe PID Profile that can use any derivative sorta function? it is generic, but would be kinda useless
+import frc.robot.GenericPID.ApproximationUtils.*;
+import frc.robot.GenericPID.Testing.*;
+/**
+  *A basic pid controller class, that lets the motor handle tracking position, velocity, and max of these. 
+  *For this functionality, extend this class (could override controlEffect).
+  the max effective target velocity should be implicitly in line with the tuning, and the motor should cap itself. This object is quite basic.
+  *The motor should listen to pid after each control effect, and keep track of its own time value too (this can be a real life time value)
+  */
+  public class PID {
+      //graph of how the pid time should update
+      // .          .          .
+      //  |________| |________|
+      //   motor i0   motor i1    (you handle)
+      // di0  di1        di2      (internal) 
+      //  i0        i1       i2   (internal)
+      //  p0        p1       p2   (internal)
+      
+      //todo: maybe PID Profile that can use any derivative sorta function? it is generic, but would be kinda useless
 
     private static final boolean debug = Debug.debug_GenericPID;
 

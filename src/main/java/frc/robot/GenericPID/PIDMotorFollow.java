@@ -1,6 +1,7 @@
 package frc.robot.GenericPID;
 
-import frc.robot.GenericPID.Approximations.DoubleFunction;
+import frc.robot.GenericPID.Extensible.CatchUpFunction;
+import frc.robot.GenericPID.Extensible.DoubleFunction;
 import frc.robot.GenericPID.Implementations.FullCatchUp;
 import frc.robot.GenericPID.Implementations.FullForce;
 import frc.robot.GenericPID.Implementations.LinearSegment;
@@ -11,8 +12,13 @@ import frc.robot.GenericPID.Testing.Graph;
 import java.awt.Color;
 import java.util.Random;
 
+/**An object which drives together a pid controller with a path and a controleffect profile for fully driving the motor.
+ * <p> The path is not recommended to be a actual intricate path to follow, but more like things to do over time.
+ * The motor does NOT use cross-track error, although that is planning to be added as an abstraction.
+ * The motor evalues the error with the current position on the path, or one offsetted one ahead of time defined by "prediction" function abstraction parameter.
+*/
 public class PIDMotorFollow {
-    //an object which drives together a pid controller with a path and a controleffect profile for fully driving the motor.
+    //todo: implement cross-track error or a compensation method so the motor can reasonably follow a real path.
     //todo: split into motor on top of lower level version connects path and pid??
     //todo: maybe make this more similar to frc code and compiles down?
     boolean debug = Debug.debug_MotorFollow;
@@ -37,6 +43,7 @@ public class PIDMotorFollow {
         this.pid = new PID(config);
         this.catchUpDt = new FullCatchUp();
         this.dt = dt;
+        this.motor = motorprofile;
     }
     
     public static void test() {
@@ -80,7 +87,7 @@ public class PIDMotorFollow {
 
         //go for thirty fake seconds of following the control effect at target intervals, and graph it
         while (t < 30) {
-            m.exert(g.motorOutputNow(m.p(), t), dt);
+            m.exert(g.motorOutputNow(m.p(), m.v(), t), dt);
             t += random.nextDouble() / 1000;
             G.addPoint(t, m.p(), 0);
         }
@@ -103,14 +110,14 @@ public class PIDMotorFollow {
         G.init(1000,1000, "folow");
     }
 
-    public double motorOutputNow(double x, double t) {
+    public double motorOutputNow(double x, double v, double t) {
         //Decides whether or not to redetermine control effect
         //Converts to motor output using the controleffectprofile's adapater
         if(debug) System.out.printf("Realtime: %f PID time: %f\n", t, pid.t());
         if (t < pid.t()) {
             if(debug) System.out.println("PID time already covered!");
             timesBehind = 0;
-            return lastEffect;
+            return motor.mEffect(lastEffect, v);
         }
 
         if (t > pid.t() + dt) {
@@ -120,7 +127,7 @@ public class PIDMotorFollow {
             if(debug) System.out.printf("PID time behind, using catchupfunction to catchup! timebehind %f timesbehind %d dt %f to catch up!\n", timeBehind, timesBehind, newdt);
             double effect = nextControlEffect(x, newdt);
             lastEffect = effect;
-            return motor.mEffect(effect, effect);
+            return motor.mEffect(effect, v);
         }
 
         if (t > pid.t()) {
@@ -128,7 +135,7 @@ public class PIDMotorFollow {
             timesBehind = 0;
             double effect = nextControlEffect(x, dt);
             lastEffect = effect;
-            return effect;
+            return motor.mEffect(effect, v);
         }
         
         int no_this_wont_happen_if_no_data_race = 69420;

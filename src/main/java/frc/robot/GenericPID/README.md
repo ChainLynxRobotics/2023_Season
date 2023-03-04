@@ -111,17 +111,24 @@ Next, we should consider setting up some functions that we will use later,
 because this init function can save them as final variables. Just to be clear, you don't have to 
 remember this all at the beginning, and you can add more of these functions as you need them later
 in the engineering and design process. But anyway, here we're going to put a catch-up function for
-how to handle the motor getting behind, a control effect profile for how to handle the difference 
+how to handle the motor getting behind, a motor control profile for how to handle the difference 
 between the PID Control Effect and the Motor Output (which needs a control strategy function), and 
-then a path-tracking PID modification function. However, we can use library implementations for
+then two path-tracking PID modification functions. However, we can use library implementations for
 these if they aren't important; most of the constructors for the controllers use these default
-implementations, so many of these aren't strictly necessary.
+implementations, so many of these aren't necessarily necessary.
 
 
-import GenericPID.ControlEffectProfile;
-import GenericPID.ControlEffectProfile.ControlStrategy;
-import GenericPID.PIDMotorFollow.CatchUpFunction;
+import GenericPID.Extensible.CatchUpFunction;
+import GenericPID.Extensible.ControlStrategy;
+import GenericPID.Extensible.EstimatedTimeArrival;
+import GenericPID.Extensible.PathTargetLocation;
 
+import GenericPID.Implementations.FullCatchUp;
+import GenericPID.Implementations.FullForce;
+import GenericPID.Implementations.Instant;
+import GenericPID.Implementations.OnTimeSpot;
+
+import GenericPID.MotorControlProfile;
 
 
 

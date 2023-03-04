@@ -10,7 +10,7 @@ import java.awt.BasicStroke;
 import javax.swing.SwingUtilities;
 
 import frc.robot.GenericPID.Debug;
-import frc.robot.GenericPID.Approximations.DoubleFunction;
+import frc.robot.GenericPID.Extensible.DoubleFunction;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -29,9 +29,13 @@ class Pointp {
     }
 }
 
-
+/**
+ * A 2d Cartesian Graph object that drives graphics for a viewer. Use init() to render
+ * and drawagain() to render again. Use addPlot or addPoint to add info, and the colors are from
+ * the awt library. The graph has multiple plots, and will auto adjust y window, but the info can be changed
+ * with the associated GraphConfig.
+ */
 public class Graph extends JPanel {
-    //a 2d cartesian graph object that also drives graphics to represent it. use init and disp to render.
     //todo: add more display features
 
     private static final boolean debug = Debug.debug_Graph;

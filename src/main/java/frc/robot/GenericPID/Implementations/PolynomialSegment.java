@@ -1,8 +1,6 @@
-package frc.robot.GenericPID;
+package frc.robot.GenericPID.Implementations;
 
 import java.util.ArrayList;
-
-import frc.robot.GenericPID.Implementations.PathSegmentBase;
 
 public class PolynomialSegment extends PathSegmentBase {
     ArrayList<Double> coeffs; //the index represents the x degree, so [1,2,3] = 3x^2 + 2x + 1
@@ -35,14 +33,6 @@ public class PolynomialSegment extends PathSegmentBase {
             coeffs.add(0.0);
         }
     }
-    public void generateQuadraticConnector(double x2a, double y2a, double x1b, double y1b, double dydx2a, double dydx1b) {
-        //generate a quadratic that connects the two points, with the given derivatives at each point.
-        setDegree(2);
-        double a = (dydx1b - dydx2a) / (2 * (x1b - x2a));
-        double b = dydx2a - 2 * a * x2a;
-        double c = y2a - a * x2a * x2a - b * x2a;
-        setCoeff(2, a);
-    }
     final class Pair {
         public double a;
         public double b;
@@ -51,12 +41,4 @@ public class PolynomialSegment extends PathSegmentBase {
             this.b = b;
         }
     }
-    public boolean canRedirect(double accel, double x1, double x2, double v1, double v2) {
-        //TODO
-        return false;
-    }
-    public void quadraticConnectorSlitDescent() {//maybe : skew it to be more efficient
-        return; //TODO
-    }
-
 }

@@ -8,6 +8,10 @@ import frc.robot.GenericPID.Implementations.LinearSegment;
 import frc.robot.GenericPID.Implementations.PathSegmentBase;
 import frc.robot.GenericPID.Testing.Graph;
 
+/**
+ * A 2d Composite Path, from a dynamic array of SegmentBase slices, each of which have their own extensible implementation.
+ * Very easy to use, just use insert the segment with insert() and it will automatically find where it fits.Then access the value anywhere with y().
+ */
 class Path {
     private final static boolean debug = Debug.debug_GenericPath;
     private final static boolean debug2 = Debug.debug_GenericPath2;

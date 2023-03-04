@@ -1,6 +1,7 @@
-package frc.robot.GenericPID.Approximations;
+package frc.robot.GenericPID.ApproximationUtils;
 
 import frc.robot.GenericPID.Debug;
+import frc.robot.GenericPID.Extensible.DoubleFunction;
 
 public class ApproximateDerivative {
     //a sometimes static class which takes the derivative of a certain point of a function

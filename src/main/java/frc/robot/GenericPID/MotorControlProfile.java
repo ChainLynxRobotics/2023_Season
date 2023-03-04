@@ -1,13 +1,14 @@
 package frc.robot.GenericPID;
 
-import java.util.ArrayList;
+import frc.robot.GenericPID.Extensible.ControlStrategy;
 import frc.robot.GenericPID.Implementations.NoAdapter;
 
+/**PID doesn't always yield direct results to a motor. This class holds functions you can write so your
+  *motor control can skip right to the important part. If the motor has built-in second PID to get to a certain
+   *velocity, great! use that and the adapter does nothing. If the motor needs a controlled voltage, problem! 
+   *let's convert it here.
+   */
 public class MotorControlProfile {
-    //PID doesn't always yield direct results to a motor. This class holds functions you can write so your
-    //motor control can skip right to the important part. If the motor has built-in second PID to get to a certain
-    //velocity, great! use that and the adapter does nothing. If the motor needs a controlled voltage, problem! 
-    //let's convert it here.
     private ControlLevel controlEffect = ControlLevel.VELOCITY; //final
     private ControlStrategy converter; //should be final
     private ControlLevel motorEffect = ControlLevel.ACCELERATION;
@@ -39,6 +40,10 @@ public class MotorControlProfile {
         return calculate(effect, this.motorEffect, curreffect);
     }
     //todo: make these more un-weird, how is force being returned as acceleration > o<
+    /**
+     * An enum that represents which derivative level of control is being represented. 
+     * Does not necessarily signify units used or calculation (Force would be tied to number 2, accel)
+     */
     public static enum ControlLevel {
         ABSERK,
         ABSELERATION,
@@ -49,9 +54,5 @@ public class MotorControlProfile {
         ACCELERATION,
         JERK,
         SNAP,
-        _NONE_,
-        CURRENT, //other factors here
-        VOLTAGE,
-        POWER,
     }
 }

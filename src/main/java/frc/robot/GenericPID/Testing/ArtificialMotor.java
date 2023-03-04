@@ -1,18 +1,18 @@
 package frc.robot.GenericPID.Testing;
 import frc.robot.GenericPID.Debug;
-import frc.robot.GenericPID.Approximations.*;
-
+import frc.robot.GenericPID.ApproximationUtils.*;
 
 import java.lang.Math;
 import java.awt.Color;
-
+/**
+  *An artificial motor class used for simulation
+  *the motor can absolutely control acceleration, and therefore can resultingly control velocity and position.
+  *therefore, the motor has behavior to target the velocity (because there's no overshoot)
+  *position should be controlled with a separate PID controller, because that's what it's for
+  *additionally, you should confirm that you start with firstEffect which omits the derivative and integral terms because they are not calculatable yet.
+  *Make sure all operations are done in the dt range AFTER the controleffect is calculated.
+*/
 public class ArtificialMotor {
-    //An artificial motor class used for simulation
-    //the motor can absolutely control acceleration, and therefore can resultingly control velocity and position.
-    //therefore, the motor has behavior to target the velocity (because there's no overshoot)
-    //position should be controlled with a separate PID controller, because that's what it's for
-    //additionally, you should confirm that you start with firstEffect which omits the derivative and integral terms because they are not calculatable yet.
-    //Make sure all operations are done in the dt range AFTER the controleffect is calculated.
     //graph of how the pid time should update
     //t .          .          .
     //   |________| |________|

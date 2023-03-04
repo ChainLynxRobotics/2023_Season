@@ -2,10 +2,14 @@ package frc.robot.GenericPID.Implementations;
 
 import java.util.ArrayList;
 
-import frc.robot.GenericPID.ControlStrategy;
+import frc.robot.GenericPID.Extensible.ControlStrategy;
 import frc.robot.GenericPID.MotorControlProfile.ControlLevel;
 import frc.robot.GenericPID.MotorControlProfile.UnknownControlStrategyException;
 
+/**
+ *Exert full force towards the setpoint, with estimated mass and dt known
+ *so it won't overshoot in the time slice
+ */
 public class DtFullForce implements ControlStrategy {
     private double F;
     private double dt;

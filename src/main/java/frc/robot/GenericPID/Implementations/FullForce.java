@@ -2,10 +2,13 @@ package frc.robot.GenericPID.Implementations;
 
 import java.util.ArrayList;
 
-import frc.robot.GenericPID.ControlStrategy;
+import frc.robot.GenericPID.Extensible.ControlStrategy;
 import frc.robot.GenericPID.MotorControlProfile.ControlLevel;
 import frc.robot.GenericPID.MotorControlProfile.UnknownControlStrategyException;
 
+/**
+ * Exert full force towards the setpoint
+ */
 public class FullForce implements ControlStrategy {
     private double F;
     public FullForce(double maxForce) {
@@ -15,9 +18,9 @@ public class FullForce implements ControlStrategy {
         if (given.ordinal() + 1 != needed.ordinal()) {
             throw new UnknownControlStrategyException("Conversion not compatible with this control strategy");
         }
-        if (effectv < currv) {
+        if (currv < effectv) {
             return F;
-        } else if (effectv > currv) {
+        } else if (currv > effectv) {
             return -F;
         } else {
             return 0;
