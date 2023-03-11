@@ -1,6 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
 
@@ -27,7 +24,10 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedBase = 2;
+
+    public static final double DRIVE_DEADBAND = 0.06;
+    //4.45 m/s max speed 
+    public static final double kMaxSpeedBase = 4.45;
     public static final double kMaxSpeedScaleFactor = 0.7;
     public static final double kMaxSpeedMetersPerSecond = kMaxSpeedBase*kMaxSpeedScaleFactor;
 
@@ -57,13 +57,13 @@ public final class Constants {
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 6;
-    public static final int kRearLeftDrivingCanId = 8;
-    public static final int kFrontRightDrivingCanId = 4;
+    public static final int kRearLeftDrivingCanId = 4;
+    public static final int kFrontRightDrivingCanId = 8;
     public static final int kRearRightDrivingCanId = 2;
 
     public static final int kFrontLeftTurningCanId = 5;
-    public static final int kRearLeftTurningCanId = 7;
-    public static final int kFrontRightTurningCanId = 3;
+    public static final int kRearLeftTurningCanId = 3;
+    public static final int kFrontRightTurningCanId = 7;
     public static final int kRearRightTurningCanId = 1;
 
     public static final boolean kGyroReversed = false;
@@ -124,6 +124,15 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kIOperatorControllerPort = 1;
+    public static final double kDriveDeadband = 0.06;
+    public static final double kMagnitudeDeadband = 0.06;
+    public static final double kDirectionSlewRate = 1.2; // radians per second
+    public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%)
+    public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
+
+    //button bindings
+    public static final int INTAKE_SPEED_AXIS = 3;
   }
 
   public static final class AutoConstants {
@@ -136,14 +145,51 @@ public final class Constants {
     public static final double kPYController = 1;
     public static final double kPThetaController = 1;
 
+    public static final double FIELD_LENGTH = 16.54;
+    public static final double FIELD_WIDTH = 8.02;
+
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
+  //TO DO: check these are the correct values (meters)
+  public static final double CAMERA_HEIGHT = 0.15;
+  public static final double TARGET_HEIGHT = 0.48;
+  public static final double CAMERA_PITCH_RADIANS = 0;
+  public static final double GOAL_RANGE = 1;
+
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
   }
 
-  public static final int ARM_MOTOR_ID = 0;
+  public static final int ELEVATOR_MOTOR_ID_MASTER = 17;
+  public static final int ELEVATOR_MOTOR_ID_SLAVE = 16;
+  public static final int INTAKE_MOTOR_INNER = 12;
+  public static final int INTAKE_MOTOR_OUTER = 13;
+
+
+  public static final double ELEVATOR_kS = 0.2;
+  public static final double ELEVATOR_kA = 0.09;
+  public static final double ELEVATOR_kV = 6.14;
+  public static final double ELEVATOR_kG = 0.68;
+
+
+  //solenoid ports on PCM
+  public static final int SOLENOID_forward1 = 0;
+  public static final int SOLENOID_reverse1 = 1;
+
+
+  public enum IntakeGamePiece {
+    CUBE,
+    CONE,
+  }
+
+  public enum ScoringLocation { 
+    LOW, 
+    MID, 
+    MIDHIGH, 
+    HIGH, 
+    SUBSTATION
+  }
 }

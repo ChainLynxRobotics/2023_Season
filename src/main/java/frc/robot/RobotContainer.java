@@ -1,28 +1,27 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Commands.VisionTurnCommand;
+import frc.robot.Constants.IntakeGamePiece;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Commands.IntakeCommand;
+import frc.robot.Commands.ReleaseCommand;
+import frc.robot.Commands.SimpleDriveCommand;
+import frc.robot.Commands.VisionTranslateCommand;
+import frc.robot.PathPlanningCode.AutoUtils;
+import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DriveSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Subsystems.ElevatorSubsystem;
+import frc.robot.Subsystems.IntakeSubsystem;
+import frc.robot.Subsystems.VisionSubsystem;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import java.util.List;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -31,94 +30,124 @@ import java.util.List;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems
+
   private final DriveSubsystem m_robotDrive;
+  private final VisionSubsystem m_vision;
+  private final ElevatorSubsystem m_elevator;
+  private final ArmSubsystem m_arm;
+  private final IntakeSubsystem m_intake;
+
+  private final AutoUtils autoUtils = new AutoUtils();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  Joystick m_operatorController = new Joystick(OIConstants.kIOperatorControllerPort);
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+
   public RobotContainer() {
-    // Configure the button bindings
-    configureButtonBindings();
-
+    SmartDashboard.putBoolean("GamePiece/CubeMode", false);
+    SmartDashboard.putBoolean("GamePiece/ConeMode", false);
+   
     m_robotDrive = new DriveSubsystem();
+    m_vision = new VisionSubsystem();
+    m_elevator = new ElevatorSubsystem();
+    m_arm = new ArmSubsystem();
+    m_intake = new IntakeSubsystem();
 
+    configureButtonBindings();
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                MathUtil.applyDeadband(-m_driverController.getLeftY(), 0.06),
-                MathUtil.applyDeadband(-m_driverController.getLeftX(), 0.06),
-                MathUtil.applyDeadband(-m_driverController.getRightX(), 0.06),
-                MathUtil.applyDeadband(-m_driverController.getRightY(), 0.06),
+                MathUtil.applyDeadband(-m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                MathUtil.applyDeadband(-m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                MathUtil.applyDeadband(-m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                MathUtil.applyDeadband(-m_driverController.getRightY(), OIConstants.kDriveDeadband),
                 m_driverController.getRightBumper(), m_driverController.getAButton()),
             m_robotDrive));
+    
+    m_elevator.setDefaultCommand(
+        new RunCommand(
+          () -> m_elevator.simpleMovement(
+            m_operatorController.getRawAxis(1)), m_elevator));
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by
-   * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its
-   * subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling
-   * passing it to a
-   * {@link JoystickButton}.
-   */
+
   private void configureButtonBindings() {
+
+    new Trigger(() -> m_driverController.getBButton())
+      .whileTrue(new VisionTurnCommand(m_vision, m_robotDrive, m_driverController));
+   
+    new Trigger(() -> m_driverController.getYButton())
+      .onTrue(new VisionTranslateCommand(m_vision, m_robotDrive, m_driverController));
+
+    new Trigger(() -> triggerPressed())
+      .whileTrue(new SimpleDriveCommand(m_robotDrive, m_driverController));
+
+    new Trigger(() -> m_operatorController.getRawButton(1))
+      .whileTrue(new ReleaseCommand(m_intake, m_intake.getWAxisSpeedMultiplier(OIConstants.INTAKE_SPEED_AXIS)));
+
+    new Trigger(() -> m_operatorController.getRawButton(2))
+      .whileTrue(new IntakeCommand(m_intake, m_intake.getWAxisSpeedMultiplier(OIConstants.INTAKE_SPEED_AXIS)));
+
+    //stops the intake motors and holds the current piece when button 14 is pressed
+    new Trigger(() -> m_operatorController.getRawButton(14))
+      .onTrue(new InstantCommand(() -> m_intake.stopMotors(), m_intake));
+
+    //sets the current game pice type to cones when button 4 is pressed
+    new Trigger(() -> m_operatorController.getRawButton(4))
+      .onTrue(new InstantCommand(() -> m_intake.setState(IntakeGamePiece.CONE), m_intake));
+
+    //sets the current game piece type to cubes when button 3 is pressed
+    new Trigger(() -> m_operatorController.getRawButton(3))
+      .onTrue(new InstantCommand(() -> m_intake.setState(IntakeGamePiece.CUBE), m_intake));
+    
+    //fully lowers the arm when button 16 is pressed
+    new Trigger(() -> m_operatorController.getRawButton(16))
+      .onTrue(new InstantCommand(m_arm::retract));
+       
+    //fully raises the arm when button 15 is pressed
+    new Trigger(() -> m_operatorController.getRawButton(15))
+      .onTrue(new InstantCommand(m_arm::expand));
+  }
+
+
+  public boolean triggerPressed() {
+    if (m_driverController.getLeftTriggerAxis() != 0 || m_driverController.getRightTriggerAxis() != 0) {
+      return true;
+    }
+    return false;
+  }
+
+
+  public XboxController getController() {
+    return m_driverController;
   }
 
   public DriveSubsystem getDrive() {
     return m_robotDrive;
   }
+ 
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
+  public VisionSubsystem getVision() {
+    return m_vision;
+  }
 
-    // An example trajectory to follow. All units in meters.
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(0)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
-        config);
+  public ElevatorSubsystem getElevator() {
+    return m_elevator;
+  }
 
-    var thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+  public ArmSubsystem getArm() {
+    return m_arm;
+  }
 
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
+  public IntakeSubsystem getIntake() {
+    return m_intake;
+  }
 
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
-
-    // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
-
-    // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.mainDrive(0, 0, 0));
+  public AutoUtils getAutoUtils() {
+    return autoUtils;
   }
 }

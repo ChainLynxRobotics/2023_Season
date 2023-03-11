@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -35,7 +36,7 @@ public class Robot extends TimedRobot {
    * that you want ran during disabled, autonomous, teleoperated and test.
    *
    * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
+   * SmartDashboard integrated updating .
    */
   @Override
   public void robotPeriodic() {
@@ -44,7 +45,6 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -52,11 +52,21 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+    Command currentAuto = m_robotContainer.getAutoUtils().chooseAuto(
+      m_robotContainer,
+      m_robotContainer.getAutoUtils().chooseStartPos(),
+      m_robotContainer.getAutoUtils().chooseInitScoreLocation());
+      
+    if (currentAuto != null) {
+      currentAuto.schedule();
+    }
+  }
 
   /** This function is called periodically during autonomous. */
   @Override
