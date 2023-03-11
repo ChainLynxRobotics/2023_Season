@@ -153,6 +153,17 @@ public final class Constants {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
+  public static final class ElevatorConstants {
+    public static final double setpointLevel1 =;
+    public static final double setpointLevel2 =;
+    public static final double setpointLevel3 =;
+
+    public static final double upSpeed =;
+    public static final double downSpeed =; //Make this negative
+    
+    public static final double elevatorDeadband = 0.25;
+  }
+
   //TO DO: check these are the correct values (meters)
   public static final double CAMERA_HEIGHT = 0.15;
   public static final double TARGET_HEIGHT = 0.48;

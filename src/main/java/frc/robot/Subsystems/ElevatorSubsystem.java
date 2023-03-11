@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants;
 
 //TO DO: error handling for if pid controllers get misaligned
 public class ElevatorSubsystem extends SubsystemBase {
@@ -107,10 +108,17 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 
     public void simpleMovement(double input) {
+<<<<<<< HEAD
       if (input > 0.25) {
         elevatorMotor1.set(-0.35);
       } else if (input < -0.25) {
         elevatorMotor1.set(0.35);
+=======
+      if (input > 0.001) {
+        elevatorMotor1.set(ElevatorConstants.downSpeed);
+      } else if (input < -0.001) {
+        elevatorMotor1.set(ElevatorConstants.upSpeed);
+>>>>>>> b663e6aea4bf6dd4d768f2e5a83f2a958b460f66
       } else {
         elevatorMotor1.set(0);
       }
