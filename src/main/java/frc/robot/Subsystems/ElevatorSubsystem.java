@@ -107,10 +107,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 
     public void simpleMovement(double input) {
-      if (input > 0.25) {
-        elevatorMotor1.set(-0.35);
-      } else if (input < -0.25) {
-        elevatorMotor1.set(0.35);
+      if (input > 0.05) {
+        elevatorMotor1.set(-input/2);
+      } else if (input < -0.05) {
+        elevatorMotor1.set(-input/2);
       } else {
         elevatorMotor1.set(0);
       }
