@@ -13,7 +13,7 @@ import frc.robot.Constants.IntakeGamePiece;
 public class IntakeSubsystem extends SubsystemBase {
     private CANSparkMax intakeMotorInner;
     private CANSparkMax intakeMotorOuter;
-
+    public static boolean coneHolder;
     private IntakeGamePiece state;
 
     public IntakeGamePiece getState() {
@@ -68,29 +68,43 @@ public class IntakeSubsystem extends SubsystemBase {
         // TODO: tune motor speeds
         intakeMotorInner.set(-0.4);
         intakeMotorOuter.set(-0.4);
+        coneHolder = true;
     }
 
     public void releaseCone(double speedMultiplier) {
         // TODO:tune motor speeds
         intakeMotorInner.set(0.4);
         intakeMotorOuter.set(0.4);
+        coneHolder = false;
     }
 
     public void pickUpCube(double speedMultiplier) {
         // TODO:tune motor speeds
-        intakeMotorInner.set(0.4);
-        intakeMotorOuter.set(-0.4);
+        intakeMotorInner.set(0.6);
+        intakeMotorOuter.set(-0.6);
+        coneHolder = false;
     }
 
     public void releaseCube(double speedMultiplier) {
         // TODO:tune motor speeds
-        intakeMotorInner.set(-0.4);
-        intakeMotorOuter.set(0.4);
+        intakeMotorInner.set(-0.6);
+        intakeMotorOuter.set(0.6);
+        coneHolder = false;
     }
 
     public void stopMotors() {
-        intakeMotorInner.set(0);
-        intakeMotorOuter.set(0);
+        // intakeMotorInner.set(0);
+        // intakeMotorOuter.set(0);
+        if (coneHolder == false){
+            intakeMotorInner.set(0);
+            intakeMotorOuter.set(0);
+        }
+
+        if (coneHolder == true) {
+            intakeMotorInner.set(-0.05);//tune cobe hold values
+            intakeMotorOuter.set(-0.05);//tune cobe hold values
+        }
+        SmartDashboard.putBoolean("Intake/coneHolder", coneHolder);
     }
 
 }

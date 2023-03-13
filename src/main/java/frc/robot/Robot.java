@@ -4,10 +4,16 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Subsystems.ArmSubsystem;
+import frc.robot.Subsystems.ElevatorSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -56,17 +62,17 @@ public class Robot extends TimedRobot {
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-  @Override
-  public void autonomousInit() {
-    Command currentAuto = m_robotContainer.getAutoUtils().chooseAuto(
-      m_robotContainer,
-      m_robotContainer.getAutoUtils().chooseStartPos(),
-      m_robotContainer.getAutoUtils().chooseInitScoreLocation());
+  // @Override
+  // public void autonomousInit() {
+  //   Command currentAuto = m_robotContainer.getAutoUtils().chooseAuto(
+  //     m_robotContainer,
+  //     m_robotContainer.getAutoUtils().chooseStartPos(),
+  //     m_robotContainer.getAutoUtils().chooseInitScoreLocation());
       
-    if (currentAuto != null) {
-      currentAuto.schedule();
-    }
-  }
+  //   if (currentAuto != null) {
+  //     currentAuto.schedule();
+  //   }
+  // }
 
   /** This function is called periodically during autonomous. */
   @Override
@@ -78,6 +84,10 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    // CANSparkMax elevatorMotorPrime = new CANSparkMax(Constants.ELEVATOR_MOTOR_ID_MASTER, MotorType.kBrushless);
+    // RelativeEncoder encoderPrime = elevatorMotorPrime.getEncoder();
+    // encoderPrime.setPosition(0); // attmpt to set encoder to 0 in init
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -85,5 +95,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+    
+    SmartDashboard.putBoolean("FourBar/extendedState", ArmSubsystem.extendedState);
+  }
 }

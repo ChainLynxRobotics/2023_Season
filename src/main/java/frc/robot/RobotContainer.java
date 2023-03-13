@@ -12,7 +12,7 @@ import frc.robot.Commands.IntakeCommand;
 import frc.robot.Commands.ReleaseCommand;
 import frc.robot.Commands.SimpleDriveCommand;
 import frc.robot.Commands.VisionTranslateCommand;
-import frc.robot.PathPlanningCode.AutoUtils;
+// import frc.robot.PathPlanningCode.AutoUtils;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DriveSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
@@ -39,7 +39,7 @@ public class RobotContainer {
 
   private double intakeSpeedMultiplier;
 
-  private final AutoUtils autoUtils = new AutoUtils();
+  // private final AutoUtils autoUtils = new AutoUtils();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -101,9 +101,17 @@ public class RobotContainer {
     new Trigger(() -> m_operatorController.getRawButton(2))
       .whileTrue(new IntakeCommand(m_intake, intakeSpeedMultiplier));
 
+    new Trigger(() -> m_operatorController.getRawButton(5))
+      .onTrue(new InstantCommand(() -> m_elevator.moveToSetPoint0()));
+
+    new Trigger(() -> m_operatorController.getRawButton(6))
+      .onTrue(new InstantCommand(() -> m_elevator.moveToSetPoint1()));
+
+    new Trigger(() -> m_operatorController.getRawButton(7))
+      .onTrue(new InstantCommand(() -> m_elevator.moveToSetPoint2()));
 
     new Trigger(() -> m_operatorController.getRawButton(8))
-      .onTrue(new InstantCommand(() -> m_intake.stopMotors(), m_intake));
+      .onTrue(new InstantCommand(() -> m_elevator.moveToSetPoint4()));
 
     //sets the current game pice type to cones when button 4 is pressed
     new Trigger(() -> m_operatorController.getRawButton(4))
@@ -118,6 +126,8 @@ public class RobotContainer {
        
     new Trigger(() -> m_operatorController.getRawButton(10))
       .onTrue(new InstantCommand(m_arm::expand));
+    
+    
   }
 
   
@@ -159,7 +169,7 @@ public class RobotContainer {
     return m_intake;
   }
 
-  public AutoUtils getAutoUtils() {
-    return autoUtils;
-  }
+  // public AutoUtils getAutoUtils() {
+  //   return autoUtils;
+  // }
 }

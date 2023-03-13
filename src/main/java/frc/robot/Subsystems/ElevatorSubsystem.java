@@ -19,11 +19,17 @@ import frc.robot.Constants;
 public class ElevatorSubsystem extends SubsystemBase {
     private final CANSparkMax elevatorMotor1;
     private final CANSparkMax elevatorMotor2;
-   
+    public static boolean resetTest = false;
+    public static boolean atSPZero= false;
+    public static boolean atSPOne = false;
+    public static boolean atSPTwo = false;
+    public static boolean atSPThree = false;
+    public static boolean atSPFour = false;
+
     private final SparkMaxPIDController m_pidController1;
-    private final RelativeEncoder m_encoder1;
+    public final RelativeEncoder m_encoder1;
     private final RelativeEncoder m_encoder2;
-    public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, elevatorSpeed;
+    public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, elevatorSpeed, elevatorExtensionPercent, avg_encoder,neutralElevator;
 
     private List<CANSparkMax> motorList = new ArrayList<>();
   
@@ -32,6 +38,9 @@ public class ElevatorSubsystem extends SubsystemBase {
       elevatorMotor2 = new CANSparkMax(Constants.ELEVATOR_MOTOR_ID_SLAVE, MotorType.kBrushless);
       m_encoder1 = elevatorMotor1.getEncoder();
       m_encoder2 = elevatorMotor2.getEncoder();
+      
+      avg_encoder = (m_encoder1.getPosition());//+m_encoder2.getPosition())/2; encoder 2 overturning
+      elevatorExtensionPercent = avg_encoder/16.5; //20 = max elevator motor revs
 
       elevatorMotor1.setIdleMode(IdleMode.kBrake);
       elevatorMotor1.restoreFactoryDefaults();
@@ -74,8 +83,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       //SmartDashboard.putNumber("elevator motor power", elevatorSpeed);
     }
 
-
-   
+    // resetTest = true;
+    //   SmartDashboard.putBoolean("Elevator/EncoderReset", resetTest);
     public void moveElevator(Double setpoint) {
       // read PID coefficients from SmartDashboard
       double p = SmartDashboard.getNumber("P Gain", 1);
@@ -104,16 +113,76 @@ public class ElevatorSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("ProcessVariable1", m_encoder1.getPosition());
       SmartDashboard.putNumber("ProcessVariable2", m_encoder2.getPosition());
     }
+    public void updateSetPointsShuffle(){
+      SmartDashboard.putBoolean("Elevator/Setpoints/Zero", atSPZero);
+      SmartDashboard.putBoolean("Elevator/Setpoints/One", atSPOne);
+      SmartDashboard.putBoolean("Elevator/Setpoints/Two", atSPTwo);
+      SmartDashboard.putBoolean("Elevator/Setpoints/Three", atSPThree);
+      SmartDashboard.putBoolean("Elevator/Setpoints/Four", atSPFour);
+    }
+    public void moveToSetPoint0(){
+      atSPOne = false;
+      atSPZero = true;
+      atSPTwo = false;
+      atSPThree = false;
+      atSPFour= false;
+      updateSetPointsShuffle();
 
+    }
+    public void moveToSetPoint1(){
+      atSPOne = true;
+      atSPZero = false;
+      atSPTwo = false;
+      atSPThree = false;
+      atSPFour= false;
+      updateSetPointsShuffle();
 
+    }
+    public void moveToSetPoint2(){
+      atSPOne = false;
+      atSPZero = false;
+      atSPTwo = true;
+      atSPThree = false;
+      atSPFour= false;
+      updateSetPointsShuffle();
+    }
+    public void moveToSetPoint3(){
+      atSPOne = false;
+      atSPZero = false;
+      atSPTwo = false;
+      atSPThree = true;
+      atSPFour= false;
+      updateSetPointsShuffle();
+
+    }
+    public void moveToSetPoint4(){
+      atSPOne = false;
+      atSPZero = false;
+      atSPTwo = false;
+      atSPThree = false;
+      atSPFour= true;
+      updateSetPointsShuffle();
+
+    }
     public void simpleMovement(double input) {
-      if (input > 0.25) {
-        elevatorMotor1.set(-0.35);
-      } else if (input < -0.25) {
-        elevatorMotor1.set(0.35);
+      
+      elevatorSpeed = -0.45*input;
+      if (input > 0.1) {//deadband +y
+        elevatorMotor1.set(elevatorSpeed);
+        resetTest = false;
+      } else if (input < -0.1) {//deadband -y
+        elevatorMotor1.set(elevatorSpeed);
+        resetTest = false;
       } else {
-        elevatorMotor1.set(0);
+        neutralElevator=(ArmSubsystem.extendedState== true) ? 0.00 : 0.0;//keeping possibilty open to change neutral speed based on fourbar state, not viable unless we know pressure 
+        elevatorMotor1.set(neutralElevator);
       }
+      SmartDashboard.putNumber("Joystick/yInput", input);
+      SmartDashboard.putNumber("Elevator/Elevator Speed", elevatorSpeed*100);
+      SmartDashboard.putNumber("Elevator/Encoder 1", m_encoder1.getPosition());//using to measure encoder 1 values
+      SmartDashboard.putNumber("Elevator/Encoder 2", m_encoder2.getPosition());//using to measure encoder 2 value
+      SmartDashboard.putNumber("Elevator/Extension%", elevatorExtensionPercent);//using to try and calculte encoder extension, encodersrent resseting so doesnt wrok.
+      SmartDashboard.putBoolean("Elevator/EncoderReset", resetTest);
     }
   
 }
