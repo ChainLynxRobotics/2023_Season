@@ -165,6 +165,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     }
     public void simpleMovement(double input) {
+<<<<<<< HEAD
       
       elevatorSpeed = -0.45*input;
       if (input > 0.1) {//deadband +y
@@ -173,6 +174,12 @@ public class ElevatorSubsystem extends SubsystemBase {
       } else if (input < -0.1) {//deadband -y
         elevatorMotor1.set(elevatorSpeed);
         resetTest = false;
+=======
+      if (input > 0.05) {
+        elevatorMotor1.set(-input/2);
+      } else if (input < -0.05) {
+        elevatorMotor1.set(-input/2);
+>>>>>>> f92e03406597f84aa7cca34d149ab78c6483fc72
       } else {
         neutralElevator=(ArmSubsystem.extendedState== true) ? 0.00 : 0.0;//keeping possibilty open to change neutral speed based on fourbar state, not viable unless we know pressure 
         elevatorMotor1.set(neutralElevator);
