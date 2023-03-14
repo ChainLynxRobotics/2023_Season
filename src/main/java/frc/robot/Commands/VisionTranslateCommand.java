@@ -1,7 +1,5 @@
 package frc.robot.Commands;
 
-import org.photonvision.PhotonUtils;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
@@ -11,8 +9,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Subsystems.DriveSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
+import org.photonvision.PhotonUtils;
 
 public class VisionTranslateCommand extends CommandBase {
+
     //private VisionSubsystem vision;
     private VisionSubsystem vision;
     private DriveSubsystem drive;
@@ -21,10 +21,13 @@ public class VisionTranslateCommand extends CommandBase {
     private double ki = 10;
     private double kd = 0.05;
 
-
     private PIDController forwardController;
 
-    public VisionTranslateCommand(VisionSubsystem vision, DriveSubsystem drive, XboxController controller) {
+    public VisionTranslateCommand(
+        VisionSubsystem vision,
+        DriveSubsystem drive,
+        XboxController controller
+    ) {
         this.vision = vision;
         this.drive = drive;
 
@@ -43,36 +46,37 @@ public class VisionTranslateCommand extends CommandBase {
     public void execute() {
         double forwardSpeed = -controller.getLeftY();
 
-
         if (vision.getHasTarget()) {
             double range = PhotonUtils.calculateDistanceToTargetMeters(
-            Constants.CAMERA_HEIGHT,
-            Constants.TARGET_HEIGHT,
-            Constants.CAMERA_PITCH_RADIANS,
-            Units.degreesToRadians(vision.getBestTarget().getPitch()));
-           
-            forwardSpeed = forwardController.calculate(range, Constants.GOAL_RANGE);
+                Constants.CAMERA_HEIGHT,
+                Constants.TARGET_HEIGHT,
+                Constants.CAMERA_PITCH_RADIANS,
+                Units.degreesToRadians(vision.getBestTarget().getPitch())
+            );
+
+            forwardSpeed =
+                forwardController.calculate(range, Constants.GOAL_RANGE);
         } else {
             forwardSpeed = 0;
         }
 
-        drive.mainDrive(-MathUtil.applyDeadband(forwardSpeed, 0.06),
-        MathUtil.applyDeadband(controller.getLeftX(), 0.06),
-        MathUtil.applyDeadband(controller.getRightX(), 0.06));
+        drive.mainDrive(
+            -MathUtil.applyDeadband(forwardSpeed, 0.06),
+            MathUtil.applyDeadband(controller.getLeftX(), 0.06),
+            MathUtil.applyDeadband(controller.getRightX(), 0.06)
+        );
     }
 
     @Override
     public boolean isFinished() {
         if (Math.abs(forwardController.getPositionError()) < 1) {
             return true;
-
         }
         return false;
     }
 
-
     @Override
     public void end(boolean interrupted) {
-        drive.drive(0,0,0,0,false, false);
+        drive.drive(0, 0, 0, 0, false, false);
     }
 }

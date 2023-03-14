@@ -1,7 +1,7 @@
 {
-  "NTProvider": {
-    "types": {
-      "/FMSInfo": "FMSInfo"
+    "NTProvider": {
+        "types": {
+            "/FMSInfo": "FMSInfo"
+        }
     }
-  }
 }

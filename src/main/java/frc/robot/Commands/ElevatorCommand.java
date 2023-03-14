@@ -1,11 +1,11 @@
 package frc.robot.Commands;
 
 import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.ElevatorSubsystem;
 
 public class ElevatorCommand extends CommandBase {
+
     private ElevatorSubsystem elevator;
     private double setpoint;
 
@@ -17,11 +17,8 @@ public class ElevatorCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {
-    }
+    public void execute() {}
 
-    
     @Override
-    public void end(boolean interrupted) {
-    }
+    public void end(boolean interrupted) {}
 }

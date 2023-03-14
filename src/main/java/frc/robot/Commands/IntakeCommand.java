@@ -4,10 +4,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.IntakeSubsystem;
 
 public class IntakeCommand extends CommandBase {
+
     private IntakeSubsystem intake;
     private double intakeSpeedMultiplier;
 
-    
     //intakes cube or cone
     public IntakeCommand(IntakeSubsystem intake, double intakeSpeedMultiplier) {
         this.intake = intake;
@@ -25,5 +25,4 @@ public class IntakeCommand extends CommandBase {
     public void end(boolean interrupted) {
         intake.stopMotors();
     }
-
 }
