@@ -7,12 +7,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Commands.VisionTurnCommand;
+import frc.robot.Constants.Bindings;
+import frc.robot.Constants.IntakeGamePiece;
 import frc.robot.Commands.IntakeCommand;
+import frc.robot.Commands.ElevatorCommand;
 import frc.robot.Commands.ReleaseCommand;
 import frc.robot.Commands.SimpleDriveCommand;
 import frc.robot.Commands.VisionTranslateCommand;
-import frc.robot.Commands.VisionTurnCommand;
-import frc.robot.Constants.IntakeGamePiece;
 import frc.robot.Constants.OIConstants;
 import frc.robot.PathPlanningCode.AutoUtils;
 import frc.robot.Subsystems.ArmSubsystem;
@@ -85,13 +87,14 @@ public class RobotContainer {
         m_robotDrive
       )
     );
-
+  /* 
     m_elevator.setDefaultCommand(
       new RunCommand(
         () -> m_elevator.simpleMovement(m_operatorController.getRawAxis(1)),
         m_elevator
       )
     );
+  */
   }
 
   private void configureButtonBindings() {
@@ -108,7 +111,7 @@ public class RobotContainer {
     new Trigger(() -> triggerPressed())
       .whileTrue(new SimpleDriveCommand(m_robotDrive, m_driverController));
 
-    new Trigger(() -> m_operatorController.getRawButton(1))
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.releaseGamePiece))
       .whileTrue(
         new ReleaseCommand(
           m_intake,
@@ -116,7 +119,7 @@ public class RobotContainer {
         )
       );
 
-    new Trigger(() -> m_operatorController.getRawButton(2))
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.intakeGamePiece))
       .whileTrue(
         new IntakeCommand(
           m_intake,
@@ -124,12 +127,8 @@ public class RobotContainer {
         )
       );
 
-    //stops the intake motors and holds the current piece when button 14 is pressed
-    new Trigger(() -> m_operatorController.getRawButton(14))
-      .onTrue(new InstantCommand(() -> m_intake.stopMotors(), m_intake));
-
-    //sets the current game pice type to cones when button 4 is pressed
-    new Trigger(() -> m_operatorController.getRawButton(4))
+    //sets the current game piece type to cones when button 4 is pressed
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.setGamePieceCone))
       .onTrue(
         new InstantCommand(
           () -> m_intake.setState(IntakeGamePiece.CONE),
@@ -138,7 +137,7 @@ public class RobotContainer {
       );
 
     //sets the current game piece type to cubes when button 3 is pressed
-    new Trigger(() -> m_operatorController.getRawButton(3))
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.setGamePieceCube))
       .onTrue(
         new InstantCommand(
           () -> m_intake.setState(IntakeGamePiece.CUBE),
@@ -147,12 +146,14 @@ public class RobotContainer {
       );
 
     //fully lowers the arm when button 16 is pressed
-    new Trigger(() -> m_operatorController.getRawButton(16))
-      .onTrue(new InstantCommand(m_arm::retract));
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.lowerArm))
+      .onTrue(
+        new InstantCommand(m_arm::retract));
 
     //fully raises the arm when button 15 is pressed
-    new Trigger(() -> m_operatorController.getRawButton(15))
-      .onTrue(new InstantCommand(m_arm::expand));
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.raiseArm))
+      .onTrue(
+        new InstantCommand(m_arm::expand));
   }
 
   public boolean triggerPressed() {
