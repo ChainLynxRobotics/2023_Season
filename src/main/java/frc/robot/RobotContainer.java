@@ -154,7 +154,43 @@ public class RobotContainer {
     new Trigger(() -> m_operatorController.getRawButton(Bindings.raiseArm))
       .onTrue(
         new InstantCommand(m_arm::expand));
+
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.groundPickUp))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          Bindings.groundPickUp));
+  
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.lowScoreElevatorSetpoint))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          Bindings.lowScoreElevatorSetpoint));
+
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.midScoreElevatorSetpoint))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          Bindings.midScoreElevatorSetpoint));
+        
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.highScoreElevatorSetpoint))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          Bindings.highScoreElevatorSetpoint));
+
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.doubleSubstationSetpoint))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          Bindings.doubleSubstationSetpoint));
   }
+
 
   public boolean triggerPressed() {
     if (

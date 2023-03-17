@@ -20,7 +20,7 @@ class const:
     drag = 0.2
     mass = 0.6
 
-def pid_run(setpoint, current):
+def pid_run(setpoint:float, current) -> float:
     error = setpoint-current
 
     p  = error*const.kp
@@ -40,18 +40,18 @@ def pid_run(setpoint, current):
 
 
 class elevator_motor:
-    def __init__(self, pos, vel, drag_coeff, mass, t):
+    def __init__(self, pos:float, vel:float, drag_coeff:float, mass:float, t:float):
         self.pos = pos
         self.vel = vel
         self.t = t
         self.drag_coeff = drag_coeff
         self.mass = mass
 
-    def next_vel(self, func, dt):
+    def next_vel(self, func:float, dt:float):
         self.vel += func
         self.t += dt
 
-    def next_pos(self, func, dt):
+    def next_pos(self, func:float, dt:float):
         self.pos += func
         self.t += dt
 

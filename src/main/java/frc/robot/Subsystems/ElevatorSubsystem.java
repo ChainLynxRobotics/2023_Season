@@ -7,7 +7,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants;
 
 
 //TO DO: error handling for if pid controllers get misaligned
@@ -19,11 +19,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final SparkMaxPIDController m_pidController1;
     private final RelativeEncoder m_encoder1;
     private final RelativeEncoder m_encoder2;
-    public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, elevatorSpeed;
+    public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, elevatorSpeed, allowedErr;
+    //smart motion constants
+    public static double maxVel, maxAccel, minVel; // rpm
+    public static int smartMotionSlot = 1;
 
     public ElevatorSubsystem() {
-      elevatorMotor1 = new CANSparkMax(Constants.ELEVATOR_MOTOR_ID_MASTER, MotorType.kBrushless);
-      elevatorMotor2 = new CANSparkMax(Constants.ELEVATOR_MOTOR_ID_SLAVE, MotorType.kBrushless);
+      elevatorMotor1 = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_MASTER, MotorType.kBrushless);
+      elevatorMotor2 = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_SLAVE, MotorType.kBrushless);
 
       elevatorMotor1.restoreFactoryDefaults();
 
@@ -51,6 +54,10 @@ public class ElevatorSubsystem extends SubsystemBase {
       kMaxOutput = 1; 
       kMinOutput = -1;
       elevatorSpeed = 0;
+      maxVel= 2000;
+      minVel = 20;
+      maxAccel = 1500;
+      allowedErr = 0.1;
   
       // set PID coefficients
       m_pidController1.setP(kP);
@@ -59,6 +66,16 @@ public class ElevatorSubsystem extends SubsystemBase {
       m_pidController1.setIZone(kIz);
       m_pidController1.setFF(kFF);
       m_pidController1.setOutputRange(kMinOutput, kMaxOutput);
+
+      m_pidController1.setSmartMotionMaxVelocity(maxVel, smartMotionSlot);
+      m_pidController1.setSmartMotionMinOutputVelocity(minVel, smartMotionSlot);
+      m_pidController1.setSmartMotionMaxAccel(maxAccel, smartMotionSlot);
+      m_pidController1.setSmartMotionAllowedClosedLoopError(allowedErr, smartMotionSlot);
+
+      SmartDashboard.putNumber("Max Velocity", maxVel);
+      SmartDashboard.putNumber("Min Velocity", minVel);
+      SmartDashboard.putNumber("Max Acceleration", maxAccel);
+      SmartDashboard.putNumber("Allowed Closed Loop Error", allowedErr);
 
   
       // display PID coefficients on SmartDashboard
@@ -97,6 +114,10 @@ public class ElevatorSubsystem extends SubsystemBase {
       double ff = SmartDashboard.getNumber("Feed Forward", 0);
       double max = SmartDashboard.getNumber("Max Output", 0);
       double min = SmartDashboard.getNumber("Min Output", 0);
+      double maxV = SmartDashboard.getNumber("Max Velocity", 0);
+      double minV = SmartDashboard.getNumber("Min Velocity", 0);
+      double maxA = SmartDashboard.getNumber("Max Acceleration", 0);
+      double allE = SmartDashboard.getNumber("Allowed Closed Loop Error", 0);
   
       // if PID coefficients on SmartDashboard have changed, write new values to controller
       if((p != kP)) {
@@ -124,8 +145,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         kMinOutput = min;
         kMaxOutput = max; 
       }
-  
-      m_pidController1.setReference(setpoint, CANSparkMax.ControlType.kPosition);
+
+      if((maxV != maxVel)) { m_pidController1.setSmartMotionMaxVelocity(maxV,smartMotionSlot); maxVel = maxV; }
+      if((minV != minVel)) { m_pidController1.setSmartMotionMinOutputVelocity(minV,smartMotionSlot); minVel = minV; }
+      if((maxA != maxAccel)) { m_pidController1.setSmartMotionMaxAccel(maxA,smartMotionSlot); maxAccel = maxA; }
+      if((allE != allowedErr)) { m_pidController1.setSmartMotionAllowedClosedLoopError(allE,smartMotionSlot); allowedErr = allE; }
+ 
+      m_pidController1.setReference(setpoint, CANSparkMax.ControlType.kSmartMotion);
     }
 
     public void simpleMovement(double input) {
@@ -142,6 +168,10 @@ public class ElevatorSubsystem extends SubsystemBase {
       m_encoder1.setPosition(0);
       m_encoder2.setPosition(0);
       SmartDashboard.putNumber("Elevator Setpoint (rotations)", 0);
+    }
+
+    public RelativeEncoder getDrivingEncoder() {
+      return m_encoder1;
     }
   
 }
