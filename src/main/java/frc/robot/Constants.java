@@ -181,16 +181,27 @@ public final class Constants {
         public static final double kFreeSpeedRpm = 5676;
     }
 
-    public static final int ELEVATOR_MOTOR_ID_MASTER = 17;
-    public static final int ELEVATOR_MOTOR_ID_SLAVE = 16;
+    public class ElevatorConstants {
+      public static final double fullRetractionSetpoint = 0;
+      public static final double lowElevatorSetpoint = 2;
+      public static final double midElevatorConeSetpoint = 9;
+      public static final double midElevatorCubeSetpoint = 6;
+      public static final double highElevatorConeSetpoint = 15;
+      public static final double highElevatorCubeSetpoint = 10;
+      public static final double doubleSubstationSetpoint = 12;
+
+      public static final int ELEVATOR_MOTOR_ID_MASTER = 17;
+      public static final int ELEVATOR_MOTOR_ID_SLAVE = 16;
+
+      public static final double ELEVATOR_kS = 0.2;
+      public static final double ELEVATOR_kA = 0.09;
+      public static final double ELEVATOR_kV = 6.14;
+      public static final double ELEVATOR_kG = 0.68;
+    }
+
     public static final int INTAKE_MOTOR_INNER = 12;
     public static final int INTAKE_MOTOR_OUTER = 13;
-
-    public static final double ELEVATOR_kS = 0.2;
-    public static final double ELEVATOR_kA = 0.09;
-    public static final double ELEVATOR_kV = 6.14;
-    public static final double ELEVATOR_kG = 0.68;
-
+    
     //solenoid ports on PCM
     public static final int SOLENOID_forward1 = 0;
     public static final int SOLENOID_reverse1 = 1;
@@ -206,5 +217,21 @@ public final class Constants {
         MIDHIGH,
         HIGH,
         SUBSTATION,
+    }
+
+    public class Bindings {
+      public static final int releaseGamePiece = 1;
+      public static final int intakeGamePiece = 2;
+      public static final int setGamePieceCube = 3;
+      public static final int setGamePieceCone = 4;
+      public static final int raiseArm = 16;
+      public static final int lowerArm = 15;
+
+      //measured in hall effect sensor rotations
+      public static final int fullRetractionSetpoint = 5;
+      public static final int lowElevatorSetpoint = 6;
+      public static final int midElevatorSetpoint = 7;
+      public static final int highElevatorSetpoint = 8;
+      public static final int doubleSubstationSetpoint = 9;
     }
 }

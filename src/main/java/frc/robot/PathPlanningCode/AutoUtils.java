@@ -1,7 +1,6 @@
 package frc.robot.PathPlanningCode;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -27,7 +26,6 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ScoringLocation;
 import frc.robot.RobotContainer;
-import java.util.HashMap;
 import java.util.List;
 
 /*

@@ -7,7 +7,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants;
 
 
 //TO DO: error handling for if pid controllers get misaligned
@@ -22,8 +22,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, elevatorSpeed;
 
     public ElevatorSubsystem() {
-      elevatorMotor1 = new CANSparkMax(Constants.ELEVATOR_MOTOR_ID_MASTER, MotorType.kBrushless);
-      elevatorMotor2 = new CANSparkMax(Constants.ELEVATOR_MOTOR_ID_SLAVE, MotorType.kBrushless);
+      elevatorMotor1 = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_MASTER, MotorType.kBrushless);
+      elevatorMotor2 = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_SLAVE, MotorType.kBrushless);
 
       elevatorMotor1.restoreFactoryDefaults();
 
@@ -43,9 +43,9 @@ public class ElevatorSubsystem extends SubsystemBase {
       m_pidController1 = elevatorMotor1.getPIDController();
 
       // PID coefficients
-      kP = 1; 
+      kP = 0.07; 
       kI = 1e-4;
-      kD = 0.0001; 
+      kD = 0.02; 
       kIz = 0; 
       kFF = 0; 
       kMaxOutput = 1; 
@@ -142,6 +142,10 @@ public class ElevatorSubsystem extends SubsystemBase {
       m_encoder1.setPosition(0);
       m_encoder2.setPosition(0);
       SmartDashboard.putNumber("Elevator Setpoint (rotations)", 0);
+    }
+
+    public RelativeEncoder getDrivingEncoder() {
+      return m_encoder1;
     }
   
 }

@@ -154,7 +154,53 @@ public class RobotContainer {
     new Trigger(() -> m_operatorController.getRawButton(Bindings.raiseArm))
       .onTrue(
         new InstantCommand(m_arm::expand));
+
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.fullRetractionSetpoint))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          Bindings.fullRetractionSetpoint));
+  
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.lowElevatorSetpoint))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          Bindings.lowElevatorSetpoint));
+
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.midElevatorSetpoint))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          Bindings.midElevatorSetpoint));
+        
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.highElevatorSetpoint))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          Bindings.highElevatorSetpoint));
+
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.doubleSubstationSetpoint))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          Bindings.doubleSubstationSetpoint));
   }
+
+
+  public IntakeGamePiece getSetpointType() {
+    if (m_intake.getState() == IntakeGamePiece.CONE) {
+      return IntakeGamePiece.CONE;
+    } else {
+      return IntakeGamePiece.CUBE;
+    }
+  }
+
+
 
   public boolean triggerPressed() {
     if (
