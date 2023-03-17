@@ -160,21 +160,110 @@ public class AutoUtils {
           .alongWith(new ChargeStationBalanceCommand(container.getDrive(), container.getElevator()));
     }
 
-    public Command priorityThreeAuto(RobotContainer container, StartPos startPos, ScoringLocation location) {
-      return simpleTrajectoryCommand(container, initDriveToScore())
-        .andThen(rotate180(container))
-        .andThen(simpleTrajectoryCommand(container, driveToStagedGamePiece(startPos)))
-        .andThen(new IntakeCommand(container.getIntake(), 1.0))
-        .andThen(rotate180(container))
-          .deadlineWith(new VisionTranslateCommand(container.getVision(), container.getDrive(), container.getController()))
-        .andThen(new ScoreGamePieceCommand(container.getElevator(), container.getIntake()));
+    public Command priorityThreeAuto(RobotContainer container) {
+      PathPlannerTrajectory priority3Path = PathPlanner.loadPath("Priority 3 auto", new PathConstraints(4, 3));
+
+      HashMap<String, command> eventMap = new HashMap<>();
+      eventMap.put("pickup", new IntakeCommand(container.getIntake(), 1));
+
+      FollowPathWithEvents command = new FollowPathWithEvents(
+        followTrajectoryCommand(container, priority3Path, true),
+        priority3Path.getMarkers(),
+        eventMap
+      );
+
+      return command;
     }
 
-    public Command priorityFourAuto(RobotContainer container, StartPos startPos, ScoringLocation location) {
-      return priorityThreeAuto(container, startPos, location)
-        .andThen(rotate180(container))
-        .andThen(simpleTrajectoryCommand(container, getOnChargeStation(startPos)));
+    public Command priorityFourAuto(RobotContainer container) {
+      PathPlannerTrajectory priority4Path = PathPlanner.loadPath("Priority 4 ending", new PathConstraints(4, 3));
+
+      HashMap<String, command> eventMap = new HashMap<>();
+      eventMap.put("score", new ScoreGamePieceCommand(container.getElevator(), container.getIntake()));
+
+      FollowPathWithEvents command = new FollowPathWithEvents(
+        followTrajectoryCommand(container, priority4Path, false),
+        priority4Path.getMarkers(),
+        eventMap
+      );
+
+      return command;
     }
+
+    public Command priorityFiveSecondPickup(RobotContainer container) {
+      PathPlannerTrajectory priority5Path = PathPlanner.loadPath("Priority 5 2nd pickup", new PathConstraints(4, 3));
+
+      HashMap<String, command> eventMap = new HashMap<>();
+      eventMap.put("pickup2", new IntakeCommand(container.getIntake(), 1));
+
+      FollowPathWithEvents command = new FollowPathWithEvents(
+        followTrajectoryCommand(container, priority5Path, false),
+        priority5Path.getMarkers(),
+        eventMap
+      );
+
+      return command;
+    }
+
+    public Command priorityFiveExit(RobotContainer container) {
+      PathPlannerTrajectory priority5Path = PathPlanner.loadPath("Priority 5 pickup exit", new PathConstraints(4, 3));
+
+      HashMap<String, command> eventMap = new HashMap<>();
+
+      FollowPathWithEvents command = new FollowPathWithEvents(
+        followTrajectoryCommand(container, priority5Path, false),
+        priority5Path.getMarkers(),
+        eventMap
+      );
+
+      return command;
+    }
+
+    public Command priorityFiveEnding(RobotContainer container) {
+      PathPlannerTrajectory priority5Path = PathPlanner.loadPath("Priority 5 ending", new PathConstraints(4, 3));
+
+      HashMap<String, command> eventMap = new HashMap<>();
+      eventMap.put("score2", new ScoreGamePieceCommand(container.getElevator(), container.getIntake()));
+
+      FollowPathWithEvents command = new FollowPathWithEvents(
+        followTrajectoryCommand(container, priority5Path, false),
+        priority5Path.getMarkers(),
+        eventMap
+      );
+
+      return command;
+    }
+
+    public Command priority6Pickup(RobotContainer container) {
+      PathPlannerTrajectory priority6Path = PathPlanner.loadPath("Priority 6 pickup", new PathConstraints(4, 3));
+
+      HashMap<String, command> eventMap = new HashMap<>();
+      eventMap.put("pickup3", new IntakeCommand(container.getIntake(), 1));
+
+      FollowPathWithEvents command = new FollowPathWithEvents(
+        followTrajectoryCommand(container, priority6Path, false),
+        priority6Path.getMarkers(),
+        eventMap
+      );
+
+      return command;
+    }
+
+    public Command priority6Ending(RobotContainer container) {
+      PathPlannerTrajectory priority6Path = PathPlanner.loadPath("Priority 6 ending", new PathConstraints(4, 3));
+
+      HashMap<String, command> eventMap = new HashMap<>();
+      eventMap.put("score3", new ScoreGamePieceCommand(container.getElevator(), container.getIntake()));
+
+      FollowPathWithEvents command = new FollowPathWithEvents(
+        followTrajectoryCommand(container, priority6Path, false),
+        priority6Path.getMarkers(),
+        eventMap
+      );
+
+      return command;
+    }
+
 
     //test
     private Trajectory simpleCurve() {
@@ -307,9 +396,13 @@ public class AutoUtils {
       case PRIORITY_2_AUTO:
         return priorityTwoAuto(container, startPos);
       case PRIORITY_3_AUTO:
-        return priorityThreeAuto(container, startPos, location);
+        return priorityThreeAuto(container);
       case PRIORITY_4_AUTO:
-        return priorityFourAuto(container, startPos, location);
+        return priorityThreeAuto(container).andThen(priorityFourAuto(container));
+      case PRIORITY_5_AUTO:
+        return priorityThreeAuto(container).andThen(priorityFiveSecondPickup(container)).andThen(priorityFiveExit(container)).andThen(priorityFiveEnding(container));
+      case PRIORITY_6_AUTO:
+        return priorityThreeAuto(container).andThen(priorityFiveSecondPickup(container)).andThen(priorityFiveExit(container)).andThen(priority6Pickup(container)).andThen(priority6Ending(container));
       default:
         return simpleCmdGrp(container);
     }
@@ -350,7 +443,9 @@ public class AutoUtils {
     PRIORITY_1_AUTO,
     PRIORITY_2_AUTO,
     PRIORITY_3_AUTO,
-    PRIORITY_4_AUTO
+    PRIORITY_4_AUTO,
+    PRIORITY_5_AUTO,
+    PRIORITY_6_AUTO
   }
 
   private enum StartPos {
