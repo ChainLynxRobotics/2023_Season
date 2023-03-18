@@ -155,33 +155,34 @@ public class RobotContainer {
       .onTrue(
         new InstantCommand(m_arm::expand));
 
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.fullRetractionSetpoint))
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.groundPickUp))
       .onTrue(
         new ElevatorCommand(
           m_elevator,
           m_intake,
-          Bindings.fullRetractionSetpoint));
+          Bindings.groundPickUp));
   
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.lowElevatorSetpoint))
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.lowScoreElevatorSetpoint))
       .onTrue(
         new ElevatorCommand(
           m_elevator,
           m_intake,
-          Bindings.lowElevatorSetpoint));
+          Bindings.lowScoreElevatorSetpoint));
 
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.midElevatorSetpoint))
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.midScoreElevatorSetpoint))
       .onTrue(
         new ElevatorCommand(
           m_elevator,
           m_intake,
-          Bindings.midElevatorSetpoint));
+          Bindings.midScoreElevatorSetpoint));
         
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.highElevatorSetpoint))
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.highScoreElevatorSetpoint))
       .onTrue(
         new ElevatorCommand(
           m_elevator,
           m_intake,
-          Bindings.highElevatorSetpoint));
+          Bindings.highScoreElevatorSetpoint));
+
 
     new Trigger(() -> m_operatorController.getRawButton(Bindings.doubleSubstationSetpoint))
       .onTrue(
@@ -189,17 +190,14 @@ public class RobotContainer {
           m_elevator,
           m_intake,
           Bindings.doubleSubstationSetpoint));
+
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.fullRetraction))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          Bindings.fullRetraction));
   }
-
-
-  public IntakeGamePiece getSetpointType() {
-    if (m_intake.getState() == IntakeGamePiece.CONE) {
-      return IntakeGamePiece.CONE;
-    } else {
-      return IntakeGamePiece.CUBE;
-    }
-  }
-
 
 
   public boolean triggerPressed() {
