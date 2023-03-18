@@ -8,16 +8,20 @@ import frc.robot.Subsystems.ElevatorSubsystem;
 
 //extends elevator and moves according to pitch angle
 public class ChargeStationBalanceCommand extends CommandBase {
+
     private DriveSubsystem drive;
     private ElevatorSubsystem elevator;
-    
+
     private Timer timer;
 
     private static final double ERROR = 2;
     private static final double TIME_ENGAGED = 1.5;
     private static final double ELEVATOR_SETPOINT = 2;
-    
-    public ChargeStationBalanceCommand(DriveSubsystem drive, ElevatorSubsystem elevator) {
+
+    public ChargeStationBalanceCommand(
+        DriveSubsystem drive,
+        ElevatorSubsystem elevator
+    ) {
         this.drive = drive;
         this.elevator = elevator;
 
@@ -42,13 +46,13 @@ public class ChargeStationBalanceCommand extends CommandBase {
         double error = ERROR - pitch;
 
         //drive and put data on smart dashboard
-        drive.mainDrive(-0.1*pitch, 0, drive.getHeading());
+        drive.mainDrive(-0.1 * pitch, 0, drive.getHeading());
         SmartDashboard.putNumber("ChargeStationBalance/CurrentAngle", pitch);
         SmartDashboard.putNumber("ChargeStationBalance/AngularEffort", error);
 
         //reset timer if robot is not balanced
         if (error > ERROR) {
-            timer.reset(); 
+            timer.reset();
         }
     }
 

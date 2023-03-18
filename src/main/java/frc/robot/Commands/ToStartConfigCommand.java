@@ -7,10 +7,10 @@ import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
 
 public class ToStartConfigCommand extends CommandBase {
+
     private ArmSubsystem arm;
     private ElevatorSubsystem elevator;
 
-    
     //arm down, turn on intake
     public ToStartConfigCommand(ArmSubsystem arm, ElevatorSubsystem elevator) {
         this.arm = arm;
@@ -20,11 +20,8 @@ public class ToStartConfigCommand extends CommandBase {
     }
 
     @Override
-    public void initialize() {
-    }
-
+    public void initialize() {}
 
     @Override
-    public void execute() {
-    }
+    public void execute() {}
 }

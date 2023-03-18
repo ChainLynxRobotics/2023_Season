@@ -7,33 +7,31 @@ import frc.robot.Constants.ScoringLocation;
 import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
 
-
 //should account for piece (cone--y dir offset for placement, cube), scoring location (bottom, mid, high)
 public class ScoreGamePieceCommand extends CommandBase {
+
     private ElevatorSubsystem elevator;
     private IntakeSubsystem intake;
 
-    public ScoreGamePieceCommand(ElevatorSubsystem elevator, IntakeSubsystem intake) {
+    public ScoreGamePieceCommand(
+        ElevatorSubsystem elevator,
+        IntakeSubsystem intake
+    ) {
         this.elevator = elevator;
         this.intake = intake;
     }
 
     @Override
-    public void initialize() {
-    }
+    public void initialize() {}
 
     @Override
-    public void execute() {
-    }
-
+    public void execute() {}
 
     @Override
     public boolean isFinished() {
-       return true;
+        return true;
     }
-
 
     @Override
-    public void end(boolean isFinished) {
-    }
+    public void end(boolean isFinished) {}
 }
