@@ -13,6 +13,7 @@ import frc.robot.Constants.Bindings;
 import frc.robot.Constants.IntakeGamePiece;
 import frc.robot.Commands.IntakeCommand;
 import frc.robot.Commands.ElevatorCommand;
+import frc.robot.Commands.ElevatorControlCommand;
 import frc.robot.Commands.ReleaseCommand;
 import frc.robot.Commands.SimpleDriveCommand;
 import frc.robot.Commands.VisionTranslateCommand;
@@ -88,15 +89,6 @@ public class RobotContainer {
         m_robotDrive
       )
     );
-
-  
-    m_elevator.setDefaultCommand(
-      new RunCommand(
-        () -> m_elevator.simpleMovement(m_operatorController.getRawAxis(1)),
-        m_elevator
-      )
-    );
-
   }
 
   private void configureButtonBindings() {
@@ -195,6 +187,9 @@ public class RobotContainer {
           m_elevator,
           m_intake,
           Bindings.fullRetraction));
+
+    new Trigger(() -> m_operatorController.getRawButton(5))
+      .whileTrue(new ElevatorControlCommand(m_operatorController, m_elevator));
   }
 
 

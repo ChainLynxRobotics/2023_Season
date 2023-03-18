@@ -59,8 +59,8 @@ public class ElevatorCommand extends CommandBase {
             elevator.moveElevator(setpoint+ElevatorConstants.ELEVATOR_RAMP_DIST);
             double startTime2 = System.currentTimeMillis();
 
-            if (System.currentTimeMillis()-startTime2 > 100) {
-                elevator.moveElevator(setpoint);
+            if (System.currentTimeMillis()-startTime2 > 300) {
+                elevator.moveElevator(setpoint+5);
             }
         } else {
             elevator.moveElevator(setpoint);

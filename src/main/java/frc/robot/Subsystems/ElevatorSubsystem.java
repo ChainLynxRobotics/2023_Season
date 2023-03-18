@@ -176,5 +176,4 @@ public class ElevatorSubsystem extends SubsystemBase {
     public RelativeEncoder getDrivingEncoder() {
       return m_encoder1;
     }
-  
 }
