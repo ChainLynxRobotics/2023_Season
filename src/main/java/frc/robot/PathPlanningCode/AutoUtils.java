@@ -1,9 +1,13 @@
 
 package frc.robot.PathPlanningCode;
 
+import java.util.HashMap;
 import java.util.List;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -163,7 +167,7 @@ public class AutoUtils {
     public Command priorityThreeAuto(RobotContainer container) {
       PathPlannerTrajectory priority3Path = PathPlanner.loadPath("Priority 3 auto", new PathConstraints(4, 3));
 
-      HashMap<String, command> eventMap = new HashMap<>();
+      HashMap<String, Command> eventMap = new HashMap<>();
       eventMap.put("pickup", new IntakeCommand(container.getIntake(), 1));
 
       FollowPathWithEvents command = new FollowPathWithEvents(
@@ -178,7 +182,7 @@ public class AutoUtils {
     public Command priorityFourAuto(RobotContainer container) {
       PathPlannerTrajectory priority4Path = PathPlanner.loadPath("Priority 4 ending", new PathConstraints(4, 3));
 
-      HashMap<String, command> eventMap = new HashMap<>();
+      HashMap<String, Command> eventMap = new HashMap<>();
       eventMap.put("score", new ScoreGamePieceCommand(container.getElevator(), container.getIntake()));
 
       FollowPathWithEvents command = new FollowPathWithEvents(
@@ -193,75 +197,75 @@ public class AutoUtils {
     public Command priorityFiveSecondPickup(RobotContainer container) {
       PathPlannerTrajectory priority5Path = PathPlanner.loadPath("Priority 5 2nd pickup", new PathConstraints(4, 3));
 
-      HashMap<String, command> eventMap = new HashMap<>();
+      HashMap<String, Command> eventMap = new HashMap<>();
       eventMap.put("pickup2", new IntakeCommand(container.getIntake(), 1));
 
-      FollowPathWithEvents command = new FollowPathWithEvents(
+      FollowPathWithEvents Command = new FollowPathWithEvents(
         followTrajectoryCommand(container, priority5Path, false),
         priority5Path.getMarkers(),
         eventMap
       );
 
-      return command;
+      return Command;
     }
 
     public Command priorityFiveExit(RobotContainer container) {
       PathPlannerTrajectory priority5Path = PathPlanner.loadPath("Priority 5 pickup exit", new PathConstraints(4, 3));
 
-      HashMap<String, command> eventMap = new HashMap<>();
+      HashMap<String, Command> eventMap = new HashMap<>();
 
-      FollowPathWithEvents command = new FollowPathWithEvents(
+      FollowPathWithEvents Command = new FollowPathWithEvents(
         followTrajectoryCommand(container, priority5Path, false),
         priority5Path.getMarkers(),
         eventMap
       );
 
-      return command;
+      return Command;
     }
 
     public Command priorityFiveEnding(RobotContainer container) {
       PathPlannerTrajectory priority5Path = PathPlanner.loadPath("Priority 5 ending", new PathConstraints(4, 3));
 
-      HashMap<String, command> eventMap = new HashMap<>();
+      HashMap<String, Command> eventMap = new HashMap<>();
       eventMap.put("score2", new ScoreGamePieceCommand(container.getElevator(), container.getIntake()));
 
-      FollowPathWithEvents command = new FollowPathWithEvents(
+      FollowPathWithEvents Command = new FollowPathWithEvents(
         followTrajectoryCommand(container, priority5Path, false),
         priority5Path.getMarkers(),
         eventMap
       );
 
-      return command;
+      return Command;
     }
 
     public Command priority6Pickup(RobotContainer container) {
       PathPlannerTrajectory priority6Path = PathPlanner.loadPath("Priority 6 pickup", new PathConstraints(4, 3));
 
-      HashMap<String, command> eventMap = new HashMap<>();
+      HashMap<String, Command> eventMap = new HashMap<>();
       eventMap.put("pickup3", new IntakeCommand(container.getIntake(), 1));
 
-      FollowPathWithEvents command = new FollowPathWithEvents(
+      FollowPathWithEvents Command = new FollowPathWithEvents(
         followTrajectoryCommand(container, priority6Path, false),
         priority6Path.getMarkers(),
         eventMap
       );
 
-      return command;
+      return Command;
     }
 
     public Command priority6Ending(RobotContainer container) {
       PathPlannerTrajectory priority6Path = PathPlanner.loadPath("Priority 6 ending", new PathConstraints(4, 3));
 
-      HashMap<String, command> eventMap = new HashMap<>();
+      HashMap<String, Command> eventMap = new HashMap<>();
       eventMap.put("score3", new ScoreGamePieceCommand(container.getElevator(), container.getIntake()));
 
-      FollowPathWithEvents command = new FollowPathWithEvents(
+      FollowPathWithEvents Command = new FollowPathWithEvents(
         followTrajectoryCommand(container, priority6Path, false),
         priority6Path.getMarkers(),
         eventMap
       );
 
-      return command;
+      return Command;
     }
 
 

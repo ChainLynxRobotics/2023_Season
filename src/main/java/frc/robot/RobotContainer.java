@@ -73,7 +73,7 @@ public class RobotContainer {
     m_elevator.setDefaultCommand(
         new RunCommand(
           () -> m_elevator.simpleMovement(
-            MathUtil.applyDeadband(m_operatorController.getRawAxis(1), ElevatorConstants.elevatorDeadband), m_elevator));
+            MathUtil.applyDeadband(m_operatorController.getRawAxis(1), ElevatorConstants.elevatorDeadband)), m_elevator));
   }
 
 
