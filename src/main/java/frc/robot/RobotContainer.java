@@ -189,6 +189,7 @@ public class RobotContainer {
           m_elevator,
           m_intake,
           Bindings.doubleSubstationSetpoint));
+<<<<<<< HEAD
 
     new Trigger(() -> m_operatorController.getRawButton(Bindings.fullRetraction))
       .onTrue(
@@ -197,6 +198,15 @@ public class RobotContainer {
           m_intake,
           Bindings.fullRetraction));
 
+=======
+
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.fullRetraction))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          Bindings.fullRetraction));
+>>>>>>> 4c014fc4b12b5c00e5ad54f70e6c9e25a37f3c9b
   }
 
 
