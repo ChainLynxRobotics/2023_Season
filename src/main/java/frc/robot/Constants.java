@@ -182,13 +182,12 @@ public final class Constants {
     }
 
     public class ElevatorConstants {
-      public static final double fullRetractionSetpoint = 0;
-      public static final double lowElevatorSetpoint = 2;
-      public static final double midElevatorConeSetpoint = 9;
-      public static final double midElevatorCubeSetpoint = 6;
-      public static final double highElevatorConeSetpoint = 15;
-      public static final double highElevatorCubeSetpoint = 10;
-      public static final double doubleSubstationSetpoint = 12;
+      public static final double groundPickupCubeHybrid = 7.5;
+      public static final double coneDrivingWithLift = 3;
+      public static final double midElevatorGamepiece = 7.5;
+      public static final double highElevatorConeSetpoint = 15.5;
+      public static final double highElevatorCubeSetpoint = 13.5;
+      public static final double doubleSubstationSetpoint = 14;
 
       public static final int ELEVATOR_MOTOR_ID_MASTER = 17;
       public static final int ELEVATOR_MOTOR_ID_SLAVE = 16;
@@ -224,14 +223,15 @@ public final class Constants {
       public static final int intakeGamePiece = 2;
       public static final int setGamePieceCube = 3;
       public static final int setGamePieceCone = 4;
-      public static final int raiseArm = 16;
-      public static final int lowerArm = 15;
+      public static final int raiseArmPOV = 4;
+      public static final int lowerArmPOV = 0;
 
       //measured in hall effect sensor rotations
-      public static final int fullRetractionSetpoint = 5;
-      public static final int lowElevatorSetpoint = 6;
-      public static final int midElevatorSetpoint = 7;
-      public static final int highElevatorSetpoint = 8;
-      public static final int doubleSubstationSetpoint = 9;
+      public static final int groundPickUp = 15; //for ground pick up and cube hybrid
+      public static final int fullRetraction = 14;
+      public static final int lowScoreElevatorSetpoint = 13; //for cone pickup with ability to lift
+      public static final int midScoreElevatorSetpoint = 12;
+      public static final int highScoreElevatorSetpoint = 11;
+      public static final int doubleSubstationSetpoint = 16;
     }
 }

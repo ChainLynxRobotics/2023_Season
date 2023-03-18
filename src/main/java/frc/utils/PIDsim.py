@@ -40,7 +40,7 @@ def pid_run(setpoint:float, current) -> float:
 
 
 class elevator_motor:
-    def __init__(self, pos, vel, drag_coeff, mass, t):
+    def __init__(self, pos:float, vel:float, drag_coeff:float, mass:float, t:float):
         self.pos = pos
         self.vel = vel
         self.t = t
