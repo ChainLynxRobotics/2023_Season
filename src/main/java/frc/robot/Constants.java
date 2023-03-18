@@ -189,6 +189,8 @@ public final class Constants {
       public static final double highElevatorCubeSetpoint = 13.5;
       public static final double doubleSubstationSetpoint = 14;
 
+      public static final double ELEVATOR_RAMP_DIST = 3;
+
       public static final int ELEVATOR_MOTOR_ID_MASTER = 17;
       public static final int ELEVATOR_MOTOR_ID_SLAVE = 16;
 

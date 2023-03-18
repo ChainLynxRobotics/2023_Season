@@ -48,11 +48,18 @@ public class ElevatorCommand extends CommandBase {
         System.out.printf("setting setpoint via command, setpoint at: %f \n", setpoint);
         SmartDashboard.putNumber("Elevator Setpoint (rotations)", setpoint);
 
-        if (Math.abs(setpoint-elevator.getDrivingEncoder().getPosition()) > 8) {
+        if (setpoint-elevator.getDrivingEncoder().getPosition() > 8) {
             elevator.moveElevator(setpoint-ElevatorConstants.ELEVATOR_RAMP_DIST);
             double startTime = System.currentTimeMillis();
 
             if (System.currentTimeMillis()-startTime > 100) {
+                elevator.moveElevator(setpoint);
+            }
+        } else if (setpoint-elevator.getDrivingEncoder().getPosition() < -8) {
+            elevator.moveElevator(setpoint+ElevatorConstants.ELEVATOR_RAMP_DIST);
+            double startTime2 = System.currentTimeMillis();
+
+            if (System.currentTimeMillis()-startTime2 > 100) {
                 elevator.moveElevator(setpoint);
             }
         } else {
