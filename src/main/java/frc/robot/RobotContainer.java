@@ -89,14 +89,13 @@ public class RobotContainer {
     );
 
   
-  /* 
     m_elevator.setDefaultCommand(
       new RunCommand(
         () -> m_elevator.simpleMovement(m_operatorController.getRawAxis(1)),
         m_elevator
       )
     );
-  */
+
   }
 
   private void configureButtonBindings() {
