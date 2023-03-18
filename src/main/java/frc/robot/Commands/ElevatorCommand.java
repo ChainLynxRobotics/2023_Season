@@ -3,6 +3,7 @@ package frc.robot.Commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.Bindings;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeGamePiece;
 import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
@@ -46,7 +47,24 @@ public class ElevatorCommand extends CommandBase {
 
         System.out.printf("setting setpoint via command, setpoint at: %f \n", setpoint);
         SmartDashboard.putNumber("Elevator Setpoint (rotations)", setpoint);
-        elevator.moveElevator(setpoint);
+
+        if (setpoint-elevator.getDrivingEncoder().getPosition() > 8) {
+            elevator.moveElevator(setpoint-ElevatorConstants.ELEVATOR_RAMP_DIST);
+            double startTime = System.currentTimeMillis();
+
+            if (System.currentTimeMillis()-startTime > 100) {
+                elevator.moveElevator(setpoint);
+            }
+        } else if (setpoint-elevator.getDrivingEncoder().getPosition() < -8) {
+            elevator.moveElevator(setpoint+ElevatorConstants.ELEVATOR_RAMP_DIST);
+            double startTime2 = System.currentTimeMillis();
+
+            if (System.currentTimeMillis()-startTime2 > 300) {
+                elevator.moveElevator(setpoint+5);
+            }
+        } else {
+            elevator.moveElevator(setpoint);
+        }
     }
 
     @Override

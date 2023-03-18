@@ -157,6 +157,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void simpleMovement(double input) {
+        System.out.println("simple movement running");
         if (input > 0.25) {
             elevatorMotor1.set(-0.25);
         } else if (input < -0.25) {
@@ -175,5 +176,4 @@ public class ElevatorSubsystem extends SubsystemBase {
     public RelativeEncoder getDrivingEncoder() {
       return m_encoder1;
     }
-  
 }

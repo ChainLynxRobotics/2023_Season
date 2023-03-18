@@ -189,6 +189,8 @@ public final class Constants {
       public static final double highElevatorCubeSetpoint = 13.5;
       public static final double doubleSubstationSetpoint = 14;
 
+      public static final double ELEVATOR_RAMP_DIST = 3;
+
       public static final int ELEVATOR_MOTOR_ID_MASTER = 17;
       public static final int ELEVATOR_MOTOR_ID_SLAVE = 16;
 
@@ -223,13 +225,8 @@ public final class Constants {
       public static final int intakeGamePiece = 2;
       public static final int setGamePieceCube = 3;
       public static final int setGamePieceCone = 4;
-<<<<<<< HEAD
-      public static final int raiseArmPOV = 4;
-      public static final int lowerArmPOV = 0;
-=======
       public static final int raiseArm = 9;
       public static final int lowerArm = 8;
->>>>>>> 4c014fc4b12b5c00e5ad54f70e6c9e25a37f3c9b
 
       //measured in hall effect sensor rotations
       public static final int groundPickUp = 15; //for ground pick up and cube hybrid
