@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.VisionTurnCommand;
 import frc.robot.Constants.Bindings;
@@ -147,12 +148,12 @@ public class RobotContainer {
         )
       );
 
-    new Trigger(() -> m_operatorController.getRawButton(m_operatorController.getPOV(0)))
-      .onTrue(new InstantCommand(m_arm::retract));
 
-    new Trigger(() -> m_operatorController.getRawButton(m_operatorController.getPOV(180)))
-      .onTrue(new InstantCommand(m_arm::expand));
+    POVButton upPOV = new POVButton(m_operatorController, 0);
+    POVButton downPOV = new POVButton(m_operatorController, 180);
 
+    upPOV.onTrue(new InstantCommand(m_arm::expand));
+    downPOV.onTrue(new InstantCommand(m_arm::retract));
 
     new Trigger(() -> m_operatorController.getRawButton(Bindings.groundPickUp))
       .onTrue(
@@ -189,7 +190,6 @@ public class RobotContainer {
           m_elevator,
           m_intake,
           Bindings.doubleSubstationSetpoint));
-<<<<<<< HEAD
 
     new Trigger(() -> m_operatorController.getRawButton(Bindings.fullRetraction))
       .onTrue(
@@ -197,16 +197,6 @@ public class RobotContainer {
           m_elevator,
           m_intake,
           Bindings.fullRetraction));
-
-=======
-
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.fullRetraction))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.fullRetraction));
->>>>>>> 4c014fc4b12b5c00e5ad54f70e6c9e25a37f3c9b
   }
 
 
