@@ -28,7 +28,7 @@ public class ScoreGamePieceCommand extends CommandBase {
     public void initialize() {
         CommandScheduler.getInstance().schedule(new InstantCommand(arm::expand)
             .andThen(new ElevatorCommand(elevator, intake, setpointLocation)
-            .andThen(new ReleaseCommand(intake, 0.8))));
+            .andThen(new ReleaseCommand(intake, 0.8)).withTimeout(1)));
     }
 
     @Override

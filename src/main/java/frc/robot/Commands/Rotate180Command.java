@@ -28,7 +28,7 @@ public class Rotate180Command extends CommandBase {
     
     @Override
     public boolean isFinished() {
-        if (Math.abs(initGyroHeading-curGyroHeading) < 2) {
+        if (Math.abs(initGyroHeading+180-curGyroHeading) < 2) {
             return true;
         }
         return false;

@@ -167,7 +167,8 @@ public class AutoUtils {
             "Priority 1 auto", 
             true, 
             Map.of("init score p1a", new ScoreGamePieceCommand(
-              container.getElevator(), container.getIntake(), 
+              container.getElevator(), 
+              container.getIntake(), 
               container.getArm(),
               Bindings.midScoreElevatorSetpoint)));
     }
