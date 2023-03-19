@@ -6,7 +6,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.DriveSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
 
-//extends elevator and moves according to pitch angle
+/*
+ * moves forward at constant initial speed until pitch changes
+ * if pitch > 0, move forward with + scale factor proportional to error
+ * if < 0, move forward wtih - scale factor proportional to error
+ */
 public class ChargeStationBalanceCommand extends CommandBase {
 
     private DriveSubsystem drive;
@@ -15,15 +19,16 @@ public class ChargeStationBalanceCommand extends CommandBase {
     private Timer timer;
 
     private static final double ERROR = 2;
-    private static final double TIME_ENGAGED = 1.5;
-    private static final double ELEVATOR_SETPOINT = 2;
+    private static final double TIME_ENGAGED = 1;
+    private static final double ELEVATOR_SETPOINT = 0;
 
-    public ChargeStationBalanceCommand(
-        DriveSubsystem drive,
-        ElevatorSubsystem elevator
-    ) {
+    private boolean pitchChanged = false;
+
+    public ChargeStationBalanceCommand(DriveSubsystem drive, ElevatorSubsystem elevator) {
         this.drive = drive;
         this.elevator = elevator;
+
+        timer = new Timer();
 
         addRequirements(drive, elevator);
 
@@ -45,13 +50,19 @@ public class ChargeStationBalanceCommand extends CommandBase {
         double pitch = drive.getPitch();
         double error = ERROR - pitch;
 
-        //drive and put data on smart dashboard
-        drive.mainDrive(-0.1 * pitch, 0, drive.getHeading());
         SmartDashboard.putNumber("ChargeStationBalance/CurrentAngle", pitch);
         SmartDashboard.putNumber("ChargeStationBalance/AngularEffort", error);
 
+        //drive and put data on smart dashboard
+        if (pitch > 2) {
+            pitchChanged = true;
+            drive.mainDrive(0.1 * pitch, 0, 0);
+        } else if (pitch < -2) {
+            drive.mainDrive(-0.1 * pitch, 0, 0);
+        }
+
         //reset timer if robot is not balanced
-        if (error > ERROR) {
+        if (error > ERROR || pitchChanged == false) {
             timer.reset();
         }
     }
