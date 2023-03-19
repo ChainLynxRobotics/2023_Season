@@ -45,12 +45,22 @@
       }
     }
   ],
+  "maxVelocity": null,
+  "maxAcceleration": null,
+  "isReversed": true,
   "markers": [
     {
       "position": 0.8087002840909097,
       "names": [
         "score",
         "balance p4a"
+      ]
+    },
+    {
+      "position": 0.2179687500000001,
+      "names": [
+        "event",
+        "score p4a"
       ]
     }
   ]
