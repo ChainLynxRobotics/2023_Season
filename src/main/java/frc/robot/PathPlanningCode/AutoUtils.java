@@ -187,11 +187,9 @@ public class AutoUtils {
     public Command priorityFourAuto(RobotContainer container) {
         return createPath(
             container, 
-            "Priority 4 auto", 
+            "Priority 4 ending", 
             false, 
-            Map.of("balance p4a", new ChargeStationBalanceCommand(
-              container.getDrive(), 
-              container.getElevator(), container.getOperatorController())));
+            Map.of());
     }
     
 
@@ -260,7 +258,7 @@ public class AutoUtils {
                 )
             );
     }
-    
+
 
   //start position chooser is fed into this for start position-dependent trajectories
   public Command chooseAuto(RobotContainer container) {

@@ -25,16 +25,13 @@ public class ScoreGamePieceCommand extends CommandBase {
     }
 
     @Override
-    public void initialize() {
+    public void execute() {
         CommandScheduler.getInstance().schedule(new InstantCommand(arm::expand)
-            .andThen(new ElevatorCommand(elevator, intake, setpointLocation)
+            .withTimeout(2)
+            .andThen(new ElevatorCommand(elevator, intake, setpointLocation).withTimeout(2)
             .andThen(new ReleaseCommand(intake, 0.8)).withTimeout(1)));
     }
 
-    @Override
-    public boolean isFinished() {
-        return true;
-    }
 
     @Override
     public void end(boolean isFinished) {
