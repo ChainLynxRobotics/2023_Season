@@ -62,11 +62,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         Command currentAuto = m_robotContainer
             .getAutoUtils()
-            .chooseAuto(
-                m_robotContainer,
-                m_robotContainer.getAutoUtils().chooseStartPos(),
-                m_robotContainer.getAutoUtils().chooseInitScoreLocation()
-            );
+            .chooseAuto(m_robotContainer);
 
         if (currentAuto != null) {
             currentAuto.schedule();

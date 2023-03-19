@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.7781058519988888,
-        "y": 0.47564810319494166
+        "x": 1.832258902365027,
+        "y": 0.40179859699997106
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.77810585199889,
-        "y": 0.47564810319494166
+        "x": 2.8322589023650284,
+        "y": 0.40179859699997106
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -16,7 +16,9 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "init score p3a"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -28,12 +30,12 @@
         "y": 0.8796021641687284
       },
       "prevControl": {
-        "x": 7.375195812990518,
-        "y": 0.8757870700076847
+        "x": 7.078139993085543,
+        "y": 0.9227044704089401
       },
       "nextControl": {
-        "x": 7.375195812990518,
-        "y": 0.8757870700076847
+        "x": 7.078139993085543,
+        "y": 0.9227044704089401
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -49,12 +51,12 @@
     },
     {
       "anchorPoint": {
-        "x": 1.7911366281593335,
-        "y": 1.0351291845779904
+        "x": 1.7834330373521858,
+        "y": 1.0731252469449384
       },
       "prevControl": {
-        "x": 2.288733909449626,
-        "y": 1.0340391576748353
+        "x": 2.281030318642477,
+        "y": 1.0720352200417833
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -63,7 +65,9 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "end score p3a"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -77,7 +81,8 @@
     {
       "position": 0.9877130681818186,
       "names": [
-        "pickup"
+        "pickup",
+        "intake p3a"
       ]
     }
   ]

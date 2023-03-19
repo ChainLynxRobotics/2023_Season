@@ -74,7 +74,13 @@
     {
       "position": 1.9509943181818192,
       "names": [
-        "pickup3"
+        "intake p6a"
+      ]
+    },
+    {
+      "position": 1.0071732954545451,
+      "names": [
+        "score p6a"
       ]
     }
   ]

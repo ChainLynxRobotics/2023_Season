@@ -173,12 +173,7 @@ public class DriveSubsystem extends SubsystemBase {
         move(xSpeed, ySpeed, rot);
     }
 
-    public void altDrive(
-        double xSpeed,
-        double ySpeed,
-        double xRot,
-        double yRot
-    ) {
+    public void altDrive(double xSpeed, double ySpeed, double xRot, double yRot) {
         double rot = 0;
         //convert to degrees
         rightAngGoal = Math.atan2(xRot, yRot) * 180 / Math.PI;
@@ -201,12 +196,7 @@ public class DriveSubsystem extends SubsystemBase {
         move(xSpeed, ySpeed, rot, true);
     }
 
-    private void move(
-        double xSpeed,
-        double ySpeed,
-        double rot,
-        boolean rateLimit
-    ) {
+    private void move(double xSpeed, double ySpeed, double rot, boolean rateLimit) {
         double xSpeedCommanded;
         double ySpeedCommanded;
 

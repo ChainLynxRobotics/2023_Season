@@ -47,9 +47,10 @@
   ],
   "markers": [
     {
-      "position": 0.12237215909090908,
+      "position": 0.8087002840909097,
       "names": [
-        "score"
+        "score",
+        "balance p4a"
       ]
     }
   ]

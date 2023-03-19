@@ -188,6 +188,7 @@ public final class Constants {
       public static final double highElevatorConeSetpoint = 15.5;
       public static final double highElevatorCubeSetpoint = 13.5;
       public static final double doubleSubstationSetpoint = 14;
+      public static final double fullRetractionSetpoint = 0;
 
       public static final double ELEVATOR_RAMP_DIST = 3;
 
