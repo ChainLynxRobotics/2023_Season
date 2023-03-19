@@ -12,6 +12,7 @@ import frc.robot.Commands.VisionTurnCommand;
 import frc.robot.Constants.Bindings;
 import frc.robot.Constants.IntakeGamePiece;
 import frc.robot.Commands.IntakeCommand;
+import frc.robot.Commands.ChargeStationBalanceCommand;
 import frc.robot.Commands.ElevatorCommand;
 import frc.robot.Commands.ElevatorManualControlCommand;
 import frc.robot.Commands.ReleaseCommand;
@@ -190,6 +191,11 @@ public class RobotContainer {
 
     new Trigger(() -> m_operatorController.getRawButton(5))
       .whileTrue(new ElevatorManualControlCommand(m_operatorController, m_elevator));
+
+    new Trigger(() -> m_operatorController.getRawButton(10))
+      .onTrue(new ChargeStationBalanceCommand(m_robotDrive, m_elevator));
+
+
   }
 
 

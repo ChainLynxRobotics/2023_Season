@@ -35,8 +35,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       m_encoder1.setPosition(0);
       m_encoder2.setPosition(0);
 
-      elevatorMotor1.setIdleMode(IdleMode.kCoast);
-      elevatorMotor2.setIdleMode(IdleMode.kCoast);
+      elevatorMotor1.setIdleMode(IdleMode.kBrake);
+      elevatorMotor2.setIdleMode(IdleMode.kBrake);
       elevatorMotor1.setInverted(true);
       elevatorMotor2.follow(elevatorMotor1, true);
       elevatorMotor1.clearFaults();
