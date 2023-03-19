@@ -33,8 +33,6 @@ import frc.robot.RobotContainer;
 public class AutoUtils {
 
     private SendableChooser<AutoModes> autoChooser = new SendableChooser<>();
-    private SendableChooser<StartPos> startPosChooser = new SendableChooser<>();
-    private SendableChooser<ScoringLocation> scoreLocationChooser = new SendableChooser<>();
 
     //stores all the command bindings along path checkpoints
     private HashMap<String, Command> eventMap = new HashMap<>();
@@ -46,33 +44,14 @@ public class AutoUtils {
         .setKinematics(DriveConstants.kDriveKinematics);
 
     public AutoUtils() {
-        autoChooser.setDefaultOption(
-            "Priority 1 Auto",
-            AutoModes.PRIORITY_1_AUTO
-        );
-        autoChooser.addOption("Simple Trajectory", AutoModes.SIMPLE_TRAJECTORY);
-        autoChooser.addOption(
-            "Auto Align Trajectory",
-            AutoModes.AUTO_ALIGN_TRAJECTORY
-        );
+        autoChooser.setDefaultOption("Priority 1 Auto", AutoModes.PRIORITY_1_AUTO);
         autoChooser.addOption("Priority 2 Auto", AutoModes.PRIORITY_2_AUTO);
         autoChooser.addOption("Priority 3 Auto", AutoModes.PRIORITY_3_AUTO);
         autoChooser.addOption("Priority 4 Auto", AutoModes.PRIORITY_4_AUTO);
-
-        startPosChooser.setDefaultOption(
-            "Left of charge station",
-            StartPos.LEFT_CS
-        );
-        startPosChooser.addOption("Middle of charge station", StartPos.MID_CS);
-        startPosChooser.addOption("Right of charge station", StartPos.RIGHT_CS);
-
-        scoreLocationChooser.setDefaultOption("Low", ScoringLocation.LOW);
-        scoreLocationChooser.addOption("Middle", ScoringLocation.MID);
-        scoreLocationChooser.addOption("high", ScoringLocation.HIGH);
+        autoChooser.addOption("Priority 5 Auto", AutoModes.PRIORITY_5_AUTO);
+        autoChooser.addOption("Priority 6 Auto", AutoModes.PRIORITY_6_AUTO);
 
         SmartDashboard.putData("auto choices", autoChooser);
-        SmartDashboard.putData("start position choices", startPosChooser);
-        SmartDashboard.putData("initial score location", scoreLocationChooser);
     }
 
     public Command simpleCmdGrp(RobotContainer container) {
@@ -212,7 +191,7 @@ public class AutoUtils {
             false, 
             Map.of("balance p4a", new ChargeStationBalanceCommand(
               container.getDrive(), 
-              container.getElevator())));
+              container.getElevator(), container.getOperatorController())));
     }
     
 
@@ -281,7 +260,7 @@ public class AutoUtils {
                 )
             );
     }
-
+    
 
   //start position chooser is fed into this for start position-dependent trajectories
   public Command chooseAuto(RobotContainer container) {
@@ -307,18 +286,7 @@ public class AutoUtils {
             .andThen(priority6Pickup(container))
             .andThen(priority6Ending(container));
       default:
-        return simpleCmdGrp(container);
-        }
-    }
-
-    public StartPos chooseStartPos() {
-        switch (startPosChooser.getSelected()) {
-            case LEFT_CS:
-                return StartPos.LEFT_CS;
-            case MID_CS:
-                return StartPos.MID_CS;
-            default:
-                return StartPos.RIGHT_CS;
+       return priorityOneAuto(container);
         }
     }
 
@@ -338,11 +306,5 @@ public class AutoUtils {
     PRIORITY_4_AUTO,
     PRIORITY_5_AUTO,
     PRIORITY_6_AUTO
-  }
-
-  private enum StartPos {
-    LEFT_CS,
-    MID_CS,
-    RIGHT_CS
   }
 }
