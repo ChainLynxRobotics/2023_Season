@@ -6,9 +6,9 @@ from tabulate import tabulate as table
 #output: table of system response vs time, graphs of system response and control output vs time (3 entry horizontal table)
 
 class const:
-    kp = 0.1
+    kp = 0.07
     ki = 0.0001
-    kd = 1
+    kd = 0.02
     kf = 0.01
     iZone = 1e-4
     iState = 0
@@ -72,27 +72,25 @@ def main():
     motor = elevator_motor(0.0, 0.0, const.drag, const.mass, 0.0)
     motor.actuate(0.02)
 
-    plt.title("pid simulation") 
+    plt.title("pid simulation, kP = " + str(const.kp) + ", kI = " + str(const.ki) + ", kD = " + str(const.kd)) 
     plt.xlabel("time") 
-    plt.ylabel("position") 
+    plt.ylabel("position (red), controller output (blue)") 
 
     #for table
     columns = ["time", "position", "controller output"]
     data = [[0,0,0]]*500
 
-    time = 0
     counter = 0
-    while time < 10:
+    while counter < 500:
         motor.actuate(const.dt)
         pos = motor.pos
         eff = pid_run(const.setpoint, motor.pos)
 
-        data[counter] = [time, pos, eff]
+        data[counter] = [counter*const.dt, pos, eff]
 
-        plt.plot(time, motor.pos, "ro") #elevator position
-        plt.plot(time, pid_run(const.setpoint, motor.pos), "bo") #motor output
+        plt.plot(counter*const.dt, motor.pos, "ro") #elevator position
+        plt.plot(counter*const.dt, pid_run(const.setpoint, motor.pos), "bo") #motor output
 
-        time += const.dt
         counter += 1
 
     plt.show()
@@ -100,8 +98,5 @@ def main():
 
 
    
-    
-
-  
 if __name__ == "__main__":
     main()
