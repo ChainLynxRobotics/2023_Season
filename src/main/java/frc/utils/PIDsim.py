@@ -2,8 +2,8 @@ import numpy as np
 from matplotlib import pyplot as plt 
 from tabulate import tabulate as table
 
+
 #output: table of system response vs time, graphs of system response and control output vs time (3 entry horizontal table)
-#send to jairen
 
 class const:
     kp = 0.1
@@ -20,7 +20,7 @@ class const:
     drag = 0.2
     mass = 0.6
 
-def pid_run(setpoint:float, current) -> float:
+def pid_run(setpoint, current) -> float:
     error = setpoint-current
 
     p  = error*const.kp
@@ -39,36 +39,38 @@ def pid_run(setpoint:float, current) -> float:
     return output
 
 
+
 class elevator_motor:
-    def __init__(self, pos:float, vel:float, drag_coeff:float, mass:float, t:float):
+    cur_vel = 0;
+
+    def __init__(self, pos, vel, drag_coeff, mass, t):
         self.pos = pos
         self.vel = vel
         self.t = t
         self.drag_coeff = drag_coeff
         self.mass = mass
 
-    def next_vel(self, func:float, dt:float):
+    def next_vel(self, func, dt) -> float:
         self.vel += func
         self.t += dt
+        return self.vel
 
-    def next_pos(self, func:float, dt:float):
+    def next_pos(self, func, dt) -> float:
         self.pos += func
         self.t += dt
+        return self.pos
 
-    #call in main graphing loop to update pid
+
     def actuate(self, dt):
        net_force = pid_run(const.setpoint, self.pos) - self.drag_coeff*np.absolute(np.power(self.vel, 2))
-       self.vel = self.next_vel(net_force/self.mass, dt)
-       self.pos = self.next_pos(self.vel, dt)
+       cur_vel = self.next_vel(net_force/self.mass, dt)
+       self.pos = self.next_pos(cur_vel, dt) 
        self.t += dt
 
-        
 
-
-#graph controller output about setpoint
 def main():
-    motor = elevator_motor(0, 0, const.drag, const.mass, 0)
-
+    motor = elevator_motor(0.0, 0.0, const.drag, const.mass, 0.0)
+    motor.actuate(0.02)
 
     plt.title("pid simulation") 
     plt.xlabel("time") 
@@ -95,6 +97,10 @@ def main():
 
     plt.show()
     print(table(data, columns))
+
+
+   
+    
 
   
 if __name__ == "__main__":

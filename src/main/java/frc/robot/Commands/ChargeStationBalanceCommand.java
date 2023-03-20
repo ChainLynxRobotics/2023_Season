@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.DriveSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
+import frc.utils.ChargeStationStates;
 
 /*
  * moves forward at constant initial speed until pitch changes
@@ -18,13 +19,11 @@ public class ChargeStationBalanceCommand extends CommandBase {
     private ElevatorSubsystem elevator;
     private Joystick stick;
 
-    private CopiedCSB balancer = new CopiedCSB();
+    private ChargeStationStates balancer = new ChargeStationStates();
 
     private Timer timer;
 
     private static final double ELEVATOR_SETPOINT = 0;
-
-
     private boolean pitchChanged = false;
 
     public ChargeStationBalanceCommand(DriveSubsystem drive, ElevatorSubsystem elevator, Joystick stick) {
@@ -70,42 +69,16 @@ public class ChargeStationBalanceCommand extends CommandBase {
             drive.mainDrive(0.5,0,0);
         }
 
-        
-        // //drive and put data on smart dashboard
-        // if (Math.abs(pitch) > 1) {
-        //     pitchChanged = true;
-        //     drive.mainDrive(speed, 0, 0);
-        // }
-
-        // if (pitchChanged == false) {
-        //     initSpeed = SmartDashboard.getNumber("ChargeStationBalance/initSpeed", 0.18);
-        //     drive.mainDrive(0.5, 0, 0);
-        // }
-
-
-        //reset timer if robot is not balanced
-        /* 
-        if (pitch > ERROR || pitchChanged == false) {
-            System.out.printf("reset timer, current pitch is %f \n", pitch);
+        if (Math.abs(pitch) > 1) {
             timer.reset();
-        }*/
+        }
     }
 
     @Override
     public boolean isFinished() {
-        if (stick.getRawButton(9)) {
+        if (stick.getRawButton(9) || timer.hasElapsed(1)) {
             return true;
         }
         return false;
     }
-    
-    // @Override
-    // public boolean isFinished() {
-    //     return (timer.get() >= TIME_ENGAGED) ? true : false;
-    // }
-
-    // @Override
-    // public void end(boolean interrupted) {
-    //     timer.stop();
-    // }
 }

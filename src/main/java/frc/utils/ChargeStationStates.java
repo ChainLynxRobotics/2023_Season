@@ -1,8 +1,8 @@
-package frc.robot.Commands;
+package frc.utils;
 
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 
-public class CopiedCSB {
+public class ChargeStationStates {
     private BuiltInAccelerometer mRioAccel;
     private int state;
     private int debounceCount;
@@ -12,7 +12,7 @@ public class CopiedCSB {
     private double levelDegree;
     private double debounceTime;
 
-    public CopiedCSB() {
+    public ChargeStationStates() {
         mRioAccel = new BuiltInAccelerometer();
         state = 0;
         debounceCount = 0;
