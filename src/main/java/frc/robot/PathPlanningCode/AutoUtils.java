@@ -39,12 +39,12 @@ public class AutoUtils {
     private HashMap<String, Command> eventMap = new HashMap<>();
 
     public AutoUtils() {
-        autoChooser.setDefaultOption("Priority 1 Auto", AutoModes.PRIORITY_1_AUTO);
-        autoChooser.addOption("Priority 2 Auto", AutoModes.PRIORITY_2_AUTO);
-        autoChooser.addOption("Priority 3 Auto", AutoModes.PRIORITY_3_AUTO);
-        autoChooser.addOption("Priority 4 Auto", AutoModes.PRIORITY_4_AUTO);
-        autoChooser.addOption("Priority 5 Auto", AutoModes.PRIORITY_5_AUTO);
-        autoChooser.addOption("Priority 6 Auto", AutoModes.PRIORITY_6_AUTO);
+        autoChooser.setDefaultOption("P1 - Mobility", AutoModes.PRIORITY_1_AUTO);
+        autoChooser.addOption("P2 - Balance On Charging Station", AutoModes.PRIORITY_2_AUTO);
+        autoChooser.addOption("P3 - Score Cone high", AutoModes.PRIORITY_3_AUTO);
+        autoChooser.addOption("P3 -> P4 - Balance After Set Up", AutoModes.PRIORITY_4_AUTO);
+        autoChooser.addOption("P3 -> P5 - Score Second And Balance", AutoModes.PRIORITY_5_AUTO);
+        autoChooser.addOption("P3 -> P5 -> P6 - Score Third and Balance", AutoModes.PRIORITY_6_AUTO);
 
         SmartDashboard.putData("auto choices", autoChooser);
     }
