@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -161,16 +162,21 @@ public class AutoUtils {
             container, 
             "Priority 2 auto", 
             true, 
-            Map.of("init score p2a", new ScoreGamePieceCommand(
+            Map.of("init score p2a", new PrintCommand("map checkpoint reached"))),
+          new PrintCommand("sequential checkpoint reached"));
+
+        /*
+         * new ScoreGamePieceCommand(
               container.getElevator(),
               container.getIntake(),
               container.getArm(),
-              Bindings.midScoreElevatorSetpoint))),
-          new ChargeStationBalanceCommand(
+              Bindings.midScoreElevatorSetpoint))
+
+            new ChargeStationBalanceCommand(
             container.getDrive(), 
             container.getElevator(), 
-            container.getOperatorController())
-        );
+            container.getOperatorController()) 
+         */
     }
 
     public Command priorityThreeAuto(RobotContainer container) {

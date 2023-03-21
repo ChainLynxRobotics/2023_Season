@@ -1,6 +1,7 @@
 package frc.robot.PathPlanningCode;
 
 import java.util.HashMap;
+import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -62,7 +63,7 @@ public class BareBonesAutos {
         
         //add all key-value pairs to event map
         eventMap.put("score test", new ReleaseCommand(container.getIntake(), 0.8));
-        eventMap.put("marker print", new PrintCommand("marker passed!"));
+        eventMap.put("marker print", new ReleaseCommand(container.getIntake(), 0.8));
         //should only actually need to create 3 of these, but I don't want to rename everything and mess up AutoUtils
         eventMap.put("init score p1a", scoreCommand);
         eventMap.put("init score p2a", scoreCommand);
@@ -111,13 +112,17 @@ public static Command followTrajectoryCommand(RobotContainer container, PathPlan
   return swerveControllerCommand;
 }
 
+//works as expected! is drivetrain stopping when release command is called?
 private Command testAuto(RobotContainer container) {
-    PathPlannerTrajectory path = PathPlanner.loadPath("Test Auto", new PathConstraints(4, 3));
+    PathPlannerTrajectory path = PathPlanner.loadPath("Test Path", new PathConstraints(4, 3));
 
-    FollowPathWithEvents command = new FollowPathWithEvents(
-    followTrajectoryCommand(container, path, true),
-    path.getMarkers(),
-    eventMap);
+    Command command = new SequentialCommandGroup(
+      new ReleaseCommand(container.getIntake(), 0.8).withTimeout(2),
+      new FollowPathWithEvents(
+        followTrajectoryCommand(container, path, false),
+        path.getMarkers(),
+        eventMap),
+      new PrintCommand("middle"));
 
     return command;
 }
@@ -125,6 +130,7 @@ private Command testAuto(RobotContainer container) {
 
 private Command priorityOneAuto(RobotContainer container) {
     PathPlannerTrajectory path = PathPlanner.loadPath("Priority 1 auto", new PathConstraints(4, 3));
+    FollowPathWithEvents cmd = new FollowPathWithEvents(followTrajectoryCommand(container, path, true), path.getMarkers(), eventMap);
     return followTrajectoryCommand(container, path, true);
 } 
 
