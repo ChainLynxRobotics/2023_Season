@@ -49,6 +49,17 @@ public class AutoUtils {
         SmartDashboard.putData("auto choices", autoChooser);
     }
 
+    private Command getRetractCommand(RobotContainer container) {
+      Command initPosCommand = new SequentialCommandGroup(
+        new ElevatorCommand(
+            container.getElevator(), 
+            container.getIntake(), 
+            Bindings.fullRetraction),
+        new InstantCommand(container.getArm()::retract));
+
+        return initPosCommand;
+    }
+
     public Command simpleCmdGrp(RobotContainer container) {
         return new RunCommand(
             () -> container.getDrive().mainDrive(0.8, 0, 0),
@@ -157,26 +168,26 @@ public class AutoUtils {
     
 
     public Command priorityTwoAuto(RobotContainer container) {
+
         return new SequentialCommandGroup(
+          new SequentialCommandGroup(
+            new InstantCommand(container.getArm()::expand),
+            new ElevatorCommand(
+              container.getElevator(), 
+              container.getIntake(), 
+              Bindings.midScoreElevatorSetpoint),
+            new ReleaseCommand(
+              container.getIntake(), 
+              0.8)),
           createPath(
             container, 
             "Priority 2 auto", 
             true, 
-            Map.of("init score p2a", new PrintCommand("map checkpoint reached"))),
-          new PrintCommand("sequential checkpoint reached"));
-
-        /*
-         * new ScoreGamePieceCommand(
-              container.getElevator(),
-              container.getIntake(),
-              container.getArm(),
-              Bindings.midScoreElevatorSetpoint))
-
-            new ChargeStationBalanceCommand(
+            Map.of("init retract p2a", getRetractCommand(container))),
+          new ChargeStationBalanceCommand(
             container.getDrive(), 
             container.getElevator(), 
-            container.getOperatorController()) 
-         */
+            container.getOperatorController()));
     }
 
     public Command priorityThreeAuto(RobotContainer container) {
