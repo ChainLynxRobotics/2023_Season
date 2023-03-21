@@ -2,15 +2,15 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.6847955119521352,
-        "y": 0.41658552761549933
+        "x": 1.918834931419863,
+        "y": 0.44778305181610295
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.684795511952136,
-        "y": 0.41658552761549933
+        "x": 2.918834931419864,
+        "y": 0.44778305181610295
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 178.78379065384087,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -20,27 +20,29 @@
           "init score p2a"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "none",
+        "waitBehavior": "before",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 3.980108836404382,
-        "y": 1.9645753062273537
+        "x": 2.3493955581661163,
+        "y": 1.962080722772556
       },
       "prevControl": {
-        "x": 2.094411840623524,
-        "y": 1.9507517832282513
+        "x": 2.6622406196201287,
+        "y": 1.951990817176078
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 0.6994610496547755,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "balance p2a"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0

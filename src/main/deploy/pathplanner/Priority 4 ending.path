@@ -7,10 +7,10 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0514047343363684,
-        "y": 1.01099995267633
+        "x": 1.57438643002286,
+        "y": 1.009628427242965
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 179.24299634527702,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -24,12 +24,12 @@
     },
     {
       "anchorPoint": {
-        "x": 3.9427506416326135,
-        "y": 2.0678801286400055
+        "x": 2.6195614787062906,
+        "y": 2.091915772373211
       },
       "prevControl": {
-        "x": 2.9323947957626944,
-        "y": 2.1468575324413317
+        "x": 2.0409575819151637,
+        "y": 2.121663597493862
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -38,9 +38,11 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
+        "names": [
+          "balance p4a"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
         "waitTime": 0
       }
     }
@@ -48,20 +50,5 @@
   "maxVelocity": null,
   "maxAcceleration": null,
   "isReversed": true,
-  "markers": [
-    {
-      "position": 0.8087002840909097,
-      "names": [
-        "score",
-        "balance p4a"
-      ]
-    },
-    {
-      "position": 0.2179687500000001,
-      "names": [
-        "event",
-        "score p4a"
-      ]
-    }
-  ]
+  "markers": []
 }

@@ -10,7 +10,7 @@
         "x": 2.8322589023650284,
         "y": 0.40179859699997106
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 179.0605085910581,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -20,7 +20,7 @@
           "init score p3a"
         ],
         "executionBehavior": "sequential",
-        "waitBehavior": "none",
+        "waitBehavior": "before",
         "waitTime": 0
       }
     },
@@ -30,12 +30,12 @@
         "y": 0.8796021641687284
       },
       "prevControl": {
-        "x": 7.078139993085543,
-        "y": 0.9227044704089401
+        "x": 6.434589577512489,
+        "y": 0.8862300415573054
       },
       "nextControl": {
-        "x": 7.078139993085543,
-        "y": 0.9227044704089401
+        "x": 6.434589577512489,
+        "y": 0.8862300415573054
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -55,11 +55,11 @@
         "y": 1.0731252469449384
       },
       "prevControl": {
-        "x": 2.281030318642477,
-        "y": 1.0720352200417833
+        "x": 1.1539736968362826,
+        "y": 1.0646010163548099
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": -179.8748319205552,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -68,8 +68,8 @@
         "names": [
           "end score p3a"
         ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
         "waitTime": 0
       }
     }
@@ -79,9 +79,9 @@
   "isReversed": false,
   "markers": [
     {
-      "position": 0.9877130681818186,
+      "position": 1.0255681818181814,
       "names": [
-        "pickup",
+        "event",
         "intake p3a"
       ]
     }

@@ -11,7 +11,6 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,13 +19,14 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Commands.ChargeStationBalanceCommand;
+import frc.robot.Commands.ElevatorCommand;
 import frc.robot.Commands.IntakeCommand;
+import frc.robot.Commands.ReleaseCommand;
 import frc.robot.Commands.ScoreGamePieceCommand;
 import frc.robot.Commands.VisionTurnCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.Bindings;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.ScoringLocation;
 import frc.robot.RobotContainer;
 
 
@@ -36,12 +36,6 @@ public class AutoUtils {
 
     //stores all the command bindings along path checkpoints
     private HashMap<String, Command> eventMap = new HashMap<>();
-
-    private final TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared
-    )
-        .setKinematics(DriveConstants.kDriveKinematics);
 
     public AutoUtils() {
         autoChooser.setDefaultOption("Priority 1 Auto", AutoModes.PRIORITY_1_AUTO);
@@ -103,15 +97,16 @@ public class AutoUtils {
                         .resetOdometry(traj.getInitialHolonomicPose());
                 }
             }),
+
             new PPSwerveControllerCommand(
                 traj,
                 container.getDrive()::getPose,
                 DriveConstants.kDriveKinematics,
-                new PIDController(0, 0, 0), // X controller
-                new PIDController(0, 0, 0), // Y controller
-                new PIDController(0, 0, 0), // Rotation controller
+                new PIDController(1, 0, 0), // X controller
+                new PIDController(1, 0, 0), // Y controller
+                new PIDController(5, 0, 0), // Rotation controller
                 container.getDrive()::setModuleStates, // Module states consumer
-                true, // Should the path be automatically mirrored depending on alliance color.
+                false, // Should the path be automatically mirrored depending on alliance color.
                 container.getDrive()
             )
         );
@@ -128,6 +123,7 @@ public class AutoUtils {
             }
             entry++;
         }
+        PathPlanner.loadPathGroup(null,null,null,null);
 
         FollowPathWithEvents command = new FollowPathWithEvents(
           followTrajectoryCommand(container, path, isFirstPath),
@@ -145,16 +141,23 @@ public class AutoUtils {
             container, 
             "Priority 1 auto", 
             true, 
-            Map.of("init score p1a", new ScoreGamePieceCommand(
-              container.getElevator(), 
-              container.getIntake(), 
-              container.getArm(),
-              Bindings.midScoreElevatorSetpoint)));
+            Map.of("init score p1a", new SequentialCommandGroup(
+              new InstantCommand(container.getArm()::expand),
+              new ElevatorCommand(
+                container.getElevator(), 
+                container.getIntake(), 
+                Bindings.midScoreElevatorSetpoint),
+              new ReleaseCommand(
+                container.getIntake(), 
+                0.8))));
     }
+
+
     
 
     public Command priorityTwoAuto(RobotContainer container) {
-        return createPath(
+        return new SequentialCommandGroup(
+          createPath(
             container, 
             "Priority 2 auto", 
             true, 
@@ -162,7 +165,12 @@ public class AutoUtils {
               container.getElevator(),
               container.getIntake(),
               container.getArm(),
-              Bindings.midScoreElevatorSetpoint)));
+              Bindings.midScoreElevatorSetpoint))),
+          new ChargeStationBalanceCommand(
+            container.getDrive(), 
+            container.getElevator(), 
+            container.getOperatorController())
+        );
     }
 
     public Command priorityThreeAuto(RobotContainer container) {
@@ -185,11 +193,17 @@ public class AutoUtils {
     }
 
     public Command priorityFourAuto(RobotContainer container) {
-        return createPath(
+        return new SequentialCommandGroup(
+          createPath(
             container, 
             "Priority 4 ending", 
             false, 
-            Map.of());
+            Map.of()),
+          new ChargeStationBalanceCommand(
+            container.getDrive(), 
+            container.getElevator(), 
+            container.getOperatorController())
+        );
     }
     
 
@@ -198,7 +212,11 @@ public class AutoUtils {
             container, 
             "Priority 5 2nd pickup", 
             false, 
-            Map.of("intake p5a", new IntakeCommand(container.getIntake(), 0.8).withTimeout(2)));
+            Map.of("intake p5a", 
+              new SequentialCommandGroup(
+                new ElevatorCommand(container.getElevator(), container.getIntake(), Bindings.groundPickUp),
+                new IntakeCommand(container.getIntake(), 0.8).withTimeout(1)
+              )));
     }
 
     public Command priorityFiveExit(RobotContainer container) {
@@ -214,11 +232,17 @@ public class AutoUtils {
             container, 
             "Priority 5 ending", 
             false, 
-            Map.of("end score p5a", new ScoreGamePieceCommand(
-              container.getElevator(),
-              container.getIntake(),
-              container.getArm(),
-              Bindings.midScoreElevatorSetpoint)));
+            Map.of(
+              "end score p5a", new ScoreGamePieceCommand(
+                container.getElevator(),
+                container.getIntake(),
+                container.getArm(),
+                Bindings.midScoreElevatorSetpoint), 
+              "balance p5a", new ChargeStationBalanceCommand(
+                container.getDrive(),
+                container.getElevator(), 
+                container.getOperatorController()))
+              );
     }
 
     public Command priority6Pickup(RobotContainer container) {
@@ -226,12 +250,21 @@ public class AutoUtils {
             container, 
             "Priority 6 pickup", 
             false, 
-            Map.of("score p6a", new ScoreGamePieceCommand(
-              container.getElevator(),
-              container.getIntake(),
-              container.getArm(),
-              Bindings.midScoreElevatorSetpoint),
-              "intake p6a", new IntakeCommand(container.getIntake(), 0.8).withTimeout(2)));
+            Map.of(
+              "score p6a", new ScoreGamePieceCommand(
+                container.getElevator(),
+                container.getIntake(),
+                container.getArm(),
+                Bindings.midScoreElevatorSetpoint),
+              "intake p6a", new SequentialCommandGroup(
+                new ElevatorCommand(
+                  container.getElevator(), 
+                  container.getIntake(), 
+                  Bindings.groundPickUp),
+                  new IntakeCommand(
+                  container.getIntake(),
+                  0.8).withTimeout(1)
+              )));
     }
 
 
@@ -240,11 +273,16 @@ public class AutoUtils {
         container, 
         "Priority 6 ending", 
         false, 
-        Map.of("end score p6a", new ScoreGamePieceCommand(
-          container.getElevator(),
-          container.getIntake(),
-          container.getArm(),
-          Bindings.midScoreElevatorSetpoint)));
+        Map.of(
+          "end score p6a", new ScoreGamePieceCommand(
+            container.getElevator(),
+            container.getIntake(),
+            container.getArm(),
+            Bindings.midScoreElevatorSetpoint),
+          "balance p6a", new ChargeStationBalanceCommand(
+            container.getDrive(), 
+            container.getElevator(), 
+            container.getOperatorController())));
     }
 
 

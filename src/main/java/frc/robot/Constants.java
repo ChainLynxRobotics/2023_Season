@@ -159,6 +159,12 @@ public final class Constants {
         public static final double kPXController = 1;
         public static final double kPYController = 1;
         public static final double kPThetaController = 1;
+        public static final double kIThetaController = 0.001;
+        public static final double kDThetaController = 0.7;
+
+        public static final double kP = 1;
+        public static final double kI = 0.001;
+        public static final double kD = 0.1;
 
         public static final double FIELD_LENGTH = 16.54;
         public static final double FIELD_WIDTH = 8.02;
