@@ -1,7 +1,6 @@
 package frc.robot.PathPlanningCode;
 
 import java.util.HashMap;
-import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -112,7 +111,7 @@ public static Command followTrajectoryCommand(RobotContainer container, PathPlan
   return swerveControllerCommand;
 }
 
-//works as expected! is drivetrain stopping when release command is called?
+//works as expected! is drivetrain stopping when release command is called? -if so, separate into 2 paths and forget about event map
 private Command testAuto(RobotContainer container) {
     PathPlannerTrajectory path = PathPlanner.loadPath("Test Path", new PathConstraints(4, 3));
 

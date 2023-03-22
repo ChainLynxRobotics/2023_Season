@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Commands.ChargeStationBalanceCommand;
 import frc.robot.Commands.ElevatorCommand;
 import frc.robot.Commands.IntakeCommand;
@@ -172,13 +173,14 @@ public class AutoUtils {
         return new SequentialCommandGroup(
           new SequentialCommandGroup(
             new InstantCommand(container.getArm()::expand),
+            new WaitCommand(2),
             new ElevatorCommand(
               container.getElevator(), 
               container.getIntake(), 
               Bindings.midScoreElevatorSetpoint),
             new ReleaseCommand(
               container.getIntake(), 
-              0.8)),
+              0.8).withTimeout(1)),
           createPath(
             container, 
             "Priority 2 auto", 
