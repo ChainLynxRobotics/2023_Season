@@ -40,12 +40,12 @@ public class AutoUtils {
     private HashMap<String, Command> eventMap = new HashMap<>();
 
     public AutoUtils() {
-        autoChooser.setDefaultOption("Priority 1 Auto", AutoModes.PRIORITY_1_AUTO);
-        autoChooser.addOption("Priority 2 Auto", AutoModes.PRIORITY_2_AUTO);
-        autoChooser.addOption("Priority 3 Auto", AutoModes.PRIORITY_3_AUTO);
-        autoChooser.addOption("Priority 4 Auto", AutoModes.PRIORITY_4_AUTO);
-        autoChooser.addOption("Priority 5 Auto", AutoModes.PRIORITY_5_AUTO);
-        autoChooser.addOption("Priority 6 Auto", AutoModes.PRIORITY_6_AUTO);
+        autoChooser.setDefaultOption("P1 - Mobility", AutoModes.PRIORITY_1_AUTO);
+        autoChooser.addOption("P2 - Balance On Charging Station", AutoModes.PRIORITY_2_AUTO);
+        autoChooser.addOption("P3 - Score Cone high", AutoModes.PRIORITY_3_AUTO);
+        autoChooser.addOption("P3 -> P4 - Balance After Set Up", AutoModes.PRIORITY_4_AUTO);
+        autoChooser.addOption("P3 -> P5 - Score Second And Balance", AutoModes.PRIORITY_5_AUTO);
+        autoChooser.addOption("P3 -> P5 -> P6 - Score Third and Balance", AutoModes.PRIORITY_6_AUTO);
 
         SmartDashboard.putData("auto choices", autoChooser);
     }
@@ -177,7 +177,7 @@ public class AutoUtils {
             new ElevatorCommand(
               container.getElevator(), 
               container.getIntake(), 
-              Bindings.midScoreElevatorSetpoint),
+              Bindings.highScoreElevatorSetpoint),
             new ReleaseCommand(
               container.getIntake(), 
               0.8).withTimeout(1)),
@@ -185,13 +185,19 @@ public class AutoUtils {
             container, 
             "Priority 2 auto", 
             true, 
-            Map.of("init retract p2a", getRetractCommand(container))),
-          new ChargeStationBalanceCommand(
-            container.getDrive(), 
-            container.getElevator(), 
-            container.getOperatorController()));
+            Map.of("init retract p2a", getRetractCommand(container))));
     }
 
+    public Command priorityTwoAutoEnding(RobotContainer container) {
+      return new SequentialCommandGroup(new SequentialCommandGroup(
+        createPath(container, "Priority 2 ending", false, Map.of()),
+        new ChargeStationBalanceCommand(
+            container.getDrive(), 
+            container.getElevator(), 
+            container.getOperatorController())
+      ));
+    }
+   
     public Command priorityThreeAuto(RobotContainer container) {
         return createPath(
             container, 
@@ -208,7 +214,7 @@ public class AutoUtils {
                   container.getElevator(),
                   container.getIntake(),
                   container.getArm(),
-                  Bindings.midScoreElevatorSetpoint)));
+                  Bindings.highScoreElevatorSetpoint)));
     }
 
     public Command priorityFourAuto(RobotContainer container) {
@@ -323,7 +329,8 @@ public class AutoUtils {
       case PRIORITY_1_AUTO:
         return priorityOneAuto(container);
       case PRIORITY_2_AUTO:
-        return priorityTwoAuto(container);
+        return priorityTwoAuto(container)
+          .andThen(priorityTwoAutoEnding(container));
       case PRIORITY_3_AUTO:
         return priorityThreeAuto(container);
       case PRIORITY_4_AUTO:
