@@ -60,6 +60,14 @@ public class BareBonesAutos {
                 container.getIntake(), 
                 Bindings.groundPickUp)
         );
+
+        Command initPosCommand = new SequentialCommandGroup(
+            new ElevatorCommand(
+                container.getElevator(), 
+                container.getIntake(), 
+                Bindings.fullRetraction),
+            new InstantCommand(container.getArm()::retract)
+        );
         
         //add all key-value pairs to event map
         eventMap.put("score test", new ReleaseCommand(container.getIntake(), 0.8));
