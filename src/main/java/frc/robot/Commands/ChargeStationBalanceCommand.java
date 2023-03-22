@@ -64,9 +64,9 @@ public class ChargeStationBalanceCommand extends CommandBase {
         }
 
         if (pitchChanged) {
-            drive.mainDrive(1.2*speed, 0, 0);
+            drive.mainDrive(-1.2*speed, 0, 0);
         } else {
-            drive.mainDrive(0.5,0,0);
+            drive.mainDrive(-0.5,0,0);
         }
 
         if (Math.abs(pitch) > 1) {
