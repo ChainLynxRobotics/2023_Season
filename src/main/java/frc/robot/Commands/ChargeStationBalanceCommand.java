@@ -64,9 +64,9 @@ public class ChargeStationBalanceCommand extends CommandBase {
         }
 
         if (pitchChanged) {
-            drive.mainDrive(1.2*speed, 0, 0);
+            drive.mainDrive(-1.2*speed, 0, 0);
         } else {
-            drive.mainDrive(0.5,0,0);
+            drive.mainDrive(-0.5,0,0);
         }
 
         if (Math.abs(pitch) > 1) {
@@ -74,9 +74,11 @@ public class ChargeStationBalanceCommand extends CommandBase {
         }
     }
 
+    //test if robot is exiting the command prematurely or going too slow
     @Override
     public boolean isFinished() {
         if (stick.getRawButton(9) || timer.hasElapsed(1)) {
+            System.out.println("command terminated");
             return true;
         }
         return false;

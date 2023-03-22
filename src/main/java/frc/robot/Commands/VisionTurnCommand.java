@@ -4,12 +4,12 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Subsystems.DriveSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
 
 public class VisionTurnCommand extends CommandBase {
 
-    // private VisionSubsystem vision;
     private VisionSubsystem vision;
     private DriveSubsystem drive;
     private XboxController controller;
@@ -45,9 +45,9 @@ public class VisionTurnCommand extends CommandBase {
         }
 
         drive.mainDrive(
-            -MathUtil.applyDeadband(controller.getLeftY(), 0.06),
-            MathUtil.applyDeadband(controller.getLeftX(), 0.06),
-            MathUtil.applyDeadband(rotationSpeed, 0.06)
+            -MathUtil.applyDeadband(controller.getLeftY(), DriveConstants.DRIVE_DEADBAND),
+            MathUtil.applyDeadband(controller.getLeftX(), DriveConstants.DRIVE_DEADBAND),
+            MathUtil.applyDeadband(rotationSpeed, DriveConstants.DRIVE_DEADBAND)
         );
     }
 

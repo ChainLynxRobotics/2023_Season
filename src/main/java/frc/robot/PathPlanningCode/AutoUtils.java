@@ -15,10 +15,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Commands.ChargeStationBalanceCommand;
 import frc.robot.Commands.ElevatorCommand;
 import frc.robot.Commands.IntakeCommand;
@@ -147,38 +149,38 @@ public class AutoUtils {
     }
 
 
-    //if event map doesn't work (it should), put stuff in a sequential command group
+    //only event map end events aren't working
     public Command priorityOneAuto(RobotContainer container) {
-        return createPath(
-            container, 
-            "Priority 1 auto", 
-            true, 
-            Map.of("init score p1a", new SequentialCommandGroup(
-              new InstantCommand(container.getArm()::expand),
-              new ElevatorCommand(
-                container.getElevator(), 
-                container.getIntake(), 
-                Bindings.midScoreElevatorSetpoint),
-              new ReleaseCommand(
-                container.getIntake(), 
-                0.8))));
-    }
-
-
-    
-
-    public Command priorityTwoAuto(RobotContainer container) {
-
         return new SequentialCommandGroup(
           new SequentialCommandGroup(
             new InstantCommand(container.getArm()::expand),
+            new WaitCommand(1.5),
+            new ElevatorCommand(
+              container.getElevator(), 
+              container.getIntake(), 
+              Bindings.highScoreElevatorSetpoint)),
+          createPath(
+            container, 
+            "Priority 1 auto", 
+            true, 
+            Map.of("init retract p1a", new ReleaseCommand(
+              container.getIntake(), 
+              0.8).withTimeout(1))));
+    }
+
+
+    public Command priorityTwoAuto(RobotContainer container) {
+        return new SequentialCommandGroup(
+          new SequentialCommandGroup(
+            new InstantCommand(container.getArm()::expand),
+            new WaitCommand(1.5),
             new ElevatorCommand(
               container.getElevator(), 
               container.getIntake(), 
               Bindings.highScoreElevatorSetpoint),
             new ReleaseCommand(
               container.getIntake(), 
-              0.8)),
+              0.8).withTimeout(1)),
           createPath(
             container, 
             "Priority 2 auto", 
@@ -196,23 +198,42 @@ public class AutoUtils {
       ));
     }
    
+    //switch second score to cone mode
     public Command priorityThreeAuto(RobotContainer container) {
-        return createPath(
-            container, 
-            "Priority 3 auto", 
-            true, 
-            Map.of(
-                "init score p3a", new ScoreGamePieceCommand(
-                  container.getElevator(),
-                  container.getIntake(),
-                  container.getArm(),
-                  Bindings.midScoreElevatorSetpoint),
-                "intake p3a", new IntakeCommand(container.getIntake(), 0.8).withTimeout(2),
-                "end score p3a", new ScoreGamePieceCommand(
-                  container.getElevator(),
-                  container.getIntake(),
-                  container.getArm(),
-                  Bindings.highScoreElevatorSetpoint)));
+      return new SequentialCommandGroup(
+        new SequentialCommandGroup(
+            new InstantCommand(container.getArm()::expand),
+            new WaitCommand(1.5),
+            new ElevatorCommand(
+              container.getElevator(), 
+              container.getIntake(), 
+              Bindings.highScoreElevatorSetpoint),
+        createPath(
+          container, 
+          "Priority 3 auto", 
+          true, 
+          Map.of(
+            "init retract p3a", new ScoreGamePieceCommand(
+              container.getElevator(),
+                container.getIntake(),
+                container.getArm(),
+                Bindings.highScoreElevatorSetpoint), 
+            "intake p3a", new ParallelCommandGroup(
+              new ElevatorCommand(
+                container.getElevator(),
+                container.getIntake(),
+                Bindings.groundPickUp),
+              new IntakeCommand(
+                container.getIntake(), 
+                0.7)
+            ))),
+        new SequentialCommandGroup(
+          new InstantCommand(container.getArm()::expand),
+          new WaitCommand(1.5),
+          new ElevatorCommand(
+            container.getElevator(), 
+            container.getIntake(), 
+            Bindings.highScoreElevatorSetpoint))));
     }
 
     public Command priorityFourAuto(RobotContainer container) {

@@ -24,7 +24,7 @@ public class ElevatorCommand extends CommandBase {
         addRequirements(elevator, intake);
     }
 
-
+    //TODO: fix elevator setpoint logic
     @Override
     public void execute() {
         if (setpointLocation == Bindings.groundPickUp) {

@@ -17,7 +17,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "init score p3a"
+          "init retract p3a"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "before",
@@ -26,16 +26,16 @@
     },
     {
       "anchorPoint": {
-        "x": 6.230419831290612,
-        "y": 0.8796021641687284
+        "x": 6.4871846601332095,
+        "y": 0.9071636962718367
       },
       "prevControl": {
-        "x": 6.434589577512489,
-        "y": 0.8862300415573054
+        "x": 6.691354406355087,
+        "y": 0.9137915736604137
       },
       "nextControl": {
-        "x": 6.434589577512489,
-        "y": 0.8862300415573054
+        "x": 6.691354406355087,
+        "y": 0.9137915736604137
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -79,7 +79,7 @@
   "isReversed": false,
   "markers": [
     {
-      "position": 1.0255681818181814,
+      "position": 0.765127840909091,
       "names": [
         "event",
         "intake p3a"
