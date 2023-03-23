@@ -27,7 +27,7 @@ public final class Constants {
 
         public static final double DRIVE_DEADBAND = 0.06;
         //4.45 m/s max speed
-        public static final double kMaxSpeedBase = 4.45;
+        public static final double kMaxSpeedBase = 4.8;
         public static final double kMaxSpeedScaleFactor = 0.7;
         public static final double kMaxSpeedMetersPerSecond =
             kMaxSpeedBase * kMaxSpeedScaleFactor;
@@ -214,7 +214,7 @@ public final class Constants {
     public static final int SOLENOID_forward1 = 0;
     public static final int SOLENOID_reverse1 = 1;
 
-    public enum IntakeGamePiece {
+    public enum GamePiece {
         CUBE,
         CONE,
     }

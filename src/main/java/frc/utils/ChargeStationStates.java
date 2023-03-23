@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 
 public class ChargeStationStates {
     private BuiltInAccelerometer mRioAccel;
-    private int state;
+    private States state;
     private int debounceCount;
     private double robotSpeedSlow;
     private double robotSpeedFast;
@@ -14,7 +14,7 @@ public class ChargeStationStates {
 
     public ChargeStationStates() {
         mRioAccel = new BuiltInAccelerometer();
-        state = 0;
+        state = States.APPROACH;
         debounceCount = 0;
 
         // Speed the robot drived while scoring/approaching station, default = 0.4
@@ -38,6 +38,10 @@ public class ChargeStationStates {
         // Reduces the impact of sensor noice, but too high can make the auto run
         // slower, default = 0.2
         debounceTime = 0.2;
+    }
+
+    public void overrideState() {
+        this.state = States.ON_CHARGE_STATION;
     }
 
     public double getPitch() {
@@ -71,34 +75,34 @@ public class ChargeStationStates {
     public double autoBalanceRoutine() {
         switch (state) {
             // drive forwards to approach station, exit when tilt is detected
-            case 0:
+            case APPROACH:
                 if (getTilt() > onChargeStationDegree) {
                     debounceCount++;
                 }
                 if (debounceCount > secondsToTicks(debounceTime)) {
-                    state = 1;
+                    state = States.CLIMBING_CHARGE_STATION;
                     debounceCount = 0;
                     return robotSpeedSlow;
                 }
                 return robotSpeedFast;
             // driving up charge station, drive slower, stopping when level
-            case 1:
+            case CLIMBING_CHARGE_STATION:
                 if (getTilt() < levelDegree) {
                     debounceCount++;
                 }
                 if (debounceCount > secondsToTicks(debounceTime)) {
-                    state = 2;
+                    state = States.ON_CHARGE_STATION;
                     debounceCount = 0;
                     return 0;
                 }
                 return robotSpeedSlow;
             // on charge station, stop motors and wait for end of auto
-            case 2:
+            case ON_CHARGE_STATION:
                 if (Math.abs(getTilt()) <= levelDegree / 2) {
                     debounceCount++;
                 }
                 if (debounceCount > secondsToTicks(debounceTime)) {
-                    state = 4;
+                    state = States.STOP;
                     debounceCount = 0;
                     return 0;
                 }
@@ -107,9 +111,17 @@ public class ChargeStationStates {
                 } else if (getTilt() <= -levelDegree) {
                     return -0.1;
                 }
-            case 3:
+            case STOP:
                 return 0;
         }
         return 0;
+    }
+
+
+    public enum States {
+        APPROACH,
+        CLIMBING_CHARGE_STATION,
+        ON_CHARGE_STATION,
+        STOP
     }
 }

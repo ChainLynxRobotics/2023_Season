@@ -4,14 +4,13 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.VisionTurnCommand;
 import frc.robot.Constants.Bindings;
-import frc.robot.Constants.IntakeGamePiece;
+import frc.robot.Constants.GamePiece;
 import frc.robot.Commands.IntakeCommand;
 import frc.robot.Commands.ChargeStationBalanceCommand;
 import frc.robot.Commands.ElevatorCommand;
@@ -128,7 +127,7 @@ public class RobotContainer {
     new Trigger(() -> m_operatorController.getRawButton(Bindings.setGamePieceCone))
       .onTrue(
         new InstantCommand(
-          () -> m_intake.setState(IntakeGamePiece.CONE),
+          () -> m_intake.setState(GamePiece.CONE),
           m_intake
         )
       );
@@ -137,7 +136,7 @@ public class RobotContainer {
     new Trigger(() -> m_operatorController.getRawButton(Bindings.setGamePieceCube))
       .onTrue(
         new InstantCommand(
-          () -> m_intake.setState(IntakeGamePiece.CUBE),
+          () -> m_intake.setState(GamePiece.CUBE),
           m_intake
         )
       );

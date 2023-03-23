@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8674706509480403,
-        "y": 1.0384258967137847
+        "x": 1.5866218902576694,
+        "y": 0.9130784685180475
       },
       "holonomicAngle": 179.77762914370493,
       "isReversal": false,
@@ -16,9 +16,7 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "init retract p1a"
-        ],
+        "names": [],
         "executionBehavior": "sequential",
         "waitBehavior": "before",
         "waitTime": 0
@@ -26,12 +24,12 @@
     },
     {
       "anchorPoint": {
-        "x": 5.588371230561906,
-        "y": 1.0197763208026418
+        "x": 5.49553250148167,
+        "y": 0.9620782974204838
       },
       "prevControl": {
-        "x": 4.55398524614516,
-        "y": 1.0095697052549166
+        "x": 5.113913715674654,
+        "y": 0.9457836797618039
       },
       "nextControl": null,
       "holonomicAngle": 0,
@@ -50,5 +48,12 @@
   "maxVelocity": null,
   "maxAcceleration": null,
   "isReversed": false,
-  "markers": []
+  "markers": [
+    {
+      "position": 0.09165482954545455,
+      "names": [
+        "init retract p1a"
+      ]
+    }
+  ]
 }

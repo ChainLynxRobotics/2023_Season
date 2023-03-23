@@ -2,38 +2,38 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.832258902365027,
-        "y": 0.40179859699997106
+        "x": 5.5,
+        "y": 0.96
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8322589023650284,
-        "y": 0.40179859699997106
+        "x": 5.631108359438941,
+        "y": 0.9561055372110739
       },
-      "holonomicAngle": 179.0605085910581,
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [],
-        "executionBehavior": "sequential",
-        "waitBehavior": "before",
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 6.4871846601332095,
-        "y": 0.9071636962718367
+        "x": 6.413423970945164,
+        "y": 0.9391150639940167
       },
       "prevControl": {
-        "x": 6.691354406355087,
-        "y": 0.9137915736604137
+        "x": 6.340997004910677,
+        "y": 0.9352298704597405
       },
       "nextControl": {
-        "x": 6.691354406355087,
-        "y": 0.9137915736604137
+        "x": 6.340997004910677,
+        "y": 0.9352298704597405
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -49,44 +49,32 @@
     },
     {
       "anchorPoint": {
-        "x": 1.7834330373521858,
-        "y": 1.0731252469449384
+        "x": 3.845716960531144,
+        "y": 2.7857417520390597
       },
       "prevControl": {
-        "x": 1.1539736968362826,
-        "y": 1.0646010163548099
+        "x": 4.157170310868399,
+        "y": 2.986264128778257
       },
       "nextControl": null,
-      "holonomicAngle": -179.8748319205552,
+      "holonomicAngle": 178.87092344185476,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "end score p3a"
-        ],
-        "executionBehavior": "sequential",
-        "waitBehavior": "after",
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "maxVelocity": null,
-  "maxAcceleration": null,
-  "isReversed": false,
   "markers": [
     {
-      "position": 0.765127840909091,
+      "position": 0.19602272727272727,
       "names": [
-        "event",
-        "intake p3a"
-      ]
-    },
-    {
-      "position": 0.023295454545454536,
-      "names": [
-        "init retract p3a"
+        "start intaking"
       ]
     }
   ]

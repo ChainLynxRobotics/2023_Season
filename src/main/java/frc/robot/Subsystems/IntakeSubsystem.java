@@ -7,27 +7,26 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.IntakeGamePiece;
+import frc.robot.Constants.GamePiece;
 
 public class IntakeSubsystem extends SubsystemBase {
 
     private CANSparkMax intakeMotorInner;
     private CANSparkMax intakeMotorOuter;
 
-    private IntakeGamePiece state;
+    private static boolean coneHold;
+    private GamePiece state;
 
-    public IntakeGamePiece getState() {
+    public GamePiece getState() {
         return state;
     }
 
-    public void setState(IntakeGamePiece state) {
+    public void setState(GamePiece state) {
         this.state = state;
-        if (state == IntakeGamePiece.CUBE) {
-            SmartDashboard.putBoolean("GamePiece/ConeMode", false);
-            SmartDashboard.putBoolean("GamePiece/CubeMode", true);
+        if (state == GamePiece.CUBE) {
+            SmartDashboard.putBoolean("Intake/Mode", true);
         } else {
-            SmartDashboard.putBoolean("GamePiece/ConeMode", true);
-            SmartDashboard.putBoolean("GamePiece/CubeMode", false);
+            SmartDashboard.putBoolean("Intake/Mode", false);
         }
     }
 
@@ -42,7 +41,10 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotorOuter.setIdleMode(IdleMode.kBrake);
         intakeMotorOuter.restoreFactoryDefaults();
 
-        state = IntakeGamePiece.CUBE;
+        state = GamePiece.CUBE;
+
+        coneHold = false;
+        SmartDashboard.putBoolean("Intake/coneHold", coneHold);
     }
 
     public double getWAxisSpeedMultiplier(double axisValue) {
@@ -51,47 +53,53 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void releaseGamePiece(double speedMultiplier) {
-        if (state == IntakeGamePiece.CONE) {
+        if (state == GamePiece.CONE) {
             releaseCone(speedMultiplier);
-        } else if (state == IntakeGamePiece.CUBE) {
+        } else if (state == GamePiece.CUBE) {
             releaseCube(speedMultiplier);
         }
     }
 
     public void intakeGamePiece(double speedMultiplier) {
-        if (state == IntakeGamePiece.CONE) {
+        if (state == GamePiece.CONE) {
             pickUpCone(speedMultiplier);
-        } else if (state == IntakeGamePiece.CUBE) {
+        } else if (state == GamePiece.CUBE) {
             pickUpCube(speedMultiplier);
         }
     }
 
     public void pickUpCone(double speedMultiplier) {
-        // TODO: tune motor speeds
         intakeMotorInner.set(-0.4);
         intakeMotorOuter.set(-0.4);
+        coneHold = true;
     }
 
     public void releaseCone(double speedMultiplier) {
-        // TODO:tune motor speeds
         intakeMotorInner.set(0.4);
         intakeMotorOuter.set(0.4);
+        coneHold = false;
     }
 
     public void pickUpCube(double speedMultiplier) {
-        // TODO:tune motor speeds
         intakeMotorInner.set(0.4);
         intakeMotorOuter.set(-0.4);
+        coneHold = false;
     }
 
     public void releaseCube(double speedMultiplier) {
-        // TODO:tune motor speeds
         intakeMotorInner.set(-0.4);
         intakeMotorOuter.set(0.4);
+        coneHold = false;
     }
 
     public void stopMotors() {
-        intakeMotorInner.set(0);
-        intakeMotorOuter.set(0);
+        if (coneHold) {
+            intakeMotorInner.set(-0.05);
+            intakeMotorOuter.set(-0.05);
+        } else {
+            intakeMotorInner.set(0);
+            intakeMotorOuter.set(0);
+        }
+        
     }
 }
