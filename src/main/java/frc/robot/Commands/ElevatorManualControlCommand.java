@@ -2,6 +2,7 @@ package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.OIConstants;
 import frc.robot.Subsystems.ElevatorSubsystem;
 
 public class ElevatorManualControlCommand extends CommandBase {
@@ -17,6 +18,6 @@ public class ElevatorManualControlCommand extends CommandBase {
 
     @Override
     public void execute() {
-        elevator.simpleMovement(stick.getRawAxis(1));
+        elevator.simpleMovement(stick.getRawAxis(OIConstants.yAxis));
     } 
 }

@@ -9,6 +9,7 @@ public class AutoElevatorCommand extends CommandBase {
 
     private ElevatorSubsystem elevator;
     private double setpoint;
+    private double startTime;
 
 
     public AutoElevatorCommand(ElevatorSubsystem elevator, double setpoint) {
@@ -19,25 +20,25 @@ public class AutoElevatorCommand extends CommandBase {
     }
 
     @Override
+    public void initialize() {
+        startTime = System.currentTimeMillis();
+    }
+
+    @Override
     public void execute() {
         elevator.moveElevator(setpoint);
 
-        System.out.printf("setting setpoint via command, setpoint at: %f \n", setpoint);
-        SmartDashboard.putNumber("Elevator Setpoint (rotations)", setpoint);
-
-        if (setpoint-elevator.getDrivingEncoder().getPosition() > 8) {
+        if (setpoint-elevator.getDrivingEncoder().getPosition() > ElevatorConstants.MAX_TRAVEL_LIMIT) {
             elevator.moveElevator(setpoint-ElevatorConstants.ELEVATOR_RAMP_DIST);
-            double startTime = System.currentTimeMillis();
 
-            if (System.currentTimeMillis()-startTime > 100) {
+            if (System.currentTimeMillis()-startTime > 300) {
                 elevator.moveElevator(setpoint);
             }
-        } else if (setpoint-elevator.getDrivingEncoder().getPosition() < -8) {
+        } else if (setpoint-elevator.getDrivingEncoder().getPosition() < -ElevatorConstants.MAX_TRAVEL_LIMIT) {
             elevator.moveElevator(setpoint+ElevatorConstants.ELEVATOR_RAMP_DIST);
-            double startTime2 = System.currentTimeMillis();
 
-            if (System.currentTimeMillis()-startTime2 > 300) {
-                elevator.moveElevator(setpoint+5);
+            if (System.currentTimeMillis()-startTime > 300) {
+                elevator.moveElevator(setpoint);
             }
         } else {
             elevator.moveElevator(setpoint);
@@ -46,7 +47,7 @@ public class AutoElevatorCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if (Math.abs(setpoint - elevator.getDrivingEncoder().getPosition()) < 1) {
+        if (Math.abs(setpoint - elevator.getDrivingEncoder().getPosition()) < 0.05) {
             System.out.println("finished!");
             return true;
         }

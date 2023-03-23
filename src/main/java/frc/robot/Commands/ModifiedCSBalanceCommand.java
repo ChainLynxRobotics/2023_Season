@@ -81,7 +81,7 @@ public class ModifiedCSBalanceCommand extends CommandBase {
             drive.mainDrive(CSDriveDir*0.5,0,0);
         }
 
-        if (Math.abs(pitch) > 1) {
+        if (Math.abs(pitch) > 6) {
             timer.reset();
         }
     }

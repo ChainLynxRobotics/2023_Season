@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -28,8 +27,6 @@ import frc.robot.Commands.ChargeStationBalanceCommand;
 import frc.robot.Commands.ElevatorCommand;
 import frc.robot.Commands.IntakeCommand;
 import frc.robot.Commands.ModifiedCSBalanceCommand;
-import frc.robot.Commands.ReleaseCommand;
-import frc.robot.Commands.ScoreGamePieceCommand;
 import frc.robot.Commands.VisionTurnCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.Bindings;
@@ -50,9 +47,14 @@ public class AutoUtils {
         autoChooser.setDefaultOption("P1 - Mobility", AutoModes.PRIORITY_1_AUTO);
         autoChooser.addOption("P2 - Balance On Charging Station", AutoModes.PRIORITY_2_AUTO);
         autoChooser.addOption("P3 - Score Cone high", AutoModes.PRIORITY_3_AUTO);
+
+        //might still need these later
+        /*
         autoChooser.addOption("P3 -> P4 - Balance After Set Up", AutoModes.PRIORITY_4_AUTO);
         autoChooser.addOption("P3 -> P5 - Score Second And Balance", AutoModes.PRIORITY_5_AUTO);
         autoChooser.addOption("P3 -> P5 -> P6 - Score Third and Balance", AutoModes.PRIORITY_6_AUTO);
+         * 
+         */
 
         SmartDashboard.putData("auto choices", autoChooser);
     }
@@ -264,11 +266,7 @@ public class AutoUtils {
             "Priority 5 ending", 
             false, 
             Map.of(
-              "end score p5a", new ScoreGamePieceCommand(
-                container.getElevator(),
-                container.getIntake(),
-                container.getArm(),
-                Bindings.midScoreElevatorSetpoint), 
+              "end score p5a", getScoreCommand(container,  ElevatorConstants.highElevatorConeSetpoint, GamePiece.CONE), 
               "balance p5a", new ChargeStationBalanceCommand(
                 container.getDrive(),
                 container.getElevator(), 
@@ -282,11 +280,7 @@ public class AutoUtils {
             "Priority 6 pickup", 
             false, 
             Map.of(
-              "score p6a", new ScoreGamePieceCommand(
-                container.getElevator(),
-                container.getIntake(),
-                container.getArm(),
-                Bindings.midScoreElevatorSetpoint),
+              "score p6a", getScoreCommand(container,  ElevatorConstants.highElevatorConeSetpoint, GamePiece.CONE),
               "intake p6a", new SequentialCommandGroup(
                 new ElevatorCommand(
                   container.getElevator(), 
@@ -305,11 +299,7 @@ public class AutoUtils {
         "Priority 6 ending", 
         false, 
         Map.of(
-          "end score p6a", new ScoreGamePieceCommand(
-            container.getElevator(),
-            container.getIntake(),
-            container.getArm(),
-            Bindings.midScoreElevatorSetpoint),
+          "end score p6a", getScoreCommand(container, ElevatorConstants.highElevatorCubeSetpoint, GamePiece.CUBE),
           "balance p6a", new ChargeStationBalanceCommand(
             container.getDrive(), 
             container.getElevator(), 

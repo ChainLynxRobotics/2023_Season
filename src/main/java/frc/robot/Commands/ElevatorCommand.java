@@ -15,6 +15,8 @@ public class ElevatorCommand extends CommandBase {
     private double setpoint;
     private int setpointLocation;
 
+    double startTime;
+
     public ElevatorCommand(ElevatorSubsystem elevator, IntakeSubsystem intake, int setpointLocation) {
         this.elevator = elevator;
         this.intake = intake;
@@ -24,7 +26,13 @@ public class ElevatorCommand extends CommandBase {
         addRequirements(elevator, intake);
     }
 
-    //TODO: fix elevator setpoint logic
+    @Override
+    public void initialize() {
+        startTime = System.currentTimeMillis();
+
+    }
+
+    //TODO: fix elevator setpoint logic (not broken, but directly pass in setpoint it's too verbose)
     @Override
     public void execute() {
         if (setpointLocation == Bindings.groundPickUp) {
@@ -45,22 +53,18 @@ public class ElevatorCommand extends CommandBase {
             setpoint = ElevatorConstants.fullRetractionSetpoint;
         }
 
-        System.out.printf("setting setpoint via command, setpoint at: %f \n", setpoint);
-        SmartDashboard.putNumber("Elevator Setpoint (rotations)", setpoint);
-
-        if (setpoint-elevator.getDrivingEncoder().getPosition() > 8) {
+        //to avoid elevator slamming and excessive acceleration, ramp according to "triangular" velocity motion profile
+        if (setpoint-elevator.getDrivingEncoder().getPosition() > ElevatorConstants.MAX_TRAVEL_LIMIT) {
             elevator.moveElevator(setpoint-ElevatorConstants.ELEVATOR_RAMP_DIST);
-            double startTime = System.currentTimeMillis();
-
-            if (System.currentTimeMillis()-startTime > 100) {
+    
+            if (System.currentTimeMillis()-startTime > 300) {
                 elevator.moveElevator(setpoint);
             }
-        } else if (setpoint-elevator.getDrivingEncoder().getPosition() < -8) {
+        } else if (setpoint-elevator.getDrivingEncoder().getPosition() < -ElevatorConstants.MAX_TRAVEL_LIMIT) {
             elevator.moveElevator(setpoint+ElevatorConstants.ELEVATOR_RAMP_DIST);
-            double startTime2 = System.currentTimeMillis();
 
-            if (System.currentTimeMillis()-startTime2 > 300) {
-                elevator.moveElevator(setpoint+5);
+            if (System.currentTimeMillis()-startTime > 300) {
+                elevator.moveElevator(setpoint);
             }
         } else {
             elevator.moveElevator(setpoint);
@@ -69,8 +73,7 @@ public class ElevatorCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if (Math.abs(setpoint - elevator.getDrivingEncoder().getPosition()) < 1) {
-            System.out.println("finished!");
+        if (Math.abs(setpoint - elevator.getDrivingEncoder().getPosition()) < 0.05) {
             return true;
         }
         return false;

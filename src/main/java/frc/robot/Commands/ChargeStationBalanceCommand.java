@@ -4,9 +4,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Subsystems.DriveSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.utils.ChargeStationStates;
+import frc.utils.ChargeStationStates.States;
 
 /*
  * moves forward at constant initial speed until pitch changes
@@ -56,10 +58,9 @@ public class ChargeStationBalanceCommand extends CommandBase {
         double speed = balancer.autoBalanceRoutine();
 
         SmartDashboard.putNumber("ChargeStationBalance/CurrentAngle", pitch);
-        System.out.println("pitch at " + pitch);
 
        
-        if (pitch > 5) {
+        if (pitch > AutoConstants.MIN_PITCH_CHANGE) {
             pitchChanged = true;
         }
 
@@ -69,16 +70,16 @@ public class ChargeStationBalanceCommand extends CommandBase {
             drive.mainDrive(-0.5,0,0);
         }
 
-        if (Math.abs(pitch) > 1) {
+        if (Math.abs(pitch) > 6 && balancer.getState() == States.ON_CHARGE_STATION) {
             timer.reset();
         }
     }
 
-    //test if robot is exiting the command prematurely or going too slow
     @Override
     public boolean isFinished() {
-        if (stick.getRawButton(9) || timer.hasElapsed(1)) {
+        if (timer.hasElapsed(1)) {
             System.out.println("command terminated");
+            timer.stop();
             return true;
         }
         return false;
