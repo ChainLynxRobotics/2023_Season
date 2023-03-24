@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -61,6 +62,8 @@ public class RobotContainer {
     m_intake = new IntakeSubsystem();
 
     configureButtonBindings();
+    //TODO check this is the right port (ask Jairen)
+    CameraServer.startAutomaticCapture("intake camera", 0);
     // Configure default commands
     m_robotDrive.setDefaultCommand(
       // The left stick controls translation of the robot.
@@ -193,7 +196,7 @@ public class RobotContainer {
       .whileTrue(new ElevatorManualControlCommand(m_operatorController, m_elevator));
 
     new Trigger(() -> m_operatorController.getRawButton(Bindings.chargeStationBalance))
-      .onTrue(new ChargeStationBalanceCommand(m_robotDrive, m_elevator, m_operatorController));
+      .onTrue(new ChargeStationBalanceCommand(m_robotDrive, m_elevator));
   }
 
 

@@ -141,9 +141,9 @@ public final class Constants {
         public static final int yAxis = 1;
         public static final double kDriveDeadband = 0.06;
         public static final double kMagnitudeDeadband = 0.06;
-        public static final double kDirectionSlewRate = 1.2; // radians per second
-        public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%)
-        public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
+        public static final double kDirectionSlewRate = 10; // radians per second
+        public static final double kMagnitudeSlewRate = 90; // percent per second (1 = 100%)
+        public static final double kRotationalSlewRate = 90; // percent per second (1 = 100%)
 
         //button bindings
         public static final int INTAKE_SPEED_AXIS = 3;
@@ -151,8 +151,8 @@ public final class Constants {
 
     public static final class AutoConstants {
 
-        public static final double kMaxSpeedMetersPerSecond = 3;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+        public static final double kMaxSpeedMetersPerSecond = 4.8;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 8;
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
@@ -195,7 +195,7 @@ public final class Constants {
       public static final double midElevatorGamepiece = 7.5;
       public static final double highElevatorConeSetpoint = 15.5;
       public static final double highElevatorCubeSetpoint = 13.5;
-      public static final double doubleSubstationSetpoint = 14;
+      public static final double doubleSubstationSetpoint = 14.2;
       public static final double fullRetractionSetpoint = 0;
 
       public static final double ELEVATOR_RAMP_DIST = 3;

@@ -1,9 +1,10 @@
 package frc.utils;
 
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ChargeStationStates {
-    private BuiltInAccelerometer mRioAccel;
+    private static BuiltInAccelerometer mRioAccel;
     private States state;
     private int debounceCount;
     private double robotSpeedSlow;
@@ -57,6 +58,7 @@ public class ChargeStationStates {
         return Math.atan2(mRioAccel.getY(), mRioAccel.getZ()) * 57.3;
     }
 
+
     // returns the magnititude of the robot's tilt calculated by the root of
     // pitch^2 + roll^2, used to compensate for diagonally mounted rio
     public double getTilt() {
@@ -66,6 +68,22 @@ public class ChargeStationStates {
             return Math.sqrt(pitch * pitch + roll * roll);
         } else {
             return -Math.sqrt(pitch * pitch + roll * roll);
+        }
+    }
+
+
+    public static double getAcceleration() {
+        return Math.signum(mRioAccel.getY())*Math.sqrt(mRioAccel.getX()*mRioAccel.getX()+mRioAccel.getY()*mRioAccel.getY())*57.3;
+    }
+
+    //if nonzero, put to shuffleboard
+    public static void updateChassisVelocity() {
+        double lastTime = System.currentTimeMillis();
+        double lastAcceleration = getAcceleration();
+
+        if (System.currentTimeMillis()-lastTime > 20) {
+            double velocity = (getAcceleration()-lastAcceleration)*0.02;
+            SmartDashboard.putNumber("driveVelocity", velocity);
         }
     }
 
