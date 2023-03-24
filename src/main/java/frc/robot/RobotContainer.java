@@ -193,7 +193,7 @@ public class RobotContainer {
       .whileTrue(new ElevatorManualControlCommand(m_operatorController, m_elevator));
 
     new Trigger(() -> m_operatorController.getRawButton(Bindings.chargeStationBalance))
-      .onTrue(new ChargeStationBalanceCommand(m_robotDrive, m_elevator, m_operatorController));
+      .onTrue(new ChargeStationBalanceCommand(m_robotDrive, m_elevator));
   }
 
 

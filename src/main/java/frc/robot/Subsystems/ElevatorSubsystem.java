@@ -20,9 +20,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final RelativeEncoder m_encoder1;
     private final RelativeEncoder m_encoder2;
     public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, elevatorSpeed, allowedErr;
-    //smart motion constants
-    public static double maxVel, maxAccel, minVel; // rpm
-    public static int smartMotionSlot = 1;
 
     public ElevatorSubsystem() {
       elevatorMotor1 = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_MASTER, MotorType.kBrushless);
@@ -54,9 +51,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       kMaxOutput = 1; 
       kMinOutput = -1;
       elevatorSpeed = 0;
-      maxVel= 1e-10;
-      minVel = 1e-12;
-      maxAccel = 1e-10;
       allowedErr = 0.1;
   
       // set PID coefficients
@@ -67,14 +61,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       m_pidController1.setFF(kFF);
       m_pidController1.setOutputRange(kMinOutput, kMaxOutput);
 
-      m_pidController1.setSmartMotionMaxVelocity(maxVel, smartMotionSlot);
-      m_pidController1.setSmartMotionMinOutputVelocity(minVel, smartMotionSlot);
-      m_pidController1.setSmartMotionMaxAccel(maxAccel, smartMotionSlot);
-      m_pidController1.setSmartMotionAllowedClosedLoopError(allowedErr, smartMotionSlot);
-
-      SmartDashboard.putNumber("Max Velocity", maxVel);
-      SmartDashboard.putNumber("Min Velocity", minVel);
-      SmartDashboard.putNumber("Max Acceleration", maxAccel);
       SmartDashboard.putNumber("Allowed Closed Loop Error", allowedErr);
 
   

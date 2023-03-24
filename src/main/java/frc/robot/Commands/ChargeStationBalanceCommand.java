@@ -19,7 +19,6 @@ public class ChargeStationBalanceCommand extends CommandBase {
 
     private DriveSubsystem drive;
     private ElevatorSubsystem elevator;
-    private Joystick stick;
 
     private ChargeStationStates balancer = new ChargeStationStates();
 
@@ -28,10 +27,9 @@ public class ChargeStationBalanceCommand extends CommandBase {
     private static final double ELEVATOR_SETPOINT = 0;
     private boolean pitchChanged = false;
 
-    public ChargeStationBalanceCommand(DriveSubsystem drive, ElevatorSubsystem elevator, Joystick stick) {
+    public ChargeStationBalanceCommand(DriveSubsystem drive, ElevatorSubsystem elevator) {
         this.drive = drive;
         this.elevator = elevator;
-        this.stick = stick;
         timer = new Timer();
 
         addRequirements(drive, elevator);
@@ -65,12 +63,12 @@ public class ChargeStationBalanceCommand extends CommandBase {
         }
 
         if (pitchChanged) {
-            drive.mainDrive(-1.2*speed, 0, 0);
+            drive.mainDrive(-1*speed, 0, 0);
         } else {
-            drive.mainDrive(-0.5,0,0);
+            drive.mainDrive(-0.6,0,0);
         }
 
-        if (Math.abs(pitch) > 6 && balancer.getState() == States.ON_CHARGE_STATION) {
+        if (Math.abs(pitch) > 6 && balancer.getState() != States.ON_CHARGE_STATION) {
             timer.reset();
         }
     }

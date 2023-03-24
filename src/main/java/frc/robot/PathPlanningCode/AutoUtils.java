@@ -234,8 +234,7 @@ public class AutoUtils {
             Map.of()),
           new ChargeStationBalanceCommand(
             container.getDrive(), 
-            container.getElevator(), 
-            container.getOperatorController())
+            container.getElevator())
         );
     }
     
@@ -269,8 +268,7 @@ public class AutoUtils {
               "end score p5a", getScoreCommand(container,  ElevatorConstants.highElevatorConeSetpoint, GamePiece.CONE), 
               "balance p5a", new ChargeStationBalanceCommand(
                 container.getDrive(),
-                container.getElevator(), 
-                container.getOperatorController()))
+                container.getElevator()))
               );
     }
 
@@ -302,8 +300,7 @@ public class AutoUtils {
           "end score p6a", getScoreCommand(container, ElevatorConstants.highElevatorCubeSetpoint, GamePiece.CUBE),
           "balance p6a", new ChargeStationBalanceCommand(
             container.getDrive(), 
-            container.getElevator(), 
-            container.getOperatorController())));
+            container.getElevator())));
     }
 
 
