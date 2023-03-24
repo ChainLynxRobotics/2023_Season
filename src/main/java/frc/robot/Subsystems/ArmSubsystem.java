@@ -20,16 +20,18 @@ public class ArmSubsystem extends SubsystemBase {
 
         SmartDashboard.putBoolean("Arm/State", false);
         SmartDashboard.putString("Arm/StateString", "retracted");
-        SmartDashboard.putNumber("Arm/PressurePSI", input.getVoltage());
+        SmartDashboard.putNumber("Arm/PressurePSI", 0);
     }
 
     @Override
     public void periodic() {
-        //put pressure reading here
+        SmartDashboard.putNumber("Arm/PressurePSI", getPressure());
     }
 
     public double getPressure() {
-        return (250*input.getVoltage())-25;
+        double pressure = (250*input.getVoltage()/5)-25;
+        pressure = pressure < 0 ? 0 : pressure;
+        return pressure;
     }
 
     public void expand() {

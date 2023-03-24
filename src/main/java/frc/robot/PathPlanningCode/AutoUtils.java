@@ -48,8 +48,8 @@ public class AutoUtils {
         autoChooser.setDefaultOption("P1 - Score preloaded, Mobility", AutoModes.PRIORITY_1_AUTO);
         autoChooser.addOption("P2 - Score preloaded, Balance On Charging Station", AutoModes.PRIORITY_2_AUTO);
         autoChooser.addOption("P3 - Score preload, pick up cube, score cube", AutoModes.PRIORITY_3_AUTO);
-        autoChooser.addOption("P4 - Score preload, pick cube, auto balance", AutoModes.PRIORITY_3_AUTO);
-        autoChooser.addOption("P5 - Score preload, pick up cube, score cube, balance", AutoModes.PRIORITY_3_AUTO);
+        autoChooser.addOption("P4 - Score preload, pick cube, auto balance", AutoModes.PRIORITY_4_AUTO);
+        autoChooser.addOption("P5 - Score preload, pick up cube, score cube, balance", AutoModes.PRIORITY_5_AUTO);
 
         initGamePieceChooser.setDefaultOption("InitGamePiece: Cone", InitGamePiece.CONE);
         initGamePieceChooser.addOption("InitGamePiece: Cube", InitGamePiece.CUBE);
@@ -64,6 +64,7 @@ public class AutoUtils {
          */
 
         SmartDashboard.putData("auto choices", autoChooser);
+        SmartDashboard.putData("init score choices", initGamePieceChooser);
     }
 
     private Command getRetractCommand(RobotContainer container) {
@@ -185,7 +186,7 @@ public class AutoUtils {
     //only event map end events aren't working
     public Command priorityOneAuto(RobotContainer container) {
         return new SequentialCommandGroup(
-          getScoreCommand(container,  ElevatorConstants.highElevatorConeSetpoint, GamePiece.CONE),
+          initGamePieceScore(container),
           createPath(
             container, 
             "Priority 1 auto", 
@@ -233,7 +234,7 @@ public class AutoUtils {
 
     public Command priorityThreeAuto(RobotContainer container) {
       return new SequentialCommandGroup(
-        getScoreCommand(container, ElevatorConstants.highElevatorConeSetpoint, GamePiece.CONE),
+        initGamePieceScore(container),
         createPath(
           container, 
           "Priority 3 auto", 

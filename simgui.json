@@ -2,7 +2,8 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/SmartDashboard/auto choices": "String Chooser"
+      "/SmartDashboard/auto choices": "String Chooser",
+      "/SmartDashboard/init score choices": "String Chooser"
     }
   }
 }
