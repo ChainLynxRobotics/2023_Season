@@ -1,6 +1,6 @@
 package frc.robot.Subsystems;
 
-import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -11,20 +11,27 @@ import frc.robot.Constants;
 public class ArmSubsystem extends SubsystemBase {
 
     private DoubleSolenoid sol;
-    private Compressor compressor;
+    private AnalogInput input = new AnalogInput(0);
+    
 
     public ArmSubsystem() {
         sol = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.SOLENOID_forward1, Constants.SOLENOID_reverse1);
-        compressor = new Compressor(PneumaticsModuleType.REVPH);
+       
 
         SmartDashboard.putBoolean("Arm/State", false);
         SmartDashboard.putString("Arm/StateString", "retracted");
-        SmartDashboard.putNumber("Arm/pressurePSI", compressor.getPressure());
+        SmartDashboard.putNumber("Arm/PressurePSI", 0);
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Arm/pressurePSI", compressor.getPressure());
+        SmartDashboard.putNumber("Arm/PressurePSI", getPressure());
+    }
+
+    public double getPressure() {
+        double pressure = (250*input.getVoltage()/5)-25;
+        pressure = pressure < 0 ? 0 : pressure;
+        return pressure;
     }
 
     public void expand() {
