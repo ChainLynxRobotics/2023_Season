@@ -44,9 +44,12 @@ public class AutoUtils {
     private HashMap<String, Command> eventMap = new HashMap<>();
 
     public AutoUtils() {
-        autoChooser.setDefaultOption("P1 - Mobility", AutoModes.PRIORITY_1_AUTO);
-        autoChooser.addOption("P2 - Balance On Charging Station", AutoModes.PRIORITY_2_AUTO);
-        autoChooser.addOption("P3 - Score Cone high", AutoModes.PRIORITY_3_AUTO);
+        autoChooser.setDefaultOption("P1 - Score preloaded, Mobility", AutoModes.PRIORITY_1_AUTO);
+        autoChooser.addOption("P2 - Score preloaded, Balance On Charging Station", AutoModes.PRIORITY_2_AUTO);
+        autoChooser.addOption("P3 - Score preload, pick up cube, score cube", AutoModes.PRIORITY_3_AUTO);
+        autoChooser.addOption("P4 - Score preload, pick cube, auto balance", AutoModes.PRIORITY_3_AUTO);
+        autoChooser.addOption("P5 - Score preload, pick up cube, score cube, balance", AutoModes.PRIORITY_3_AUTO);
+
 
         //might still need these later
         /*
@@ -73,9 +76,19 @@ public class AutoUtils {
     private Command getScoreCommand(RobotContainer container, double setpoint, GamePiece gamePiece) {
       return new SequentialCommandGroup(
             new InstantCommand(container.getArm()::expand),
-            new WaitCommand(1.5),
+            new WaitCommand(1.2),
             new AutoElevatorCommand(container.getElevator(), setpoint),
-            new AutoReleaseCommand(container.getIntake(), 0.8, gamePiece).withTimeout(0.5));
+            //TODO verify elevator motors are stalling between setpoint command and release
+            new ParallelCommandGroup(
+              new RunCommand(() -> container.getElevator().setMotors(-0.05), container.getElevator()),
+              new AutoReleaseCommand(container.getIntake(), 0.8, gamePiece).withTimeout(0.5)
+            ));
+    }
+
+    private Command getIntakeCommand(RobotContainer container, double setpoint, GamePiece gamePiece, double timeout) {
+      return new ParallelCommandGroup(
+        new AutoIntakeCommand(container.getIntake(), 0.8, gamePiece),
+        new AutoElevatorCommand(container.getElevator(), setpoint)).withTimeout(timeout);
     }
 
     public Command simpleCmdGrp(RobotContainer container) {
@@ -176,6 +189,25 @@ public class AutoUtils {
             Map.of("init retract p1a", getRetractCommand(container))));
     }
 
+    //TODO might need to tune intake timeout
+    public Command intakeSecondThenCS(RobotContainer container) {
+      return new SequentialCommandGroup(
+        createPath(
+          container, 
+          "Intake 2nd then CS", 
+          false, 
+          Map.of("2nd intake", 
+          getIntakeCommand(
+            container, 
+            ElevatorConstants.groundPickupCubeHybrid, 
+            GamePiece.CUBE, 2))),
+        new ModifiedCSBalanceCommand(
+          container.getDrive(), 
+          container.getElevator(), 
+          container.getOperatorController(), 
+          false));
+    }
+
 
     public Command priorityTwoAutoEnding(RobotContainer container) {
       return new SequentialCommandGroup(
@@ -183,10 +215,10 @@ public class AutoUtils {
           container, 
           "Priority 2 ending intake balance", 
           false,
-          Map.of("start intaking", new AutoIntakeCommand(
-            container.getIntake(), 
-            0.8, 
-            GamePiece.CUBE))),
+          Map.of("start intaking", getIntakeCommand(
+            container, 
+            ElevatorConstants.groundPickupCubeHybrid, 
+            GamePiece.CUBE, 2))),
         new ModifiedCSBalanceCommand(
           container.getDrive(), 
           container.getElevator(), 
@@ -234,8 +266,7 @@ public class AutoUtils {
             Map.of()),
           new ChargeStationBalanceCommand(
             container.getDrive(), 
-            container.getElevator())
-        );
+            container.getElevator()));
     }
     
 
@@ -268,8 +299,7 @@ public class AutoUtils {
               "end score p5a", getScoreCommand(container,  ElevatorConstants.highElevatorConeSetpoint, GamePiece.CONE), 
               "balance p5a", new ChargeStationBalanceCommand(
                 container.getDrive(),
-                container.getElevator()))
-              );
+                container.getElevator())));
     }
 
     public Command priority6Pickup(RobotContainer container) {
@@ -323,19 +353,16 @@ public class AutoUtils {
         return priorityOneAuto(container);
       case PRIORITY_2_AUTO:
         return priorityOneAuto(container)
-          .andThen(priorityTwoAutoEnding(container));
+          .andThen(intakeSecondThenCS(container));
       case PRIORITY_3_AUTO:
-        return priorityThreeAuto(container)
-          .andThen(priorityOneAuto(container))
-          .andThen(priorityThreeAutoEnding(container));
+        return priorityThreeAuto(container);
       case PRIORITY_4_AUTO:
-        return priorityThreeAuto(container)
-            .andThen(priorityFourAuto(container));
+        return priorityOneAuto(container)
+        .andThen(priorityTwoAutoEnding(container));
       case PRIORITY_5_AUTO:
         return priorityThreeAuto(container)
-            .andThen(priorityFiveSecondPickup(container))
-            .andThen(priorityFiveExit(container))
-            .andThen(priorityFiveEnding(container));
+        .andThen(priorityOneAuto(container))
+        .andThen(priorityThreeAutoEnding(container));
       case PRIORITY_6_AUTO:
         return priorityThreeAuto(container)
             .andThen(priorityFiveSecondPickup(container))

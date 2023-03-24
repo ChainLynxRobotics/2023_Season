@@ -5,7 +5,6 @@
 package frc.robot.Subsystems;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -67,6 +66,8 @@ public class DriveSubsystem extends SubsystemBase {
     private double currentTranslationDir = 0.0;
     private double currentTranslationMag = 0.0;
 
+    private double headingOffset;
+
     private SlewRateLimiter magLimiter = new SlewRateLimiter(
         OIConstants.kMagnitudeSlewRate
     );
@@ -111,7 +112,7 @@ public class DriveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("delta heading", ang - prevAngle);
 
         prevAngle = ang;
-        SmartDashboard.putNumber("heading", ang);
+        SmartDashboard.putNumber("heading", ang - headingOffset);
 
         SmartDashboard.putNumber("right stick angle", rightAngGoal);
         SmartDashboard.putNumber("turn direction", turnDir);
@@ -346,6 +347,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     /** Zeroes the heading of the robot. */
     public void zeroHeading() {
+        headingOffset = m_gyro.getAngle();
         m_gyro.reset();
     }
 

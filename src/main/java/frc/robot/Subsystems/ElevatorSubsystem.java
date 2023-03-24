@@ -138,6 +138,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
     }
 
+    public void setMotors(double speed) {
+      elevatorMotor1.set(speed);
+    }
+
     public void zeroEncoders() {
       m_encoder1.setPosition(0);
       m_encoder2.setPosition(0);
