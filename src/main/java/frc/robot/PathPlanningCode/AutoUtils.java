@@ -39,6 +39,7 @@ import frc.robot.RobotContainer;
 public class AutoUtils {
 
     private SendableChooser<AutoModes> autoChooser = new SendableChooser<>();
+    private SendableChooser<InitGamePiece> initGamePieceChooser = new SendableChooser<>();
 
     //stores all the command bindings along path checkpoints
     private HashMap<String, Command> eventMap = new HashMap<>();
@@ -49,6 +50,9 @@ public class AutoUtils {
         autoChooser.addOption("P3 - Score preload, pick up cube, score cube", AutoModes.PRIORITY_3_AUTO);
         autoChooser.addOption("P4 - Score preload, pick cube, auto balance", AutoModes.PRIORITY_3_AUTO);
         autoChooser.addOption("P5 - Score preload, pick up cube, score cube, balance", AutoModes.PRIORITY_3_AUTO);
+
+        initGamePieceChooser.setDefaultOption("InitGamePiece: Cone", InitGamePiece.CONE);
+        initGamePieceChooser.addOption("InitGamePiece: Cube", InitGamePiece.CUBE);
 
 
         //might still need these later
@@ -374,6 +378,15 @@ public class AutoUtils {
         }
     }
 
+    public Command initGamePieceScore(RobotContainer container) {
+      switch (initGamePieceChooser.getSelected()) {
+        case CUBE:
+          return getScoreCommand(container, ElevatorConstants.highElevatorCubeSetpoint, GamePiece.CUBE);
+        default:
+          return getScoreCommand(container, ElevatorConstants.highElevatorConeSetpoint, GamePiece.CONE);
+      }
+    }
+
 
     public SendableChooser<AutoModes> getChooser() {
         return autoChooser;
@@ -390,5 +403,10 @@ public class AutoUtils {
     PRIORITY_4_AUTO,
     PRIORITY_5_AUTO,
     PRIORITY_6_AUTO
+  }
+
+  private enum InitGamePiece {
+    CONE,
+    CUBE
   }
 }
