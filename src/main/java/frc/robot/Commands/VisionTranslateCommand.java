@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Subsystems.DriveSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
 import org.photonvision.PhotonUtils;
@@ -61,9 +62,9 @@ public class VisionTranslateCommand extends CommandBase {
         }
 
         drive.mainDrive(
-            -MathUtil.applyDeadband(forwardSpeed, 0.06),
-            MathUtil.applyDeadband(controller.getLeftX(), 0.06),
-            MathUtil.applyDeadband(controller.getRightX(), 0.06)
+            -MathUtil.applyDeadband(forwardSpeed, DriveConstants.DRIVE_DEADBAND),
+            MathUtil.applyDeadband(controller.getLeftX(), DriveConstants.DRIVE_DEADBAND),
+            MathUtil.applyDeadband(controller.getRightX(), DriveConstants.DRIVE_DEADBAND)
         );
     }
 

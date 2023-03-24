@@ -5,6 +5,9 @@
 package frc.robot.Subsystems;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
+import com.pathplanner.lib.PathPlannerTrajectory;
+
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,8 +20,11 @@ import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.utils.SwerveUtils;
@@ -173,12 +179,7 @@ public class DriveSubsystem extends SubsystemBase {
         move(xSpeed, ySpeed, rot);
     }
 
-    public void altDrive(
-        double xSpeed,
-        double ySpeed,
-        double xRot,
-        double yRot
-    ) {
+    public void altDrive(double xSpeed, double ySpeed, double xRot, double yRot) {
         double rot = 0;
         //convert to degrees
         rightAngGoal = Math.atan2(xRot, yRot) * 180 / Math.PI;
@@ -201,12 +202,7 @@ public class DriveSubsystem extends SubsystemBase {
         move(xSpeed, ySpeed, rot, true);
     }
 
-    private void move(
-        double xSpeed,
-        double ySpeed,
-        double rot,
-        boolean rateLimit
-    ) {
+    private void move(double xSpeed, double ySpeed, double rot, boolean rateLimit) {
         double xSpeedCommanded;
         double ySpeedCommanded;
 

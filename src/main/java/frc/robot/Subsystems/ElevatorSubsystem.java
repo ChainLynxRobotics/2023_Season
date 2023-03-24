@@ -35,8 +35,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       m_encoder1.setPosition(0);
       m_encoder2.setPosition(0);
 
-      elevatorMotor1.setIdleMode(IdleMode.kCoast);
-      elevatorMotor2.setIdleMode(IdleMode.kCoast);
+      elevatorMotor1.setIdleMode(IdleMode.kBrake);
+      elevatorMotor2.setIdleMode(IdleMode.kBrake);
       elevatorMotor1.setInverted(true);
       elevatorMotor2.follow(elevatorMotor1, true);
       elevatorMotor1.clearFaults();
@@ -99,10 +99,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("elevator/motor 16/output power", elevatorMotor2.getAppliedOutput());
       SmartDashboard.putNumber("elevator/motor 17/raw output power", elevatorMotor1.get());
       SmartDashboard.putNumber("elevator/motor 16/raw output power", elevatorMotor2.get());
-      /* 
-      double curSetpoint = SmartDashboard.getNumber("Elevator Setpoint (rotations)", 0);
-
-      moveElevator(curSetpoint);*/
     }
 
     public void moveElevator(Double setpoint) {
@@ -114,12 +110,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       double ff = SmartDashboard.getNumber("Feed Forward", 0);
       double max = SmartDashboard.getNumber("Max Output", 0);
       double min = SmartDashboard.getNumber("Min Output", 0);
-      /* 
-      double maxV = SmartDashboard.getNumber("Max Velocity", 0);
-      double minV = SmartDashboard.getNumber("Min Velocity", 0);
-      double maxA = SmartDashboard.getNumber("Max Acceleration", 0);
-      double allE = SmartDashboard.getNumber("Allowed Closed Loop Error", 0);
-      */
+
       // if PID coefficients on SmartDashboard have changed, write new values to controller
       if((p != kP)) {
         m_pidController1.setP(p);
@@ -147,12 +138,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         kMaxOutput = max; 
       }
 
-      /*
-      if((maxV != maxVel)) { m_pidController1.setSmartMotionMaxVelocity(maxV,smartMotionSlot); maxVel = maxV; }
-      if((minV != minVel)) { m_pidController1.setSmartMotionMinOutputVelocity(minV,smartMotionSlot); minVel = minV; }
-      if((maxA != maxAccel)) { m_pidController1.setSmartMotionMaxAccel(maxA,smartMotionSlot); maxAccel = maxA; }
-      if((allE != allowedErr)) { m_pidController1.setSmartMotionAllowedClosedLoopError(allE,smartMotionSlot); allowedErr = allE; }
-      */
       m_pidController1.setReference(setpoint, CANSparkMax.ControlType.kPosition);
     }
 

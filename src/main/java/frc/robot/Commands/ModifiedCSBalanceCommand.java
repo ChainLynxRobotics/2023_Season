@@ -4,18 +4,16 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Subsystems.DriveSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.utils.ChargeStationStates;
-import frc.utils.ChargeStationStates.States;
 
 /*
  * moves forward at constant initial speed until pitch changes
  * if pitch > 0, move forward with + scale factor proportional to error
  * if < 0, move forward wtih - scale factor proportional to error
  */
-public class ChargeStationBalanceCommand extends CommandBase {
+public class ModifiedCSBalanceCommand extends CommandBase {
 
     private DriveSubsystem drive;
     private ElevatorSubsystem elevator;
@@ -27,11 +25,16 @@ public class ChargeStationBalanceCommand extends CommandBase {
 
     private static final double ELEVATOR_SETPOINT = 0;
     private boolean pitchChanged = false;
+    //from which side is the robot approaching the charge station? 
+    //Because it's field-oriented, the signs sometimes need to be swapped
+    private boolean innerSide;
+    private int CSDriveDir;
 
-    public ChargeStationBalanceCommand(DriveSubsystem drive, ElevatorSubsystem elevator, Joystick stick) {
+    public ModifiedCSBalanceCommand(DriveSubsystem drive, ElevatorSubsystem elevator, Joystick stick, boolean innerSide) {
         this.drive = drive;
         this.elevator = elevator;
         this.stick = stick;
+        this.innerSide = innerSide;
         timer = new Timer();
 
         addRequirements(drive, elevator);
@@ -47,6 +50,13 @@ public class ChargeStationBalanceCommand extends CommandBase {
         timer.start();
 
         pitchChanged = false;
+        balancer.overrideState();
+
+        if (innerSide) {
+            CSDriveDir = 1;
+        } else {
+            CSDriveDir = -1;
+        }
 
         elevator.moveElevator(ELEVATOR_SETPOINT);
     }
@@ -58,28 +68,29 @@ public class ChargeStationBalanceCommand extends CommandBase {
         double speed = balancer.autoBalanceRoutine();
 
         SmartDashboard.putNumber("ChargeStationBalance/CurrentAngle", pitch);
+        System.out.println("pitch at " + pitch);
 
        
-        if (pitch > AutoConstants.MIN_PITCH_CHANGE) {
+        if (pitch > 5) {
             pitchChanged = true;
         }
 
         if (pitchChanged) {
-            drive.mainDrive(-1.2*speed, 0, 0);
+            drive.mainDrive(CSDriveDir*1.2*speed, 0, 0);
         } else {
-            drive.mainDrive(-0.5,0,0);
+            drive.mainDrive(CSDriveDir*0.5,0,0);
         }
 
-        if (Math.abs(pitch) > 6 && balancer.getState() == States.ON_CHARGE_STATION) {
+        if (Math.abs(pitch) > 6) {
             timer.reset();
         }
     }
 
+    //test if robot is exiting the command prematurely or going too slow
     @Override
     public boolean isFinished() {
-        if (timer.hasElapsed(1)) {
+        if (stick.getRawButton(9) || timer.hasElapsed(1)) {
             System.out.println("command terminated");
-            timer.stop();
             return true;
         }
         return false;

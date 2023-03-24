@@ -10,10 +10,11 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.VisionTurnCommand;
 import frc.robot.Constants.Bindings;
-import frc.robot.Constants.IntakeGamePiece;
+import frc.robot.Constants.GamePiece;
 import frc.robot.Commands.IntakeCommand;
+import frc.robot.Commands.ChargeStationBalanceCommand;
 import frc.robot.Commands.ElevatorCommand;
-import frc.robot.Commands.ElevatorControlCommand;
+import frc.robot.Commands.ElevatorManualControlCommand;
 import frc.robot.Commands.ReleaseCommand;
 import frc.robot.Commands.SimpleDriveCommand;
 import frc.robot.Commands.VisionTranslateCommand;
@@ -125,7 +126,7 @@ public class RobotContainer {
     new Trigger(() -> m_operatorController.getRawButton(Bindings.setGamePieceCone))
       .onTrue(
         new InstantCommand(
-          () -> m_intake.setState(IntakeGamePiece.CONE),
+          () -> m_intake.setState(GamePiece.CONE),
           m_intake
         )
       );
@@ -134,7 +135,7 @@ public class RobotContainer {
     new Trigger(() -> m_operatorController.getRawButton(Bindings.setGamePieceCube))
       .onTrue(
         new InstantCommand(
-          () -> m_intake.setState(IntakeGamePiece.CUBE),
+          () -> m_intake.setState(GamePiece.CUBE),
           m_intake
         )
       );
@@ -188,8 +189,11 @@ public class RobotContainer {
           m_intake,
           Bindings.fullRetraction));
 
-    new Trigger(() -> m_operatorController.getRawButton(5))
-      .whileTrue(new ElevatorControlCommand(m_operatorController, m_elevator));
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.manualElevatorControl))
+      .whileTrue(new ElevatorManualControlCommand(m_operatorController, m_elevator));
+
+    new Trigger(() -> m_operatorController.getRawButton(Bindings.chargeStationBalance))
+      .onTrue(new ChargeStationBalanceCommand(m_robotDrive, m_elevator, m_operatorController));
   }
 
 
@@ -205,6 +209,10 @@ public class RobotContainer {
 
   public XboxController getController() {
     return m_driverController;
+  }
+
+  public Joystick getOperatorController() {
+    return m_operatorController;
   }
 
   public DriveSubsystem getDrive() {

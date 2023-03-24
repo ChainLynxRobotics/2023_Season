@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.Bindings;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.IntakeGamePiece;
+import frc.robot.Constants.GamePiece;
 import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
 
@@ -15,6 +15,8 @@ public class ElevatorCommand extends CommandBase {
     private double setpoint;
     private int setpointLocation;
 
+    double startTime;
+
     public ElevatorCommand(ElevatorSubsystem elevator, IntakeSubsystem intake, int setpointLocation) {
         this.elevator = elevator;
         this.intake = intake;
@@ -24,43 +26,45 @@ public class ElevatorCommand extends CommandBase {
         addRequirements(elevator, intake);
     }
 
+    @Override
+    public void initialize() {
+        startTime = System.currentTimeMillis();
 
+    }
+
+    //TODO: fix elevator setpoint logic (not broken, but directly pass in setpoint it's too verbose)
     @Override
     public void execute() {
-        if (setpointLocation == 15) {
-            setpoint = 7.5;
-        } else if (setpointLocation == 13) {
-            setpoint = 3;
-        } else if (setpointLocation == 12) {
-            setpoint = 7.5;
-        } else if (setpointLocation == 11) {
-            if (intake.getState() == IntakeGamePiece.CONE) {
-                setpoint = 15.5;
+        if (setpointLocation == Bindings.groundPickUp) {
+            setpoint = ElevatorConstants.groundPickupCubeHybrid;
+        } else if (setpointLocation == Bindings.lowScoreElevatorSetpoint) {
+            setpoint = ElevatorConstants.coneDrivingWithLift;
+        } else if (setpointLocation == Bindings.midScoreElevatorSetpoint) {
+            setpoint = ElevatorConstants.midElevatorGamepiece;
+        } else if (setpointLocation == Bindings.highScoreElevatorSetpoint) {
+            if (intake.getState() == GamePiece.CONE) {
+                setpoint = ElevatorConstants.highElevatorConeSetpoint;
             } else {
-                setpoint = 13.5;
+                setpoint = ElevatorConstants.highElevatorCubeSetpoint;
             }
-        } else if (setpointLocation == 16) {
-            setpoint = 14;
-        } else if (setpointLocation == 14) {
-            setpoint = 0;
+        } else if (setpointLocation == Bindings.doubleSubstationSetpoint) {
+            setpoint = ElevatorConstants.doubleSubstationSetpoint;
+        } else if (setpointLocation == Bindings.fullRetraction) {
+            setpoint = ElevatorConstants.fullRetractionSetpoint;
         }
 
-        System.out.printf("setting setpoint via command, setpoint at: %f \n", setpoint);
-        SmartDashboard.putNumber("Elevator Setpoint (rotations)", setpoint);
-
-        if (setpoint-elevator.getDrivingEncoder().getPosition() > 8) {
+        //to avoid elevator slamming and excessive acceleration, ramp according to "triangular" velocity motion profile
+        if (setpoint-elevator.getDrivingEncoder().getPosition() > ElevatorConstants.MAX_TRAVEL_LIMIT) {
             elevator.moveElevator(setpoint-ElevatorConstants.ELEVATOR_RAMP_DIST);
-            double startTime = System.currentTimeMillis();
-
-            if (System.currentTimeMillis()-startTime > 100) {
+    
+            if (System.currentTimeMillis()-startTime > 300) {
                 elevator.moveElevator(setpoint);
             }
-        } else if (setpoint-elevator.getDrivingEncoder().getPosition() < -8) {
+        } else if (setpoint-elevator.getDrivingEncoder().getPosition() < -ElevatorConstants.MAX_TRAVEL_LIMIT) {
             elevator.moveElevator(setpoint+ElevatorConstants.ELEVATOR_RAMP_DIST);
-            double startTime2 = System.currentTimeMillis();
 
-            if (System.currentTimeMillis()-startTime2 > 300) {
-                elevator.moveElevator(setpoint+5);
+            if (System.currentTimeMillis()-startTime > 300) {
+                elevator.moveElevator(setpoint);
             }
         } else {
             elevator.moveElevator(setpoint);
@@ -69,8 +73,7 @@ public class ElevatorCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if (Math.abs(setpoint - elevator.getDrivingEncoder().getPosition()) < 1) {
-            System.out.println("finished!");
+        if (Math.abs(setpoint - elevator.getDrivingEncoder().getPosition()) < 0.05) {
             return true;
         }
         return false;

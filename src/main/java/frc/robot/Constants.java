@@ -27,8 +27,8 @@ public final class Constants {
 
         public static final double DRIVE_DEADBAND = 0.06;
         //4.45 m/s max speed
-        public static final double kMaxSpeedBase = 4.45;
-        public static final double kMaxSpeedScaleFactor = 0.7;
+        public static final double kMaxSpeedBase = 4.8;
+        public static final double kMaxSpeedScaleFactor = 0.9;
         public static final double kMaxSpeedMetersPerSecond =
             kMaxSpeedBase * kMaxSpeedScaleFactor;
 
@@ -138,6 +138,7 @@ public final class Constants {
 
         public static final int kDriverControllerPort = 0;
         public static final int kIOperatorControllerPort = 1;
+        public static final int yAxis = 1;
         public static final double kDriveDeadband = 0.06;
         public static final double kMagnitudeDeadband = 0.06;
         public static final double kDirectionSlewRate = 1.2; // radians per second
@@ -153,12 +154,19 @@ public final class Constants {
         public static final double kMaxSpeedMetersPerSecond = 3;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
         public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-        public static final double kMaxAngularSpeedRadiansPerSecondSquared =
-            Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
         public static final double kPXController = 1;
         public static final double kPYController = 1;
         public static final double kPThetaController = 1;
+        public static final double kIThetaController = 0.001;
+        public static final double kDThetaController = 0.7;
+
+        public static final double MIN_PITCH_CHANGE = 5;
+
+        public static final double kP = 1;
+        public static final double kI = 0.001;
+        public static final double kD = 0.1;
 
         public static final double FIELD_LENGTH = 16.54;
         public static final double FIELD_WIDTH = 8.02;
@@ -188,8 +196,10 @@ public final class Constants {
       public static final double highElevatorConeSetpoint = 15.5;
       public static final double highElevatorCubeSetpoint = 13.5;
       public static final double doubleSubstationSetpoint = 14;
+      public static final double fullRetractionSetpoint = 0;
 
       public static final double ELEVATOR_RAMP_DIST = 3;
+      public static final double MAX_TRAVEL_LIMIT = 8; //rotations of hall effect sensors
 
       public static final int ELEVATOR_MOTOR_ID_MASTER = 17;
       public static final int ELEVATOR_MOTOR_ID_SLAVE = 16;
@@ -207,7 +217,7 @@ public final class Constants {
     public static final int SOLENOID_forward1 = 0;
     public static final int SOLENOID_reverse1 = 1;
 
-    public enum IntakeGamePiece {
+    public enum GamePiece {
         CUBE,
         CONE,
     }
@@ -227,6 +237,8 @@ public final class Constants {
       public static final int setGamePieceCone = 4;
       public static final int raiseArm = 9;
       public static final int lowerArm = 8;
+      public static final int manualElevatorControl = 5;
+      public static final int chargeStationBalance = 10;
 
       //measured in hall effect sensor rotations
       public static final int groundPickUp = 15; //for ground pick up and cube hybrid

@@ -1,0 +1,93 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.832258902365027,
+        "y": 0.40179859699997106
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.8322589023650284,
+        "y": 0.40179859699997106
+      },
+      "holonomicAngle": 179.0605085910581,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "sequential",
+        "waitBehavior": "before",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.4871846601332095,
+        "y": 0.9071636962718367
+      },
+      "prevControl": {
+        "x": 6.691354406355087,
+        "y": 0.9137915736604137
+      },
+      "nextControl": {
+        "x": 6.691354406355087,
+        "y": 0.9137915736604137
+      },
+      "holonomicAngle": 0,
+      "isReversal": true,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.7834330373521858,
+        "y": 1.0731252469449384
+      },
+      "prevControl": {
+        "x": 1.1539736968362826,
+        "y": 1.0646010163548099
+      },
+      "nextControl": null,
+      "holonomicAngle": -179.8748319205552,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "end score p3a"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "after",
+        "waitTime": 0
+      }
+    }
+  ],
+  "maxVelocity": null,
+  "maxAcceleration": null,
+  "isReversed": false,
+  "markers": [
+    {
+      "position": 0.765127840909091,
+      "names": [
+        "event",
+        "intake p3a"
+      ]
+    },
+    {
+      "position": 0.023295454545454536,
+      "names": [
+        "init retract p3a"
+      ]
+    }
+  ]
+}

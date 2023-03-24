@@ -26,8 +26,9 @@ public class VisionSubsystem extends SubsystemBase {
     private PhotonPipelineResult result;
     private final RobotPoseEstimator poseEstimator;
 
-    //to do: sendable chooser to select alliance so origin of robot can be set correctly
+    //TODO sendable chooser to select alliance so origin of robot can be set correctly
     //default origin is at the bottom right of blue alliance wall
+    //tag positions on field
     private static final AprilTagFieldLayout layout = new AprilTagFieldLayout(
         new ArrayList<AprilTag>() {
             {
@@ -46,7 +47,7 @@ public class VisionSubsystem extends SubsystemBase {
     );
 
     public VisionSubsystem() {
-        camera = new PhotonCamera("lol");
+        camera = new PhotonCamera("IMX219");
 
         List<Pair<PhotonCamera, Transform3d>> camPair = new ArrayList<>();
         camPair.add(new Pair<>(camera, new Transform3d()));
