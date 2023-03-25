@@ -62,8 +62,8 @@ public class RobotContainer {
     m_intake = new IntakeSubsystem();
 
     configureButtonBindings();
-    //TODO check this is the right port (ask Jairen)
     CameraServer.startAutomaticCapture("intake camera", 0);
+
     // Configure default commands
     m_robotDrive.setDefaultCommand(
       // The left stick controls translation of the robot.
