@@ -44,7 +44,7 @@ public class AutoUtils {
     //stores all the command bindings along path checkpoints
     private HashMap<String, Command> eventMap = new HashMap<>();
 
-    private double kMinPressure = 75;
+    private double kMinPressure = 90;
 
     public AutoUtils() {
         autoChooser.setDefaultOption("P1 - Score preloaded, Mobility", AutoModes.PRIORITY_1_AUTO);
@@ -52,8 +52,9 @@ public class AutoUtils {
         autoChooser.addOption("P2 - Score preloaded, Balance On Charging Station", AutoModes.PRIORITY_2_AUTO);
         autoChooser.addOption("P LOW - Score preloaded in hybrid, Mobility", AutoModes.PRIORITY_1_ALT_AUTO);
         autoChooser.addOption("P3 - Score preload, pick up cube, score cube", AutoModes.PRIORITY_3_AUTO);
-        autoChooser.addOption("P4 - Score preload, pick cube, auto balance", AutoModes.PRIORITY_3_AUTO);
-        autoChooser.addOption("P5 - Score preload, pick up cube, score cube, balance", AutoModes.PRIORITY_3_AUTO);
+        autoChooser.addOption("P4 - Score preload, pick cube, auto balance", AutoModes.PRIORITY_4_AUTO);
+        autoChooser.addOption("P5 - Score preload, pick up cube, score cube, balance", AutoModes.PRIORITY_5_AUTO);
+        autoChooser.addOption("CS Testing", AutoModes.CS_TESTING_AUTO);
 
         initGamePieceChooser.addOption("InitGamePiece: Cube", InitGamePiece.CUBE);
         initGamePieceChooser.setDefaultOption("InitGamePiece: Cone", InitGamePiece.CONE);
@@ -84,7 +85,7 @@ public class AutoUtils {
     private Command getScoreCommand(RobotContainer container, double setpoint, GamePiece gamePiece) {
       return new SequentialCommandGroup(
             new InstantCommand(container.getArm()::expand),
-            new WaitCommand(1.2),
+            new WaitCommand(2),
             new AutoElevatorCommand(container.getElevator(), setpoint),
             //TODO verify elevator motors are stalling between setpoint command and release
             new ParallelCommandGroup(
@@ -263,6 +264,20 @@ public class AutoUtils {
           container.getDrive(), 
           container.getElevator(), 
           container.getOperatorController(), 
+          true));
+    }
+
+    public Command autoCsTesting(RobotContainer container) {
+      return new SequentialCommandGroup(
+        createPath(
+          container, 
+          "New Path", 
+          true,
+          Map.of()),
+        new ModifiedCSBalanceCommand(
+          container.getDrive(), 
+          container.getElevator(), 
+          container.getOperatorController(), 
           false));
     }
    
@@ -416,6 +431,8 @@ public class AutoUtils {
             .andThen(priorityFiveExit(container))
             .andThen(priority6Pickup(container))
             .andThen(priority6Ending(container));
+      case CS_TESTING_AUTO:
+        return autoCsTesting(container);
       default:
        return priorityOneAuto(container);
         }
@@ -456,7 +473,8 @@ public class AutoUtils {
     PRIORITY_3_AUTO,
     PRIORITY_4_AUTO,
     PRIORITY_5_AUTO,
-    PRIORITY_6_AUTO
+    PRIORITY_6_AUTO,
+    CS_TESTING_AUTO
   }
 
   private enum InitGamePiece {
