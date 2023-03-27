@@ -54,10 +54,12 @@ public class AutoUtils {
         autoChooser.addOption("P3 - Score preload, pick up cube, score cube", AutoModes.PRIORITY_3_AUTO);
         autoChooser.addOption("P4 - Score preload, pick cube, auto balance", AutoModes.PRIORITY_4_AUTO);
         autoChooser.addOption("P5 - Score preload, pick up cube, score cube, balance", AutoModes.PRIORITY_5_AUTO);
-        autoChooser.addOption("CS Testing", AutoModes.CS_TESTING_AUTO);
+        autoChooser.addOption("Charge Station Testing", AutoModes.CS_TESTING_AUTO);
+        autoChooser.addOption("Score game piece then balance on Charge Station", AutoModes.SCORE_CHARGESTATION_AUTO);
 
-        initGamePieceChooser.addOption("InitGamePiece: Cube", InitGamePiece.CUBE);
+        
         initGamePieceChooser.setDefaultOption("InitGamePiece: Cone", InitGamePiece.CONE);
+        initGamePieceChooser.addOption("InitGamePiece: Cube", InitGamePiece.CUBE);
 
 
         //might still need these later
@@ -69,10 +71,11 @@ public class AutoUtils {
          */
 
         SmartDashboard.putData("auto choices", autoChooser);
+        SmartDashboard.putData("init score choices", initGamePieceChooser);
     }
 
     private Command getRetractCommand(RobotContainer container) {
-      Command initPosCommand = new SequentialCommandGroup(
+      Command initPosCommand = new ParallelCommandGroup(
         new ElevatorCommand(
             container.getElevator(), 
             container.getIntake(), 
@@ -203,6 +206,23 @@ public class AutoUtils {
             "Priority 1 auto", 
             true, 
             Map.of("init retract p1a", getRetractCommand(container))));
+    }
+
+    public Command autoScoreThenChargeStation(RobotContainer container) {
+      return new SequentialCommandGroup(
+        getScoreCommand(container,  ElevatorConstants.highElevatorConeSetpoint, GamePiece.CONE),
+        getRetractCommand(container),
+        new WaitCommand(0.5),
+        createPath(
+          container, 
+          "Score Then Charge Station", 
+          true, 
+          Map.of()),
+        new ModifiedCSBalanceCommand(
+          container.getDrive(), 
+          container.getElevator(), 
+          container.getOperatorController(), 
+          true));
     }
 
     public Command autoHybridMobility(RobotContainer container) {
@@ -433,6 +453,8 @@ public class AutoUtils {
             .andThen(priority6Ending(container));
       case CS_TESTING_AUTO:
         return autoCsTesting(container);
+      case SCORE_CHARGESTATION_AUTO:
+        return autoScoreThenChargeStation(container);
       default:
        return priorityOneAuto(container);
         }
@@ -474,7 +496,8 @@ public class AutoUtils {
     PRIORITY_4_AUTO,
     PRIORITY_5_AUTO,
     PRIORITY_6_AUTO,
-    CS_TESTING_AUTO
+    CS_TESTING_AUTO,
+    SCORE_CHARGESTATION_AUTO
   }
 
   private enum InitGamePiece {
