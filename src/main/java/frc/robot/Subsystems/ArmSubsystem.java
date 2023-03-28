@@ -25,7 +25,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Arm/PressurePSI", getPressure());
+        SmartDashboard.putNumber("Arm/PressurePSI", Math.round(getPressure()));
     }
 
     public double getPressure() {

@@ -42,7 +42,7 @@ public class ChargeStationStates {
     }
 
     public void overrideState() {
-        this.state = States.ON_CHARGE_STATION;
+        this.state = States.CLIMBING_CHARGE_STATION;//override state now tells the robot that it is climbing the charge station
     }
 
     public States getState() {

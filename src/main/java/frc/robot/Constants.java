@@ -194,7 +194,7 @@ public final class Constants {
       public static final double coneDrivingWithLift = 3;
       public static final double midElevatorGamepiece = 7.5;
       public static final double highElevatorConeSetpoint = 15.5;
-      public static final double highElevatorCubeSetpoint = 13.5;
+      public static final double highElevatorCubeSetpoint = 14.5;
       public static final double doubleSubstationSetpoint = 14.2;
       public static final double fullRetractionSetpoint = 0;
 

@@ -26,6 +26,8 @@ import frc.robot.Subsystems.DriveSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
+import frc.robot.Commands.ModifiedCSBalanceCommand;
+
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -196,7 +198,7 @@ public class RobotContainer {
       .whileTrue(new ElevatorManualControlCommand(m_operatorController, m_elevator));
 
     new Trigger(() -> m_operatorController.getRawButton(Bindings.chargeStationBalance))
-      .onTrue(new ChargeStationBalanceCommand(m_robotDrive, m_elevator));
+      .onTrue(new ModifiedCSBalanceCommand(m_robotDrive, m_elevator, m_operatorController, true));
   }
 
 
