@@ -35,4 +35,10 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: Compile and run tests on robot code
-      run: ./gradlew build --stacktrace --debug
+      run: ./gradlew build --warn
+    
+    if: ${{ failure() }}
+    - uses: actions/upload-artifact@v3
+    with:
+      name: Package
+      path: build/libs
