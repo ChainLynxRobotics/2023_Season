@@ -37,11 +37,6 @@ jobs:
     - name: Compile and run tests on robot code
       run: ./gradlew build --warn
     
-    if: ${{ failure() }}
-    - uses: actions/upload-artifact@v3
-    with:
-      name: Package
-      path: build/libs
   spotless:
       # The type of runner that the job will run on
       runs-on: ubuntu-latest
