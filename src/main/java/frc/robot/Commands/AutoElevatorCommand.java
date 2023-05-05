@@ -10,7 +10,6 @@ public class AutoElevatorCommand extends CommandBase {
     private double setpoint;
     private double startTime;
 
-
     public AutoElevatorCommand(ElevatorSubsystem elevator, double setpoint) {
         this.elevator = elevator;
         this.setpoint = setpoint;
@@ -22,7 +21,7 @@ public class AutoElevatorCommand extends CommandBase {
     public void initialize() {
         startTime = System.currentTimeMillis();
     }
-
+  
     @Override
     public void execute() {
         elevator.moveElevator(setpoint);
@@ -47,7 +46,6 @@ public class AutoElevatorCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         if (Math.abs(setpoint - elevator.getDrivingEncoder().getPosition()) < 0.05) {
-            System.out.println("finished!");
             return true;
         }
         return false;

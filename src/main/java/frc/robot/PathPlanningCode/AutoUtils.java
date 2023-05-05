@@ -83,11 +83,8 @@ public class AutoUtils {
             new InstantCommand(container.getArm()::expand),
             new WaitCommand(1.2),
             new AutoElevatorCommand(container.getElevator(), setpoint),
-            //TODO verify elevator motors are stalling between setpoint command and release
-            new ParallelCommandGroup(
-              new RunCommand(() -> container.getElevator().setMotors(-0.05), container.getElevator()),
-              new AutoReleaseCommand(container.getIntake(), 0.8, gamePiece).withTimeout(0.5)
-            ));
+            new AutoReleaseCommand(container.getIntake(), 0.8, gamePiece).withTimeout(0.5)
+            );
     }
 
     private Command getIntakeCommand(RobotContainer container, double setpoint, GamePiece gamePiece, double timeout) {
@@ -182,8 +179,6 @@ public class AutoUtils {
         return command;
     }
 
-
-    //only event map end events aren't working
     public Command priorityOneAuto(RobotContainer container) {
         return new SequentialCommandGroup(
           initGamePieceScore(container),
@@ -194,7 +189,6 @@ public class AutoUtils {
             Map.of("init retract p1a", getRetractCommand(container))));
     }
 
-    //TODO might need to tune intake timeout
     public Command intakeSecondThenCS(RobotContainer container) {
       return new SequentialCommandGroup(
         createPath(
