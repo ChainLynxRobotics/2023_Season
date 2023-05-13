@@ -22,6 +22,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final RelativeEncoder m_encoder2;
     public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, elevatorSpeed, allowedErr;
 
+    private double elevatorSetpoint;
+
+    public void setElevatorSetpoint(double elevatorSetpoint) {
+      this.elevatorSetpoint = elevatorSetpoint;
+    }
+
+    public double getElevatorSetpoint() {
+      return elevatorSetpoint;
+    }
+
     public ElevatorSubsystem() {
       elevatorMotor1 = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_MASTER, MotorType.kBrushless);
       elevatorMotor2 = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_SLAVE, MotorType.kBrushless);
@@ -74,6 +84,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Max Output", kMaxOutput);
       SmartDashboard.putNumber("Min Output", kMinOutput);
       SmartDashboard.putNumber("Elevator Setpoint (rotations)", 0);
+
+      elevatorSetpoint = m_encoder1.getPosition();
     }
     
     @Override
@@ -86,9 +98,11 @@ public class ElevatorSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("elevator/motor 16/output power", elevatorMotor2.getAppliedOutput());
       SmartDashboard.putNumber("elevator/motor 17/raw output power", elevatorMotor1.get());
       SmartDashboard.putNumber("elevator/motor 16/raw output power", elevatorMotor2.get());
+
+      moveElevator(this.elevatorSetpoint);
     }
 
-    public void moveElevator(Double setpoint) {
+    private void moveElevator(Double setpoint) {
       // read PID coefficients from SmartDashboard
       double p = SmartDashboard.getNumber("P Gain", 1);
       double i = SmartDashboard.getNumber("I Gain", 0);
@@ -152,4 +166,5 @@ public class ElevatorSubsystem extends SubsystemBase {
     public RelativeEncoder getDrivingEncoder() {
       return m_encoder1;
     }
+    
 }

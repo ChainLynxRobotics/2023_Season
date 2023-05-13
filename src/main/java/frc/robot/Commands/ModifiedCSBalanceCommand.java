@@ -58,7 +58,7 @@ public class ModifiedCSBalanceCommand extends CommandBase {
             CSDriveDir = -1;
         }
 
-        elevator.moveElevator(ELEVATOR_SETPOINT);
+        elevator.setElevatorSetpoint(ELEVATOR_SETPOINT);
     }
 
     @Override

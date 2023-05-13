@@ -54,19 +54,19 @@ public class ElevatorCommand extends CommandBase {
 
         //to avoid elevator slamming and excessive acceleration, ramp according to "triangular" velocity motion profile
         if (setpoint-elevator.getDrivingEncoder().getPosition() > ElevatorConstants.MAX_TRAVEL_LIMIT) {
-            elevator.moveElevator(setpoint-ElevatorConstants.ELEVATOR_RAMP_DIST);
+            elevator.setElevatorSetpoint(setpoint-ElevatorConstants.ELEVATOR_RAMP_DIST);
     
             if (System.currentTimeMillis()-startTime > 300) {
-                elevator.moveElevator(setpoint);
+                elevator.setElevatorSetpoint(setpoint);
             }
         } else if (setpoint-elevator.getDrivingEncoder().getPosition() < -ElevatorConstants.MAX_TRAVEL_LIMIT) {
-            elevator.moveElevator(setpoint+ElevatorConstants.ELEVATOR_RAMP_DIST);
+            elevator.setElevatorSetpoint(setpoint+ElevatorConstants.ELEVATOR_RAMP_DIST);
 
             if (System.currentTimeMillis()-startTime > 300) {
-                elevator.moveElevator(setpoint);
+                elevator.setElevatorSetpoint(setpoint);
             }
         } else {
-            elevator.moveElevator(setpoint);
+            elevator.setElevatorSetpoint(setpoint);
         }
     }
 

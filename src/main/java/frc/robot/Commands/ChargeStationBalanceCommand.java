@@ -45,7 +45,7 @@ public class ChargeStationBalanceCommand extends CommandBase {
 
         pitchChanged = false;
 
-        elevator.moveElevator(ELEVATOR_SETPOINT);
+        elevator.setElevatorSetpoint(ELEVATOR_SETPOINT);
     }
 
     @Override
