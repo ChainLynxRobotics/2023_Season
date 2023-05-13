@@ -1,10 +1,13 @@
 package frc.robot;
 
+import java.util.HashMap;
+
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -247,5 +250,22 @@ public final class Constants {
       public static final int midScoreElevatorSetpoint = 12;
       public static final int highScoreElevatorSetpoint = 11;
       public static final int doubleSubstationSetpoint = 16;
+    }
+
+    public final static class EventMapper {
+        public static EventMapper instance;
+        private static HashMap<String, Command> eventMap;
+
+        public static synchronized EventMapper getInstance() {
+            if (instance == null) {
+                instance = new EventMapper();
+                eventMap = new HashMap<>();
+            }
+            return instance;
+        }
+
+        public static HashMap<String, Command> getEventMap() {
+            return eventMap;
+        }
     }
 }
