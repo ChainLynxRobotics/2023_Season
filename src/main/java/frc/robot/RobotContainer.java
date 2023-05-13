@@ -1,10 +1,13 @@
 package frc.robot;
 
+import java.util.Map;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -20,6 +23,7 @@ import frc.robot.Commands.ReleaseCommand;
 import frc.robot.Commands.SimpleDriveCommand;
 import frc.robot.Commands.VisionTranslateCommand;
 import frc.robot.Constants.OIConstants;
+import frc.robot.PathPlanningCode.AutoRoutine;
 import frc.robot.PathPlanningCode.AutoUtils;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DriveSubsystem;
@@ -239,5 +243,11 @@ public class RobotContainer {
 
   public AutoUtils getAutoUtils() {
     return autoUtils;
+  }
+
+  public Command getAutoCommand() {
+    AutoRoutine.Builder builder = new AutoRoutine.Builder();
+    AutoRoutine testRoutine = builder.withPathCommand(this, "Priority 1 auto", true, Map.of("init retract p1a", new IntakeCommand(m_intake, 0.5))).build();
+    return testRoutine.getCommandGroup();
   }
 }
