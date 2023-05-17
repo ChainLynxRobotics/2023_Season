@@ -1,4 +1,4 @@
-package frc.MotionProfiles;
+package frc.Lib.MotionProfiles;
 
 public class LinearPositionalRamp {
     

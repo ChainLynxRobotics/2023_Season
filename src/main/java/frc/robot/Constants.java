@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public final class Constants {
 
+    public static final double GLOBAL_TIMESTEP = 0.02;
+
     public static final class DriveConstants {
 
         // Driving Parameters - Note that these are not the maximum capable speeds of
