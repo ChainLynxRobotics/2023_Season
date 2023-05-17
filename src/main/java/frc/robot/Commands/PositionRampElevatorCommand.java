@@ -1,39 +1,27 @@
 package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.MotionProfiles.PositionRamping;
 import frc.robot.Constants.Bindings;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.GamePiece;
 import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
 
-public class ElevatorCommand extends CommandBase {
+public class PositionRampElevatorCommand extends CommandBase {
 
     private ElevatorSubsystem elevator;
-    private IntakeSubsystem intake;
     private double setpoint;
-    private int setpointLocation;
+    private PositionRamping positionRamp;
 
     double startTime;
 
-    public ElevatorCommand(ElevatorSubsystem elevator, IntakeSubsystem intake, int setpointLocation) {
+    public PositionRampElevatorCommand(ElevatorSubsystem elevator, IntakeSubsystem intake, int setpointLocation, double timeRampingMillis) {
         this.elevator = elevator;
-        this.intake = intake;
-        this.setpointLocation = setpointLocation;
         this.setpoint = 0;
 
         addRequirements(elevator, intake);
-    }
 
-    @Override
-    public void initialize() {
-        startTime = System.currentTimeMillis();
-
-    }
-
-    //TODO: fix elevator setpoint logic (not broken, but directly pass in setpoint it's too verbose)
-    @Override
-    public void execute() {
         if (setpointLocation == Bindings.groundPickUp) {
             setpoint = ElevatorConstants.groundPickupCubeHybrid;
         } else if (setpointLocation == Bindings.lowScoreElevatorSetpoint) {
@@ -52,22 +40,21 @@ public class ElevatorCommand extends CommandBase {
             setpoint = ElevatorConstants.fullRetractionSetpoint;
         }
 
-        //to avoid elevator slamming and excessive acceleration, ramp according to "triangular" velocity motion profile
-        if (setpoint-elevator.getDrivingEncoder().getPosition() > ElevatorConstants.MAX_TRAVEL_LIMIT) {
-            elevator.setElevatorSetpoint(setpoint-ElevatorConstants.ELEVATOR_RAMP_DIST);
-    
-            if (System.currentTimeMillis()-startTime > 300) {
-                elevator.setElevatorSetpoint(setpoint);
-            }
-        } else if (setpoint-elevator.getDrivingEncoder().getPosition() < -ElevatorConstants.MAX_TRAVEL_LIMIT) {
-            elevator.setElevatorSetpoint(setpoint+ElevatorConstants.ELEVATOR_RAMP_DIST);
+        positionRamp = new PositionRamping(setpoint, timeRampingMillis, elevator.getDrivingEncoder().getPosition());
+    }
 
-            if (System.currentTimeMillis()-startTime > 300) {
-                elevator.setElevatorSetpoint(setpoint);
-            }
-        } else {
-            elevator.setElevatorSetpoint(setpoint);
-        }
+    @Override
+    public void initialize() {
+        startTime = System.currentTimeMillis();
+
+    }
+
+    //TODO: fix elevator setpoint logic (not broken, but directly pass in setpoint it's too verbose)
+    @Override
+    public void execute() {
+        
+        elevator.setElevatorSetpoint(positionRamp.evaluate(System.currentTimeMillis() - startTime));
+        
     }
 
     @Override
