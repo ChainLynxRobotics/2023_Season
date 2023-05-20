@@ -254,6 +254,12 @@ public final class Constants {
       public static final int doubleSubstationSetpoint = 16;
     }
 
+    public enum CONTROL_TYPES {
+        POSITION,
+        TRAPEZOIDAL,
+        SCURVE
+    }
+
     public final static class EventMapper {
         public static EventMapper instance;
         private static HashMap<String, Command> eventMap;

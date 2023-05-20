@@ -16,7 +16,7 @@ public class ApproximateDerivative {
     }
     public ApproximateDerivative() {
         this.xlast = 0;
-        ylast = 0;
+        this.ylast = 0;
     }
 
     //static instant version
@@ -25,7 +25,7 @@ public class ApproximateDerivative {
     }
     //static instant non fancy version
     public static double derivative(double x1, double y1, double x, double y) {
-        return (y - y1) / (x - x1); //hehe
+        return (y - y1) / (x - x1);
     }
     public static double derivative(double y1, double y2, double dx) {
         return (y2 - y1) / dx;

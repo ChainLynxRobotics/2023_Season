@@ -1,5 +1,5 @@
 package frc.Lib.MotionProfiles;
 
-public class NonlinearPositionalRamp {
+public class PositionalRamp {
     
 }

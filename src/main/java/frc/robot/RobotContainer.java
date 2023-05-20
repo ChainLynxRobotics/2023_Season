@@ -24,6 +24,7 @@ import frc.robot.PathPlanningCode.AutoUtils;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DriveSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
+import frc.robot.Subsystems.ElevatorSubsystemTesting;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
 
@@ -40,6 +41,7 @@ public class RobotContainer {
   private final ElevatorSubsystem m_elevator;
   private final ArmSubsystem m_arm;
   private final IntakeSubsystem m_intake;
+  private final ElevatorSubsystemTesting m_elevatorTest;
 
   private final AutoUtils autoUtils = new AutoUtils();
 
@@ -60,6 +62,7 @@ public class RobotContainer {
     m_elevator = new ElevatorSubsystem();
     m_arm = new ArmSubsystem();
     m_intake = new IntakeSubsystem();
+    m_elevatorTest = new ElevatorSubsystemTesting();
 
     configureButtonBindings();
     CameraServer.startAutomaticCapture("intake camera", 0);

@@ -14,7 +14,7 @@ import frc.robot.Constants.ElevatorConstants;
 
 
 //TO DO: error handling for if pid controllers get misaligned
-public class ElevatorSubsystem extends SubsystemBase {
+public class ElevatorSubsystemTesting extends SubsystemBase {
 
     private final CANSparkMax elevatorMotor1;
     private final CANSparkMax elevatorMotor2;
@@ -36,7 +36,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       return elevatorSetpoint;
     }
 
-    public ElevatorSubsystem() {
+    public ElevatorSubsystemTesting() {
       elevatorMotor1 = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_MASTER, MotorType.kBrushless);
       elevatorMotor2 = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_SLAVE, MotorType.kBrushless);
 
@@ -108,7 +108,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("elevator/motor 17/raw output power", elevatorMotor1.get());
       SmartDashboard.putNumber("elevator/motor 16/raw output power", elevatorMotor2.get());
 
-      //moveElevator(this.elevatorSetpoint);
+      moveElevator(this.elevatorSetpoint);
     }
 
     public void moveElevator(double setpoint) {
@@ -148,33 +148,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         kMaxOutput = max; 
       }
 
-      //m_pidController1.setReference(setpoint, CANSparkMax.ControlType.kPosition);
-      applyControlEffort(m_encoder1.getPosition(), setpoint);
-    }
-
-    public void applyControlEffort(double curr, double setpoint) {
-      elevatorMotor1.set(calculatePID.normalize(curr, setpoint));
-    }
-
-    public void simpleMovement(double input) {
-        System.out.println("simple movement running");
-        if (input > 0.25) {
-            elevatorMotor1.set(-0.25);
-        } else if (input < -0.25) {
-            elevatorMotor1.set(0.25);
-        } else {
-            elevatorMotor1.set(0);
-        }
+      m_pidController1.setReference(0, CANSparkMax.ControlType.kVelocity);
     }
 
     public void setMotors(double speed) {
       elevatorMotor1.set(speed);
-    }
-
-    public void zeroEncoders() {
-      m_encoder1.setPosition(0);
-      m_encoder2.setPosition(0);
-      SmartDashboard.putNumber("Elevator Setpoint (rotations)", 0);
     }
 
     public RelativeEncoder getDrivingEncoder() {

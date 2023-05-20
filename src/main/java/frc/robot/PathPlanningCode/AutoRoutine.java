@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.EventMapper;
 import frc.robot.Constants.ModuleConstants;
 
 /** Used as a builder to streamline the autonomous routine creation process.
@@ -60,19 +59,10 @@ public class AutoRoutine {
         public Command createPath(RobotContainer container, String pathName, boolean isFirstPath, Map<String, Command> checkpoints) {
             PathPlannerTrajectory path = PathPlanner.loadPath(pathName, new PathConstraints(4, 3));
     
-            int entry = 0;
-            while (entry < checkpoints.size()) {
-                String key = checkpoints.keySet().iterator().next();
-                if (!EventMapper.getEventMap().containsKey(key)) {
-                    EventMapper.getEventMap().put(key, checkpoints.get(key));
-                }
-                entry++;
-            }
-    
             FollowPathWithEvents command = new FollowPathWithEvents(
               followTrajectoryCommand(container, path, isFirstPath),
               path.getMarkers(),
-              EventMapper.getEventMap()
+              checkpoints
             );
       
             return command;
@@ -91,9 +81,21 @@ public class AutoRoutine {
         public AutoRoutine build() {
             return new AutoRoutine(this);
         }
+
     }
 
     public List<Command> getCommandActions() {
         return commandActions;
+    }
+
+    public SequentialCommandGroup getCommandGroup() {
+        SequentialCommandGroup commandGroup = new SequentialCommandGroup();
+        List<Command> commandList = this.getCommandActions();
+
+        for (Command command : commandList) {
+            commandGroup.addCommands(command);
+        }
+
+        return commandGroup;
     }
 }

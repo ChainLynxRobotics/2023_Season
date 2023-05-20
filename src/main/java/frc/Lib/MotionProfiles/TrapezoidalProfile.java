@@ -4,12 +4,12 @@ public class TrapezoidalProfile {
     protected int direction;
     protected double maxAccel;
     protected double maxVel;
-    protected double initAccelTime;
+    private double initAccelTime;
     protected double fullSpeedTime;
-    protected double endAccelTime;
+    private double endAccelTime;
 
-    protected Config initState;
-    protected Config finalState;
+    private Config initState;
+    private Config finalState;
 
     public static class Config {
         protected double position;
@@ -38,16 +38,11 @@ public class TrapezoidalProfile {
         this.finalState = adjustProfile(finalState);
         this.maxVel = maxVel;
         this.maxAccel = maxAccel;
-        this.initState = initState;
 
         if (this.initState.velocity  > maxVel) {
             this.initState.velocity = maxVel;
         }
-    }
-
-    public TrapezoidalProfile(double maxAccel, double maxVel, Config finalState) {
-        this(maxAccel, maxVel, new Config(0,0), finalState);
-        
+       
         //truncation calculations (if motion profile starts at 0)
         double rampUpTime = initState.velocity/maxAccel;
         double beginRampDist = rampUpTime*rampUpTime*initState.velocity/2;
@@ -67,6 +62,10 @@ public class TrapezoidalProfile {
         initAccelTime = accelTime/2-rampUpTime;
         fullSpeedTime = initAccelTime + fullSpeedDist/maxVel;
         endAccelTime = fullSpeedTime + accelTime/2 - rampDownTime;
+    }
+
+    public TrapezoidalProfile(double maxAccel, double maxVel, Config finalState) {
+        this(maxAccel, maxVel, new Config(0,0), finalState);
     }
 
     //calculate config for state at a time t (3 possible states -- + accel, 0 accel + max vel, - accel)
