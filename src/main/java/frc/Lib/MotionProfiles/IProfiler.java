@@ -4,4 +4,6 @@ public interface IProfiler {
     
     public double calculate(double t);
 
+    public boolean setpointReached(double curPos, double setpoint, double error);
+
 }
