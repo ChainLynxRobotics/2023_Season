@@ -108,7 +108,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("elevator/motor 17/raw output power", elevatorMotor1.get());
       SmartDashboard.putNumber("elevator/motor 16/raw output power", elevatorMotor2.get());
 
-      //moveElevator(this.elevatorSetpoint);
+      moveElevator(this.elevatorSetpoint);
     }
 
     public void moveElevator(double setpoint) {
