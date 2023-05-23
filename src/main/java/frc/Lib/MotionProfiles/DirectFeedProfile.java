@@ -1,6 +1,6 @@
 package frc.Lib.MotionProfiles;
 
-
+//TODO add timestep sampling
 public class DirectFeedProfile implements IProfiler {
     private double[] velocities;
     private double dt;
@@ -28,6 +28,7 @@ public class DirectFeedProfile implements IProfiler {
         return true;
        }
        return false;
-    }
+    }  
+    
 
 }
