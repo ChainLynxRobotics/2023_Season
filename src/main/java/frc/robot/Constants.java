@@ -186,9 +186,11 @@ public final class Constants {
     public static final class ShooterConstants {
         public static final double FLYWHEEL_RADIUS = 0.5; //placeholder, in meters
         public static final double TICKS_PER_ROTATION = 42;
+        public static final double SETPOINT_ERROR = 0.5;
 
         public static final int SHOOTER_FLYWHEEL_PORT = 17;
         public static final int SHOOTER_HOOD_PORT = 18;
+
 
         public enum ShooterRange {
             SHORT_RANGE,

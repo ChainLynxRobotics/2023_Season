@@ -1,4 +1,4 @@
-package frc.utils;
+package frc.utils.Simulation;
 
 
 import java.awt.BorderLayout;
@@ -30,8 +30,6 @@ class Pointp {
  * and drawagain() to render again. Use addPlot or addPoint to add info, and the colors are from
  * the awt library. The graph has multiple plots, and will auto adjust y window, but the info can be changed
  * with the associated GraphConfig.
- * 
- * Usage example: construct graph object, g.init(), g.addPlot()/g.addPoint
  */
 public class Graph extends JPanel {
     //todo: add more display features
@@ -43,20 +41,6 @@ public class Graph extends JPanel {
     private ArrayList<Color> colors;
     private int pxw;
     private int pxh;
-
-    public static void main(String[] args) {
-        test();
-    }
-    public static void test() {
-        GraphConfig conf = new Graph.GraphConfig();
-        Graph example = new Graph(conf);
-        double dt = 0.01;
-        example.addPlot(Color.RED);
-        for(double t = -3*3.14159; t < 3*3.14159; t+=dt) {
-            example.addPoint(t, Math.sin(t), 0);
-        }
-        example.init(500, 500, "Graph"); //TODO: Address that this doesn't include the head of the graph
-    }
 
     public void addPlot(Color awtcolor) {
         graph.add(new ArrayList<Pointp>());
