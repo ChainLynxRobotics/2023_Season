@@ -148,12 +148,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         kMaxOutput = max; 
       }
 
-      //m_pidController1.setReference(setpoint, CANSparkMax.ControlType.kPosition);
-      applyControlEffort(m_encoder1.getPosition(), setpoint);
+      m_pidController1.setReference(setpoint, CANSparkMax.ControlType.kPosition);
+      //applyControlEffort(m_encoder1.getPosition(), setpoint);
     }
 
     public void applyControlEffort(double curr, double setpoint) {
-      elevatorMotor1.set(calculatePID.normalize(curr, setpoint));
+      elevatorMotor1.set(calculatePID.normalizedEffect(curr, setpoint));
     }
 
     public void simpleMovement(double input) {

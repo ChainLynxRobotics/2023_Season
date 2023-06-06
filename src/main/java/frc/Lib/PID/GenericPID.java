@@ -35,7 +35,7 @@ public class GenericPID {
     }
 
     //converts control effect into motor power
-    public double normalize(double curr, double setpoint) {
+    public double normalizedEffect(double curr, double setpoint) {
         double rawOutput = posControlEffect(setpoint, curr, Constants.GLOBAL_TIMESTEP);
         return MathUtil.clamp(rawOutput, 0, 1);
     }
