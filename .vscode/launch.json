@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch Graph",
+      "request": "launch",
+      "mainClass": "frc.utils.Simulation.Graph",
+      "projectName": "2023_Season-1"
+    },
+    {
+      "type": "java",
       "name": "Launch ShooterSim",
       "request": "launch",
       "mainClass": "frc.utils.Simulation.ShooterSim",

@@ -9,16 +9,14 @@ public class ShooterCommand extends CommandBase {
 
     private boolean goalAtTop;
     private ShooterZone zone;
-    private boolean shortRange;
     private double angleSetpoint;
 
     private double startTime;
     
-    public ShooterCommand(boolean goalAtTop, ShooterZone zone, boolean shortRange, double angleSetpoint) {
+    public ShooterCommand(boolean goalAtTop, ShooterZone zone) {
         this.goalAtTop = goalAtTop;
         this.zone = zone;
-        this.shortRange = shortRange;
-        this.angleSetpoint = angleSetpoint;
+        this.angleSetpoint = shooter.characterizeZone(zone)[2];
         startTime = System.currentTimeMillis();
 
         shooter = new ShooterSubsystem(goalAtTop);
@@ -29,14 +27,14 @@ public class ShooterCommand extends CommandBase {
     @Override
     public void initialize() {
         if (goalAtTop) {
-            shooter.setAngle(shortRange, 0);
+            shooter.setAngle(zone, 0);
         }
     }
 
     @Override
     public void execute() {
         if (!goalAtTop) {
-            shooter.setAngle(shortRange, angleSetpoint);
+            shooter.setAngle(zone, angleSetpoint);
         }
         if (shooter.isAtSetpoint(angleSetpoint, shooter.ticksToAngle(shooter.getHoodMotor().getEncoder().getPosition()))) {
             shooter.setRPM(zone);

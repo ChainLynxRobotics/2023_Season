@@ -60,11 +60,11 @@ public class ShooterSubsystem extends SubsystemBase {
         pidController.setReference(setpointVel, ControlType.kVelocity);
     }
 
-    public void setAngle(boolean shortRange, double setpoint) {
+    public void setAngle(ShooterZone zone, double setpoint) {
         if (goalAtTop) {
             updateAngle(setpoint);
         } else {
-            if (shortRange) {
+            if (zone == ShooterZone.ZONE3) {
                 binaryHoodController.get().set(Value.kReverse);
             } else {
                 binaryHoodController.get().set(Value.kForward);
@@ -129,10 +129,19 @@ public class ShooterSubsystem extends SubsystemBase {
     public double[] characterizeZone(ShooterZone zone) {
         switch(zone) {
             case ZONE1:
+                if (goalAtTop) {
+                    return new double[]{10,5,Math.atan(5/10)};
+                }
                 return new double[]{10,5,45};
             case ZONE2:
+                if (goalAtTop) {
+                    return new double[]{15,5,Math.atan(5/15)};
+                }
                 return new double[]{15,5,45};
             case ZONE3:
+                if (goalAtTop) {
+                    return new double[]{10,5,Math.atan(1)};
+                }
                 return new double[]{5,5,60};
             default:
                 return new double[]{0,0,0};
@@ -141,6 +150,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public CANSparkMax getHoodMotor() {
         return hoodController.get();
+    }
+
+    public CANSparkMax getFlywheelMotor() {
+        return flywheelMotor;
     }
 
     public  Map<ShooterZone, Double> getLaunchVelocity() {

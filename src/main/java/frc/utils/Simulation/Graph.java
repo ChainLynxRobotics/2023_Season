@@ -42,6 +42,23 @@ public class Graph extends JPanel {
     private int pxw;
     private int pxh;
 
+    public static void main(String[] args) {
+        test();
+    }
+
+
+    public static void test() {
+        GraphConfig conf = new Graph.GraphConfig();
+        Graph example = new Graph(conf);
+        double dt = 0.01;
+        example.addPlot(Color.RED);
+        for(double t = -3*3.14159; t < 3*3.14159; t+=dt) {
+            example.addPoint(t, Math.sin(t), 0);
+        }
+        example.init(500, 500, "Graph");
+    }
+
+
     public void addPlot(Color awtcolor) {
         graph.add(new ArrayList<Pointp>());
         colors.add(awtcolor);
