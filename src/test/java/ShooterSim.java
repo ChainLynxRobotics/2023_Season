@@ -1,11 +1,23 @@
-package frc.utils.Simulation;
+package src.test.java;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
-public class ShooterSim {
-    
+import edu.wpi.first.hal.HAL;
+
+import java.awt.Color;
+import java.beans.Transient;
+
+import com.revrobotics.CANSparkMax;
+
+import frc.utils.Simulation.Graph;
+import frc.utils.Simulation.Graph.GraphConfig;
+import frc.robot.Subsystems.ShooterSubsystem;
 
 
 public class ShooterSim {
@@ -13,7 +25,22 @@ public class ShooterSim {
     private static Graph graph = new Graph(config);
     private static double dt = 0.02; //timestep
 
-    private static ShooterSubsystem shooter = new ShooterSubsystem(true);
+    private static ShooterSubsystem shooter;
+
+
+    @BeforeEach
+    public void setup() {
+        HAL.initialize(100, 0);
+        shooter = new ShooterSubsystem(true);
+    }
+
+
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    @AfterEach 
+    //destroy all subsystem objects here
+    public void cleanup() throws Exception {
+
+    }
 
     @Test
     public static void shooterVelocityAndAngleSim() {
@@ -32,7 +59,12 @@ public class ShooterSim {
         graph.init(500, 500, "Flywheel Motor Output");
     }
 
-    
+
+    @Test
+    public void testAssertion() {
+        assertTrue(true);
+    }
+
     public static void test() {
         graph.addPlot(Color.BLACK);
         graph.addPlot(Color.BLUE);
@@ -45,4 +77,4 @@ public class ShooterSim {
         graph.init(500, 500, "test plot");
     }
 }
-}
+

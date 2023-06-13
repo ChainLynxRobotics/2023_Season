@@ -1,8 +1,7 @@
 package frc.Lib.MotionProfiles;
 
-import org.apache.commons.lang3.Range;
-
-import frc.robot.Constants;
+//Range comments can be removed if not running unit tests (for some reason it crashes them)
+//import org.apache.commons.lang3.Range;
 
 public class SCurveProfile extends TrapezoidalProfile {
     private double t1;
@@ -94,11 +93,11 @@ public class SCurveProfile extends TrapezoidalProfile {
     }
 
     public void isInRange(double curCheckpoint, double checkpoint, double curr, double t) {
-        Range<Double> range = Range.between(curCheckpoint - Constants.GLOBAL_TIMESTEP, curCheckpoint + Constants.GLOBAL_TIMESTEP);
-
+        /*Range<Double> range = Range.between(curCheckpoint - Constants.GLOBAL_TIMESTEP, curCheckpoint + Constants.GLOBAL_TIMESTEP);
+    
         if (range.contains(t)) {
             checkpoint = curr;
-        }
+        }*/
     }
 
     protected SConfig adjustProfile(SConfig config) {
