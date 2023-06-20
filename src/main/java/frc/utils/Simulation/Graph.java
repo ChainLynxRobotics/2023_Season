@@ -5,6 +5,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+
 import javax.swing.SwingUtilities;
 
 import frc.Lib.PID.DoubleFunction;
@@ -33,14 +36,14 @@ class Pointp {
  */
 public class Graph extends JPanel {
     //todo: add more display features
-
-    private GraphConfig config;
+    private static GraphConfig config;
     private ArrayList<ArrayList<Pointp>> graph;
     
     private JFrame frame;
     private ArrayList<Color> colors;
     private int pxw;
     private int pxh;
+
 
     public static void main(String[] args) {
         test();
@@ -119,13 +122,40 @@ public class Graph extends JPanel {
         return (int)map(config.y1, config.y2, pxh, 0, n); //todo fix this it's upside down but if i upside down it fills :((
     }
 
+    public void addComponentListener() {
+        frame.addComponentListener(new ComponentListener() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                double width = e.getComponent().getWidth();
+                double length = e.getComponent().getHeight();
+                
+                config.x1 = -width/2;
+                config.x2 = width/2;
+                config.y1 = -length/2;
+                config.y2 = length/2;
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {}
+
+            @Override
+            public void componentShown(ComponentEvent e) {}
+
+            @Override
+            public void componentHidden(ComponentEvent e) {}
+        });
+
+        drawAgain();
+    }
+
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         drawGraph(g);
     }
 
-    public void drawagain() {
+    public void drawAgain() {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 frame.repaint();
@@ -189,6 +219,10 @@ public class Graph extends JPanel {
         this.frame.getContentPane().add(this, BorderLayout.CENTER);
         this.frame.setVisible(true);
     }    
+
+    public JFrame getJFrame() {
+        return frame;
+    }
 
     public static class GraphConfig {
         public double x1; //currently UB if x1 > x2, same with y
@@ -272,7 +306,7 @@ public class Graph extends JPanel {
         this.config = c;
         this.graph = new ArrayList<ArrayList<Pointp>>();
         this.colors = new ArrayList<Color>();
-        this.frame = null;
+        this.frame = getJFrame();
         this.pxw = 500;
         this.pxh = 500;
     }

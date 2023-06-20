@@ -1,7 +1,8 @@
 package frc.Lib.MotionProfiles;
 
-//Range comments can be removed if not running unit tests (for some reason it crashes them)
-//import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.Range;
+
+import frc.robot.Constants;
 
 public class SCurveProfile extends TrapezoidalProfile {
     private double t1;
@@ -12,8 +13,8 @@ public class SCurveProfile extends TrapezoidalProfile {
     private SConfig initState;
     private SConfig finalState;
 
-    private final double avAccel = Math.sqrt(maxVel/2);
-    private final double jerk = maxAccel*avAccel/((maxVel-initState.velocity)*(maxAccel-avAccel));
+    private final double avAccel;
+    private final double jerk;
 
     public static class SConfig extends TrapezoidalProfile.Config {
         private double accel;
@@ -35,6 +36,15 @@ public class SCurveProfile extends TrapezoidalProfile {
 
     public SCurveProfile(double maxAccel, double maxVel, SConfig initState, Config finalState) {
         super(maxAccel, maxVel, initState, finalState);
+
+        if (initState.position > finalState.position) {
+            direction = -1;
+        }
+
+        this.initState = adjustProfile(initState);
+
+        avAccel = Math.sqrt(maxVel/2);
+        jerk = maxAccel*avAccel/((maxVel-initState.velocity)*(maxAccel-avAccel));
 
         t1 = maxAccel/jerk;
         t2 = maxVel/avAccel - maxAccel/jerk;
@@ -93,12 +103,14 @@ public class SCurveProfile extends TrapezoidalProfile {
     }
 
     public void isInRange(double curCheckpoint, double checkpoint, double curr, double t) {
-        /*Range<Double> range = Range.between(curCheckpoint - Constants.GLOBAL_TIMESTEP, curCheckpoint + Constants.GLOBAL_TIMESTEP);
+        Range<Double> range = Range.between(curCheckpoint - Constants.GLOBAL_TIMESTEP, curCheckpoint + Constants.GLOBAL_TIMESTEP);
     
         if (range.contains(t)) {
             checkpoint = curr;
-        }*/
+        }
     }
+
+    
 
     protected SConfig adjustProfile(SConfig config) {
         SConfig current = new SConfig(config.position, config.velocity, config.accel);
