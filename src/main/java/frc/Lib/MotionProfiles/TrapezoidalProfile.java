@@ -12,8 +12,8 @@ public class TrapezoidalProfile {
     private Config finalState;
 
     public static class Config {
-        protected double position;
-        protected double velocity;
+        public double position;
+        public double velocity;
 
         public Config(double position, double velocity) {
             this.position = position;
@@ -86,6 +86,10 @@ public class TrapezoidalProfile {
         }
 
         return adjustProfile(current);
+    }
+
+    public double getTotalProfileTime() {
+        return endAccelTime;
     }
 
     protected Config adjustProfile(Config config) {
