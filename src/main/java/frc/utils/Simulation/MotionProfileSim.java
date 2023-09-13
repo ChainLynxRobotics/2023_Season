@@ -19,23 +19,22 @@ public class MotionProfileSim {
     private static SCurveProfile sProfile = new SCurveProfile(5, 10, new SCurveProfile.SConfig(10, 0, 0));
 
     public static void main(String[] args) {
-        //test();
         trapezoidalProfileState();
     }
 
     public static void trapezoidalProfileState() {
         profileGraph.addPlot(Color.GREEN); //velocity
-        profileGraph.addPlot(Color.DARK_GRAY); //position
+        profileGraph.addPlot(Color.MAGENTA); //position
         profileGraph.addPlot(Color.BLUE);
-        profileGraph.addPlot(Color.PINK);
+        profileGraph.addPlot(Color.GRAY);
         for (double t = 0; t < testProfile.totalTime(); t += dt) {
-            TrapezoidalProfile.Config config = tProfile.calculate(t);
+            SCurveProfile.Config config = sProfile.calculate(t);
             profileGraph.addPoint(t, config.velocity, 0);
             profileGraph.addPoint(t, config.position, 1);
             profileGraph.addPoint(t, testProfile.calculate(t).velocity, 2);
-            profileGraph.addPoint(t, sProfile.calculate(t).position, 3);
+            profileGraph.addPoint(t, testProfile.calculate(t).position, 3);
         }
-        profileGraph.init(500, 500, "Trapezoidal Motion Profile -- Velocity, Position");
+        profileGraph.init(500, 500, "Motion Profile -- Velocity, Position");
     }
 
     public static void test() {

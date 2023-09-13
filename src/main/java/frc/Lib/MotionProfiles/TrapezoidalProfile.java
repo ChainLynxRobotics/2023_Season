@@ -39,11 +39,11 @@ public class TrapezoidalProfile {
         this.maxVel = maxVel;
         this.maxAccel = maxAccel;
 
-        if (this.initState.velocity  > maxVel) {
+        if (this.initState.velocity > maxVel) {
             this.initState.velocity = maxVel;
         }
        
-        //truncation calculations (if motion profile starts at 0)
+        //truncation calculations (if motion profile doesn't start at 0)
         double rampUpTime = initState.velocity/maxAccel;
         double beginRampDist = rampUpTime*rampUpTime*initState.velocity/2;
 

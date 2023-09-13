@@ -2,9 +2,9 @@ package frc.Lib.MotionProfiles;
 
 public interface IProfiler {
 
-    public interface Config<T extends Config<T>> {
+    public interface Config {
 
-        public boolean atConfig(T config);
+        public boolean atConfig();
     }
 
     public double calculate(double t);

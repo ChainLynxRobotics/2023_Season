@@ -152,54 +152,26 @@ public class RobotContainer {
     upPOV.onTrue(new InstantCommand(m_arm::expand));
     downPOV.onTrue(new InstantCommand(m_arm::retract));
 
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.groundPickUp))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.groundPickUp));
-  
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.lowScoreElevatorSetpoint))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.lowScoreElevatorSetpoint));
-
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.midScoreElevatorSetpoint))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.midScoreElevatorSetpoint));
-        
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.highScoreElevatorSetpoint))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.highScoreElevatorSetpoint));
-
-
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.doubleSubstationSetpoint))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.doubleSubstationSetpoint));
-
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.fullRetraction))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.fullRetraction));
+    int[] pickups = new int[]{Bindings.groundPickUp, Bindings.lowScoreElevatorSetpoint, Bindings.midScoreElevatorSetpoint, Bindings.highScoreElevatorSetpoint, Bindings.doubleSubstationSetpoint, Bindings.fullRetraction};
+    for (int pickup : pickups) {
+      instantiateTriggerBinding(pickup);
+    }
 
     new Trigger(() -> m_operatorController.getRawButton(Bindings.manualElevatorControl))
       .whileTrue(new ElevatorManualControlCommand(m_operatorController, m_elevator));
 
     new Trigger(() -> m_operatorController.getRawButton(Bindings.chargeStationBalance))
       .onTrue(new ChargeStationBalanceCommand(m_robotDrive, m_elevator));
+  }
+
+
+  private Trigger instantiateTriggerBinding(int binding) {
+    return new Trigger(() -> m_operatorController.getRawButton(binding))
+      .onTrue(
+        new ElevatorCommand(
+          m_elevator,
+          m_intake,
+          binding));
   }
 
 
@@ -247,7 +219,9 @@ public class RobotContainer {
 
   public Command getAutoCommand() {
     AutoRoutine.Builder builder = new AutoRoutine.Builder();
-    AutoRoutine testRoutine = builder.withPathCommand(this, "Priority 1 auto", true, Map.of("init retract p1a", new IntakeCommand(m_intake, 0.5))).build();
+    AutoRoutine testRoutine = builder
+      .withPathCommand(this, "Priority 1 auto", true, Map.of("init retract p1a", new IntakeCommand(m_intake, 0.5)))
+      .build();
     return testRoutine.getCommandGroup();
   }
 }

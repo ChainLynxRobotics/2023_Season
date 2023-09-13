@@ -2,6 +2,7 @@ package frc.Lib.Interpolators;
 
 import edu.wpi.first.math.interpolation.Interpolatable;
 
+
 /**Implement using TreeMapInterpolator*/
 public class ExponentialInterpolator implements Interpolatable<ExponentialInterpolator>, InverseInterpolator<ExponentialInterpolator> {
     double[] value;

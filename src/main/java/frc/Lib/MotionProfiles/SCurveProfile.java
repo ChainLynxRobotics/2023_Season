@@ -61,6 +61,7 @@ public class SCurveProfile extends TrapezoidalProfile {
         SConfig config = new SConfig(initState.position, initState.velocity, initState.accel);
         double checkpointVel = 0;
         double checkpointPos = 0;
+        System.out.println("time is: " + t);
 
         if (t < t1) {
             config.accel = jerk*t;
@@ -98,6 +99,8 @@ public class SCurveProfile extends TrapezoidalProfile {
         } else {
             return finalState;
         }
+
+        System.out.println("config velocity is: " + config.velocity + " and position is: " + config.position);
 
         return config;
     }

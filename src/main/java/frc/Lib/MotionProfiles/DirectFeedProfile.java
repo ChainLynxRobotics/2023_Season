@@ -17,7 +17,7 @@ public class DirectFeedProfile implements IProfiler {
         this.finalState = finalState;
     }
 
-    public class DirectConfig implements Config<DirectConfig> {
+    public class DirectConfig implements Config {
 
         public double position;
         public double velocity;
@@ -28,8 +28,8 @@ public class DirectFeedProfile implements IProfiler {
         }
 
         @Override
-        public boolean atConfig(DirectConfig config) {
-            if (this.position == config.position && this.velocity == config.velocity) {
+        public boolean atConfig() {
+            if (this.position == this.position && this.velocity == this.velocity) {
                 return true;
             } else {
                 return false;
