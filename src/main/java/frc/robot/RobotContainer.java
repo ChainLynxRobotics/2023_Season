@@ -14,15 +14,16 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.VisionTurnCommand;
 import frc.robot.Constants.Bindings;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.GamePiece;
 import frc.robot.Commands.IntakeCommand;
-import frc.robot.Commands.ChargeStationBalanceCommand;
 import frc.robot.Commands.ElevatorCommand;
 import frc.robot.Commands.ElevatorManualControlCommand;
 import frc.robot.Commands.ReleaseCommand;
 import frc.robot.Commands.SimpleDriveCommand;
 import frc.robot.Commands.VisionTranslateCommand;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.Pairings;
 import frc.robot.PathPlanningCode.AutoRoutine;
 import frc.robot.PathPlanningCode.AutoUtils;
 import frc.robot.Subsystems.ArmSubsystem;
@@ -167,14 +168,29 @@ public class RobotContainer {
       .onTrue(new ModifiedCSBalanceCommand(m_robotDrive, m_elevator, m_operatorController, true));
   }
 
-
   private Trigger instantiateTriggerBinding(int binding) {
+    double setpoint;
+
+    if (binding == Bindings.highScoreElevatorSetpoint) {
+      setpoint = ElevatorConstants.highElevatorConeSetpoint; //default
+    } else {
+      setpoint = Pairings.bindingsToSetpoints.get(binding);
+    }
+     
     return new Trigger(() -> m_operatorController.getRawButton(binding))
       .onTrue(
-        new ElevatorCommand(
+        //if a button corresponds to 2 diff setpoints according to gamepiece, reassign setpoint value if necessary
+        new InstantCommand(() -> getGamePieceHighSetpoint(setpoint), m_intake)
+        .andThen(new ElevatorCommand(
           m_elevator,
-          m_intake,
-          binding));
+          setpoint)));
+  }
+
+  //get button setpoint according to current game piece
+  private void getGamePieceHighSetpoint(double input) {
+    GamePiece gamePiece = m_intake.getState();
+    double setpoint = gamePiece == GamePiece.CONE ? ElevatorConstants.highElevatorConeSetpoint : ElevatorConstants.highElevatorCubeSetpoint;
+    input = setpoint;
   }
 
 

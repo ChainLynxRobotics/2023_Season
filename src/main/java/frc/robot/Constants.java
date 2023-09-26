@@ -1,8 +1,10 @@
 package frc.robot;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -278,6 +280,16 @@ public final class Constants {
       public static final int midScoreElevatorSetpoint = 12;
       public static final int highScoreElevatorSetpoint = 11;
       public static final int doubleSubstationSetpoint = 16;
+    }
+
+    public static class Pairings {
+        public static final Map<Integer, Double> bindingsToSetpoints = new HashMap<>()
+            {{ put(Bindings.groundPickUp, ElevatorConstants.groundPickupCubeHybrid); }
+            { put(Bindings.lowScoreElevatorSetpoint, ElevatorConstants.coneDrivingWithLift); }
+            { put(Bindings.midScoreElevatorSetpoint, ElevatorConstants.midElevatorGamepiece); }
+            { put(Bindings.doubleSubstationSetpoint, ElevatorConstants.doubleSubstationSetpoint); }
+            { put(Bindings.fullRetraction, ElevatorConstants.fullRetractionSetpoint); }};
+
     }
 
     public enum CONTROL_TYPES {

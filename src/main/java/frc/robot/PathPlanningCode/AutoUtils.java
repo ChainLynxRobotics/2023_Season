@@ -16,20 +16,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Commands.AutoElevatorCommand;
-import frc.robot.Commands.AutoIntakeCommand;
-import frc.robot.Commands.AutoReleaseCommand;
-import frc.robot.Commands.ChargeStationBalanceCommand;
 import frc.robot.Commands.ElevatorCommand;
+import frc.robot.Commands.ChargeStationBalanceCommand;
 import frc.robot.Commands.IntakeCommand;
 import frc.robot.Commands.ModifiedCSBalanceCommand;
+import frc.robot.Commands.ReleaseCommand;
 import frc.robot.Commands.VisionTurnCommand;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.Bindings;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.GamePiece;
@@ -78,8 +76,7 @@ public class AutoUtils {
       Command initPosCommand = new ParallelCommandGroup(
         new ElevatorCommand(
             container.getElevator(), 
-            container.getIntake(), 
-            Bindings.fullRetraction),
+            ElevatorConstants.fullRetractionSetpoint),
         new InstantCommand(container.getArm()::retract));
 
         return initPosCommand;
@@ -88,23 +85,25 @@ public class AutoUtils {
     private Command getScoreCommand(RobotContainer container, double setpoint, GamePiece gamePiece) {
       return new SequentialCommandGroup(
             new InstantCommand(container.getArm()::expand),
+            new InstantCommand(() -> container.getIntake().setState(gamePiece), container.getIntake()),
             new WaitCommand(2),
-            new AutoElevatorCommand(container.getElevator(), setpoint),
-            new AutoReleaseCommand(container.getIntake(), 0.8, gamePiece).withTimeout(0.5)
+            new ElevatorCommand(container.getElevator(), setpoint),
+            new ReleaseCommand(container.getIntake(), 0.8).withTimeout(0.5)
             );
     }
 
     private Command getLowScoreCommand(RobotContainer container, double setpoint, GamePiece gamePiece) {
       return new SequentialCommandGroup(
-            new AutoElevatorCommand(container.getElevator(), setpoint),
-            new AutoReleaseCommand(container.getIntake(), 0.8, gamePiece).withTimeout(0.5)
-      );
+            new InstantCommand(() -> container.getIntake().setState(gamePiece), container.getIntake()),
+            new ElevatorCommand(container.getElevator(), setpoint),
+            new ReleaseCommand(container.getIntake(), 0.8).withTimeout(0.5));
     }
 
     private Command getIntakeCommand(RobotContainer container, double setpoint, GamePiece gamePiece, double timeout) {
-      return new ParallelCommandGroup(
-        new AutoIntakeCommand(container.getIntake(), 0.8, gamePiece),
-        new AutoElevatorCommand(container.getElevator(), setpoint)).withTimeout(timeout);
+      return new InstantCommand(() -> container.getIntake().setState(gamePiece), container.getIntake())
+        .andThen(new ParallelRaceGroup(
+          new IntakeCommand(container.getIntake(), 0.8),
+          new ElevatorCommand(container.getElevator(), setpoint)).withTimeout(timeout));
     }
 
     public Command simpleCmdGrp(RobotContainer container) {
@@ -203,8 +202,6 @@ public class AutoUtils {
             Map.of("init retract p1a", getRetractCommand(container))));
     }
 
-<<<<<<< HEAD
-=======
     public Command autoScoreThenChargeStation(RobotContainer container) {
       return new SequentialCommandGroup(
         getScoreCommand(container,  ElevatorConstants.highElevatorConeSetpoint, GamePiece.CONE),
@@ -233,7 +230,6 @@ public class AutoUtils {
   }
 
     //TODO might need to tune intake timeout
->>>>>>> a04cc75597db02bad6d87769d167b208a84b8f2b
     public Command intakeSecondThenCS(RobotContainer container) {
       return new SequentialCommandGroup(
         createPath(
@@ -310,14 +306,16 @@ public class AutoUtils {
           Map.of(
             "init retract p3a", getRetractCommand(container), 
             "intake p3a", new ParallelCommandGroup(
-              new AutoElevatorCommand(
+              new ElevatorCommand(
                 container.getElevator(),
                 ElevatorConstants.groundPickupCubeHybrid),
-              new AutoIntakeCommand(
-                container.getIntake(), 
-                0.7, GamePiece.CUBE)).withTimeout(2))),
+              new InstantCommand(() -> container.getIntake().setState(GamePiece.CUBE), container.getIntake())
+                .andThen(new IntakeCommand(
+                  container.getIntake(), 
+                  0.7)).withTimeout(2)))),
         getScoreCommand(container, ElevatorConstants.highElevatorCubeSetpoint, GamePiece.CUBE));
     }
+
 
     public Command priorityThreeAutoEnding(RobotContainer container) {
       return new SequentialCommandGroup(
@@ -325,7 +323,10 @@ public class AutoUtils {
           container, 
           "Intake 2nd then CS", 
           false, 
-          Map.of("2nd intake", new AutoIntakeCommand(container.getIntake(), 0.8, GamePiece.CUBE))),
+          Map.of("2nd intake", new InstantCommand(() -> container.getIntake().setState(GamePiece.CUBE), container.getIntake())
+                .andThen(new IntakeCommand(
+                  container.getIntake(), 
+                  0.7)).withTimeout(2))),
         new ModifiedCSBalanceCommand(container.getDrive(), container.getElevator(), container.getOperatorController(), false)
       );
     }
@@ -350,7 +351,7 @@ public class AutoUtils {
             false, 
             Map.of("intake p5a", 
               new SequentialCommandGroup(
-                new ElevatorCommand(container.getElevator(), container.getIntake(), Bindings.groundPickUp),
+                new ElevatorCommand(container.getElevator(), ElevatorConstants.groundPickupCubeHybrid),
                 new IntakeCommand(container.getIntake(), 0.8).withTimeout(1)
               )));
     }
@@ -385,8 +386,7 @@ public class AutoUtils {
               "intake p6a", new SequentialCommandGroup(
                 new ElevatorCommand(
                   container.getElevator(), 
-                  container.getIntake(), 
-                  Bindings.groundPickUp),
+                  ElevatorConstants.groundPickupCubeHybrid),
                   new IntakeCommand(
                   container.getIntake(),
                   0.8).withTimeout(1)
