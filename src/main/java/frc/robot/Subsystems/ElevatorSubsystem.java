@@ -177,6 +177,10 @@ public class ElevatorSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Elevator Setpoint (rotations)", 0);
     }
 
+    public double getEncoderVelocityRPM() {
+      return m_encoder1.getVelocity();
+    }
+
     public RelativeEncoder getDrivingEncoder() {
       return m_encoder1;
     }

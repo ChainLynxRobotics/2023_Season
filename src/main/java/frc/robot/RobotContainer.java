@@ -241,6 +241,7 @@ public class RobotContainer {
     AutoRoutine testRoutine = builder
       .withPathCommand(this, "Priority 1 auto", true, Map.of("init retract p1a", new IntakeCommand(m_intake, 0.5)))
       .build();
+
     return testRoutine.getCommandGroup();
   }
 }

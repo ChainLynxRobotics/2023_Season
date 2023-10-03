@@ -7,7 +7,7 @@ public interface IProfiler {
         public boolean atConfig();
     }
 
-    public double calculate(double t);
+    public double calculate();
 
     public boolean setpointReached(double curPos, double setpoint, double error);
 
