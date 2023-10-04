@@ -156,9 +156,9 @@ public class RobotContainer {
     upPOV.onTrue(new InstantCommand(m_arm::expand));
     downPOV.onTrue(new InstantCommand(m_arm::retract));
 
-    int[] pickups = new int[]{Bindings.groundPickUp, Bindings.lowScoreElevatorSetpoint, Bindings.midScoreElevatorSetpoint, Bindings.highScoreElevatorSetpoint, Bindings.doubleSubstationSetpoint, Bindings.fullRetraction};
-    for (int pickup : pickups) {
-      instantiateTriggerBinding(pickup);
+    int[] positionBindings = new int[]{Bindings.groundPickUp, Bindings.lowScoreElevatorSetpoint, Bindings.midScoreElevatorSetpoint, Bindings.highScoreElevatorSetpoint, Bindings.doubleSubstationSetpoint, Bindings.fullRetraction};
+    for (int binding : positionBindings) {
+      instantiateTriggerBinding(binding);
     }
 
     new Trigger(() -> m_operatorController.getRawButton(Bindings.manualElevatorControl))
@@ -173,24 +173,17 @@ public class RobotContainer {
 
     if (binding == Bindings.highScoreElevatorSetpoint) {
       setpoint = ElevatorConstants.highElevatorConeSetpoint; //default
-    } else {
+    } else if (Pairings.bindingsToSetpoints.containsKey(binding)) {
       setpoint = Pairings.bindingsToSetpoints.get(binding);
+    } else {
+      setpoint = m_intake.getState() == GamePiece.CONE ? ElevatorConstants.highElevatorConeSetpoint : ElevatorConstants.highElevatorCubeSetpoint;
     }
-     
+
     return new Trigger(() -> m_operatorController.getRawButton(binding))
       .onTrue(
-        //if a button corresponds to 2 diff setpoints according to gamepiece, reassign setpoint value if necessary
-        new InstantCommand(() -> getGamePieceHighSetpoint(setpoint), m_intake)
-        .andThen(new ElevatorCommand(
+          new ElevatorCommand(
           m_elevator,
-          setpoint)));
-  }
-
-  //get button setpoint according to current game piece
-  private void getGamePieceHighSetpoint(double input) {
-    GamePiece gamePiece = m_intake.getState();
-    double setpoint = gamePiece == GamePiece.CONE ? ElevatorConstants.highElevatorConeSetpoint : ElevatorConstants.highElevatorCubeSetpoint;
-    input = setpoint;
+          setpoint));
   }
 
 

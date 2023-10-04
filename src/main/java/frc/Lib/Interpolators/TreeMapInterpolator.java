@@ -5,7 +5,9 @@ import java.util.TreeMap;
 
 import edu.wpi.first.math.interpolation.Interpolatable;
 
-/**Get output of undefined input by extrapolating from nearby inputs */
+/**Get output of undefined input by extrapolating from nearby inputs, useful for finding a value for a key by making an esimate from given key-value pairs 
+ * E.g., given points on a 2D trajectory, this is a way to estimate more for increased accuracy.
+*/
 public class TreeMapInterpolator <K extends InverseInterpolator<K> & Comparable<K>, V extends Interpolatable<V>> extends TreeMap<K,V> {
     int maxSize;
 

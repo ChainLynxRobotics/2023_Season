@@ -24,22 +24,22 @@ public class ElevatorCommand extends CommandBase {
   
     @Override
     public void execute() {
-        elevator.setElevatorSetpoint(setpoint);
+        elevator.moveElevator(setpoint);
 
         if (setpoint-elevator.getDrivingEncoder().getPosition() > ElevatorConstants.MAX_TRAVEL_LIMIT) {
-            elevator.setElevatorSetpoint(setpoint-ElevatorConstants.ELEVATOR_RAMP_DIST);
+            elevator.moveElevator(setpoint-ElevatorConstants.ELEVATOR_RAMP_DIST);
 
             if (System.currentTimeMillis()-startTime > 300) {
-                elevator.setElevatorSetpoint(setpoint);
+                elevator.moveElevator(setpoint);
             }
         } else if (setpoint-elevator.getDrivingEncoder().getPosition() < -ElevatorConstants.MAX_TRAVEL_LIMIT) {
-            elevator.setElevatorSetpoint(setpoint+ElevatorConstants.ELEVATOR_RAMP_DIST);
+            elevator.moveElevator(setpoint+ElevatorConstants.ELEVATOR_RAMP_DIST);
 
             if (System.currentTimeMillis()-startTime > 300) {
-                elevator.setElevatorSetpoint(setpoint);
+                elevator.moveElevator(setpoint);
             }
         } else {
-            elevator.setElevatorSetpoint(setpoint);
+            elevator.moveElevator(setpoint);
         }
     }
 

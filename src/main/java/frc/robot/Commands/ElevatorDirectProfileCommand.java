@@ -13,6 +13,7 @@ public class ElevatorDirectProfileCommand extends CommandBase {
     private double[] vel_samples;
     private DirectFeedProfile mProfile;
 
+    //maxVel should be neo free speed and maxAccel is tunable
     public ElevatorDirectProfileCommand(ElevatorSubsystem elevator, double maxVel, double maxAccel, DirectConfig initState, DirectConfig finalState) {
         this.mProfile = new DirectFeedProfile(maxVel, maxAccel, initState, finalState, dt);
         this.elevator = elevator;

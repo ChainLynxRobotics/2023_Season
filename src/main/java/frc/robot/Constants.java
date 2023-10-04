@@ -185,32 +185,6 @@ public final class Constants {
         );
     }
 
-    public static final class ShooterConstants {
-        public static final double FLYWHEEL_RADIUS = 0.5; //placeholder, in meters
-        public static final double TICKS_PER_ROTATION = 42;
-        public static final double SETPOINT_ERROR = 0.5;
-
-        public static final int SHOOTER_FLYWHEEL_PORT = 17;
-        public static final int SHOOTER_HOOD_PORT = 18;
-
-
-        public enum ShooterRange {
-            SHORT_RANGE,
-            LONG_RANGE
-        }
-
-        public enum ShooterZone {
-            ZONE1,
-            ZONE2,
-            ZONE3
-        }
-
-        public static final double kP = 0.1;
-        public static final double kI = 0;
-        public static final double kD = 0;
-        public static final double kFF = 0.5;
-    }
-
     //TO DO: check these are the correct values (meters)
     public static final double CAMERA_HEIGHT = 0.15;
     public static final double TARGET_HEIGHT = 0.48;
@@ -282,6 +256,7 @@ public final class Constants {
       public static final int doubleSubstationSetpoint = 16;
     }
 
+    //map buttons on operator joystick to elevator extension distances
     public static class Pairings {
         public static final Map<Integer, Double> bindingsToSetpoints = new HashMap<>()
             {{ put(Bindings.groundPickUp, ElevatorConstants.groundPickupCubeHybrid); }

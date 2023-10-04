@@ -8,8 +8,6 @@ import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.Lib.PID.GenericPID;
-import frc.Lib.PID.PIDConfig;
 import frc.robot.Constants.ElevatorConstants;
 
 
@@ -23,8 +21,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final RelativeEncoder m_encoder1;
     private final RelativeEncoder m_encoder2;
     public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, elevatorSpeed, allowedErr;
-    private GenericPID calculatePID;
-    private PIDConfig config;
 
     private double elevatorSetpoint;
 
@@ -56,16 +52,12 @@ public class ElevatorSubsystem extends SubsystemBase {
       
 
       m_pidController1 = elevatorMotor1.getPIDController();
-      config = new PIDConfig();
-      calculatePID = new GenericPID(config);
+
 
       // PID coefficients
       kP = 0.07; 
       kI = 1e-4;
       kD = 0.02; 
-      config.kP = kP;
-      config.kI = kI;
-      config.kD = kD;
       kIz = 0; 
       kFF = 0; 
       kMaxOutput = 1; 
@@ -99,6 +91,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     
     @Override
     public void periodic() {
+      //debugging
       SmartDashboard.putNumber("elevator/motor 17/position value", m_encoder1.getPosition());
       SmartDashboard.putNumber("elevator/motor 16/position value", m_encoder2.getPosition());
       SmartDashboard.putNumber("elevator/motor 17/output A", elevatorMotor1.getOutputCurrent());
@@ -107,8 +100,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("elevator/motor 16/output power", elevatorMotor2.getAppliedOutput());
       SmartDashboard.putNumber("elevator/motor 17/raw output power", elevatorMotor1.get());
       SmartDashboard.putNumber("elevator/motor 16/raw output power", elevatorMotor2.get());
-
-      moveElevator(this.elevatorSetpoint);
     }
 
     public void moveElevator(double setpoint) {
@@ -149,11 +140,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       }
 
       m_pidController1.setReference(setpoint, CANSparkMax.ControlType.kPosition);
-      //applyControlEffort(m_encoder1.getPosition(), setpoint);
-    }
-
-    public void applyControlEffort(double curr, double setpoint) {
-      elevatorMotor1.set(calculatePID.normalizedEffect(curr, setpoint));
     }
 
     public void simpleMovement(double input) {
