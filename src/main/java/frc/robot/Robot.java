@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
         }
 
         CommandScheduler.getInstance().schedule(
-          new ElevatorCommand(m_robotContainer.getElevator(),0));
+          new ElevatorCommand(m_robotContainer.getElevator(), m_robotContainer.getIntake(), 0));
 
         CommandScheduler.getInstance().schedule(
           new InstantCommand(m_robotContainer.getArm()::retract));

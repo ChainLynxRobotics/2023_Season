@@ -183,6 +183,22 @@ public final class Constants {
             kMaxAngularSpeedRadiansPerSecond,
             kMaxAngularSpeedRadiansPerSecondSquared
         );
+
+        public enum AutoModes {
+            BASIC_BALANCE,
+            SIMPLE_DRIVE,
+            SIMPLE_TRAJECTORY,
+            AUTO_ALIGN_TRAJECTORY, 
+            PRIORITY_1_AUTO,
+            PRIORITY_1_ALT_AUTO,
+            PRIORITY_2_AUTO,
+            PRIORITY_3_AUTO,
+            PRIORITY_4_AUTO,
+            PRIORITY_5_AUTO,
+            PRIORITY_6_AUTO,
+            CS_TESTING_AUTO,
+            SCORE_CHARGESTATION_AUTO
+        }
     }
 
     //TO DO: check these are the correct values (meters)

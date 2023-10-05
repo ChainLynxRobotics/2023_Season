@@ -6,6 +6,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -13,10 +14,12 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.VisionTurnCommand;
+import frc.robot.Constants.AutoConstants.AutoModes;
 import frc.robot.Constants.Bindings;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.GamePiece;
 import frc.robot.Commands.IntakeCommand;
+import frc.robot.Commands.ChargeStationBalanceCommand;
 import frc.robot.Commands.ElevatorCommand;
 import frc.robot.Commands.ElevatorManualControlCommand;
 import frc.robot.Commands.ReleaseCommand;
@@ -181,8 +184,10 @@ public class RobotContainer {
 
     return new Trigger(() -> m_operatorController.getRawButton(binding))
       .onTrue(
-          new ElevatorCommand(
+          //replace with ElevatorDirectFeedProfileCommand to test motion profile
+          new ElevatorCommand( 
           m_elevator,
+          m_intake,
           setpoint));
   }
 
@@ -230,11 +235,29 @@ public class RobotContainer {
   }
 
   public Command getAutoCommand() {
-    AutoRoutine.Builder builder = new AutoRoutine.Builder();
-    AutoRoutine testRoutine = builder
-      .withPathCommand(this, "Priority 1 auto", true, Map.of("init retract p1a", new IntakeCommand(m_intake, 0.5)))
-      .build();
+    SendableChooser<AutoModes> autoChooser = new SendableChooser<>();
+    autoChooser.setDefaultOption("Score preloaded, mobility", AutoModes.PRIORITY_1_AUTO);
+    autoChooser.addOption("Basic balance", AutoModes.BASIC_BALANCE);
 
-    return testRoutine.getCommandGroup();
+    AutoRoutine.Builder builder = new AutoRoutine.Builder();
+    AutoRoutine routine = builder.build();
+
+    switch(autoChooser.getSelected()) {
+      case BASIC_BALANCE:
+        routine = builder
+          .withPathCommand(this, "Basic balance", true,
+          Map.of(
+            "init retract", new IntakeCommand(m_intake, 0.5).withTimeout(0.8),
+            "auto balance", new ChargeStationBalanceCommand(m_robotDrive, m_elevator)))
+          .build();
+      default:
+        routine = builder
+          .withPathCommand(this, "Priority 1 auto", true, 
+          Map.of("init retract", new IntakeCommand(m_intake, 0.5).withTimeout(0.8)))
+          .build();
+      }
+
+      autoChooser.close();
+      return routine.getCommandGroup();
+    }
   }
-}

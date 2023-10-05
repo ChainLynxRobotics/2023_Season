@@ -31,6 +31,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.GamePiece;
+import frc.robot.Constants.AutoConstants.AutoModes;
 import frc.robot.RobotContainer;
 
 
@@ -75,7 +76,8 @@ public class AutoUtils {
     private Command getRetractCommand(RobotContainer container) {
       Command initPosCommand = new ParallelCommandGroup(
         new ElevatorCommand(
-            container.getElevator(), 
+            container.getElevator(),
+            container.getIntake(), 
             ElevatorConstants.fullRetractionSetpoint),
         new InstantCommand(container.getArm()::retract));
 
@@ -87,7 +89,7 @@ public class AutoUtils {
             new InstantCommand(container.getArm()::expand),
             new InstantCommand(() -> container.getIntake().setState(gamePiece), container.getIntake()),
             new WaitCommand(2),
-            new ElevatorCommand(container.getElevator(), setpoint),
+            new ElevatorCommand(container.getElevator(), container.getIntake(), setpoint),
             new ReleaseCommand(container.getIntake(), 0.8).withTimeout(0.5)
             );
     }
@@ -95,7 +97,7 @@ public class AutoUtils {
     private Command getLowScoreCommand(RobotContainer container, double setpoint, GamePiece gamePiece) {
       return new SequentialCommandGroup(
             new InstantCommand(() -> container.getIntake().setState(gamePiece), container.getIntake()),
-            new ElevatorCommand(container.getElevator(), setpoint),
+            new ElevatorCommand(container.getElevator(), container.getIntake(),  setpoint),
             new ReleaseCommand(container.getIntake(), 0.8).withTimeout(0.5));
     }
 
@@ -103,7 +105,7 @@ public class AutoUtils {
       return new InstantCommand(() -> container.getIntake().setState(gamePiece), container.getIntake())
         .andThen(new ParallelRaceGroup(
           new IntakeCommand(container.getIntake(), 0.8),
-          new ElevatorCommand(container.getElevator(), setpoint)).withTimeout(timeout));
+          new ElevatorCommand(container.getElevator(), container.getIntake(), setpoint)).withTimeout(timeout));
     }
 
     public Command simpleCmdGrp(RobotContainer container) {
@@ -308,6 +310,7 @@ public class AutoUtils {
             "intake p3a", new ParallelCommandGroup(
               new ElevatorCommand(
                 container.getElevator(),
+                container.getIntake(),
                 ElevatorConstants.groundPickupCubeHybrid),
               new InstantCommand(() -> container.getIntake().setState(GamePiece.CUBE), container.getIntake())
                 .andThen(new IntakeCommand(
@@ -351,7 +354,7 @@ public class AutoUtils {
             false, 
             Map.of("intake p5a", 
               new SequentialCommandGroup(
-                new ElevatorCommand(container.getElevator(), ElevatorConstants.groundPickupCubeHybrid),
+                new ElevatorCommand(container.getElevator(), container.getIntake(), ElevatorConstants.groundPickupCubeHybrid),
                 new IntakeCommand(container.getIntake(), 0.8).withTimeout(1)
               )));
     }
@@ -386,6 +389,7 @@ public class AutoUtils {
               "intake p6a", new SequentialCommandGroup(
                 new ElevatorCommand(
                   container.getElevator(), 
+                  container.getIntake(), 
                   ElevatorConstants.groundPickupCubeHybrid),
                   new IntakeCommand(
                   container.getIntake(),
@@ -482,21 +486,6 @@ public class AutoUtils {
     }
 
 
-  private enum AutoModes {
-    BASIC_BALANCE,
-    SIMPLE_DRIVE,
-    SIMPLE_TRAJECTORY,
-    AUTO_ALIGN_TRAJECTORY, 
-    PRIORITY_1_AUTO,
-    PRIORITY_1_ALT_AUTO,
-    PRIORITY_2_AUTO,
-    PRIORITY_3_AUTO,
-    PRIORITY_4_AUTO,
-    PRIORITY_5_AUTO,
-    PRIORITY_6_AUTO,
-    CS_TESTING_AUTO,
-    SCORE_CHARGESTATION_AUTO
-  }
 
   private enum InitGamePiece {
     CONE,
