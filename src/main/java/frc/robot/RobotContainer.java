@@ -1,18 +1,28 @@
 package frc.robot;
 
+import java.util.Map;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.VisionTurnCommand;
 import frc.robot.Constants.Bindings;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.GamePiece;
 import frc.robot.Commands.IntakeCommand;
+import frc.robot.Commands.AutoElevatorCommand;
+import frc.robot.Commands.AutoIntakeCommand;
+import frc.robot.Commands.AutoReleaseCommand;
 import frc.robot.Commands.ChargeStationBalanceCommand;
 import frc.robot.Commands.ElevatorCommand;
 import frc.robot.Commands.ElevatorManualControlCommand;
@@ -20,6 +30,8 @@ import frc.robot.Commands.ReleaseCommand;
 import frc.robot.Commands.SimpleDriveCommand;
 import frc.robot.Commands.VisionTranslateCommand;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.AutoConstants.AutoModes;
+import frc.robot.PathPlanningCode.AutoRoutine;
 import frc.robot.PathPlanningCode.AutoUtils;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DriveSubsystem;
@@ -241,4 +253,58 @@ public class RobotContainer {
   public AutoUtils getAutoUtils() {
     return autoUtils;
   }
+
+   public Command getAutoCommand() {
+    SendableChooser<AutoModes> autoChooser = new SendableChooser<>();
+    autoChooser.setDefaultOption("Score preloaded, mobility", AutoModes.MOBILITY);
+    autoChooser.addOption("Basic balance", AutoModes.BASIC_BALANCE);
+    autoChooser.addOption("Two gamepiece", AutoModes.TWO_GAMEPIECE);
+
+    AutoRoutine.Builder builder = new AutoRoutine.Builder();
+    AutoRoutine routine = builder.build();
+
+    switch(autoChooser.getSelected()) {
+      case BASIC_BALANCE:
+        routine = builder
+          .withPathCommand(this, "Basic balance", true,
+          Map.of(
+            "init retract", 
+            new AutoReleaseCommand(m_intake, 0.5, GamePiece.CONE).withTimeout(0.8)
+              .andThen(new InstantCommand(m_arm::retract, m_arm)),
+            "auto balance", new ChargeStationBalanceCommand(m_robotDrive, m_elevator)))
+          .build();
+
+      case TWO_GAMEPIECE:
+        routine = builder
+          .withPathCommand(this, "Two gamepiece", true, 
+          Map.of(
+            "init retract", 
+            new AutoReleaseCommand(m_intake, 0.5, GamePiece.CONE).withTimeout(0.8)
+              .andThen(new InstantCommand(m_arm::retract, m_arm)),
+            "pickup", 
+            new ParallelCommandGroup(
+              new AutoElevatorCommand(m_elevator, ElevatorConstants.groundPickupCubeHybrid),
+              new AutoIntakeCommand(m_intake, 0.5, GamePiece.CUBE).withTimeout(0.8))
+              .andThen(new AutoElevatorCommand(m_elevator, ElevatorConstants.fullRetractionSetpoint)),
+            "2nd score",
+            new SequentialCommandGroup(
+              new InstantCommand(m_arm::expand, m_arm),
+              new AutoElevatorCommand(m_elevator, ElevatorConstants.highElevatorCubeSetpoint),
+              new AutoReleaseCommand(m_intake, 0.5, GamePiece.CUBE).withTimeout(0.8))
+            ))
+          .build();
+
+      default:
+        routine = builder
+          .withPathCommand(this, "Mobility", true, 
+          Map.of("init retract", 
+          new AutoReleaseCommand(m_intake, 0.5, GamePiece.CONE).withTimeout(0.8)
+            .andThen(new InstantCommand(m_arm::retract, m_arm))))
+          .build();
+      }
+
+      autoChooser.close();
+      return routine.getCommandGroup();
+    }
 }
+

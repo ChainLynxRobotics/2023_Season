@@ -2,15 +2,15 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 5.5,
-        "y": 0.96
+        "x": 1.8402032533231731,
+        "y": 0.46106229538847965
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.6439261246578045,
-        "y": 0.41194649055964794
+        "x": 2.501092069892473,
+        "y": 0.3287917513335027
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 179.69708925218566,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -24,18 +24,18 @@
     },
     {
       "anchorPoint": {
-        "x": 6.72302170646008,
-        "y": 1.429171340981571
+        "x": 6.41481568206192,
+        "y": 0.995363388296221
       },
       "prevControl": {
-        "x": 6.68358989148534,
-        "y": 1.6831586197894615
+        "x": 5.641894120593797,
+        "y": 1.0438413255298729
       },
       "nextControl": {
-        "x": 6.68358989148534,
-        "y": 1.6831586197894615
+        "x": 5.641894120593797,
+        "y": 1.0438413255298729
       },
-      "holonomicAngle": 61.93689504859125,
+      "holonomicAngle": 0,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
@@ -49,15 +49,15 @@
     },
     {
       "anchorPoint": {
-        "x": 3.8723334356390935,
-        "y": 2.7312330666327993
+        "x": 1.8612528839641014,
+        "y": 1.091739383131544
       },
       "prevControl": {
-        "x": 4.1441810071120155,
-        "y": 2.90722653493918
+        "x": 0.8612528839641014,
+        "y": 1.091739383131544
       },
       "nextControl": null,
-      "holonomicAngle": 179.6381253598279,
+      "holonomicAngle": -179.7357446097358,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -72,9 +72,21 @@
   ],
   "markers": [
     {
-      "position": 0.36676136363636386,
+      "position": 0.01186079545454544,
       "names": [
-        "2nd intake"
+        "init retract"
+      ]
+    },
+    {
+      "position": 0.8015624999999996,
+      "names": [
+        "pickup"
+      ]
+    },
+    {
+      "position": 1.7786931818181835,
+      "names": [
+        "2nd score"
       ]
     }
   ]

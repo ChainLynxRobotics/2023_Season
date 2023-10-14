@@ -176,6 +176,12 @@ public final class Constants {
             kMaxAngularSpeedRadiansPerSecond,
             kMaxAngularSpeedRadiansPerSecondSquared
         );
+
+        public enum AutoModes {
+            BASIC_BALANCE,
+            MOBILITY,
+            TWO_GAMEPIECE,
+        }
     }
 
     //TO DO: check these are the correct values (meters)
