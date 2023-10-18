@@ -1,5 +1,8 @@
 package frc.robot.Commands;
 
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.Lib.MotionProfiles.DirectFeedProfile;
 import frc.Lib.MotionProfiles.DirectFeedProfile.DirectConfig;
@@ -12,8 +15,11 @@ public class ElevatorDirectProfileCommand extends CommandBase {
     private static double dt = Constants.GLOBAL_TIMESTEP;
     private double[] vel_samples;
     private DirectFeedProfile mProfile;
+    private double timeCounter;
+    private SparkMaxPIDController controller;
+    
 
-    //maxVel should be neo free speed and maxAccel is tunable
+    //maxVel should be neo free speed (rpm) and maxAccel is tunable
     public ElevatorDirectProfileCommand(ElevatorSubsystem elevator, double maxVel, double maxAccel, DirectConfig initState, DirectConfig finalState) {
         this.mProfile = new DirectFeedProfile(maxVel, maxAccel, initState, finalState, dt);
         this.elevator = elevator;
@@ -26,15 +32,18 @@ public class ElevatorDirectProfileCommand extends CommandBase {
         //initialize profile according to initial conditions and maximas
         vel_samples = mProfile.sampleAlongProfile();
         mProfile.setVelocityArray(vel_samples);
+
+        timeCounter = 0;
+        controller = elevator.getController();
     }
 
     @Override
     public void execute() {
-        double curVel = elevator.getEncoderVelocityRPM();
-        mProfile.setCurVel(curVel);
+        timeCounter++;
 
         //apply this control effort to elevator motors
-        elevator.setMotors(mProfile.calculate());
+        double velSetpoint = mProfile.calculate(timeCounter*0.02);
+        controller.setReference(velSetpoint, ControlType.kVelocity);
     }
 
     @Override

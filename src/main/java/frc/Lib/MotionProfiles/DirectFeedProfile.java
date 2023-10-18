@@ -3,12 +3,12 @@ package frc.Lib.MotionProfiles;
 public class DirectFeedProfile implements IProfiler {
     private double[] setpoints;
     private double dt;
-    private double curVel;
     private double maxVel;
     private double maxAccel;
     private DirectConfig initState;
     private DirectConfig finalState;
     private int stateCounter;
+
 
     public DirectFeedProfile(double maxVel, double maxAccel, DirectConfig initState, DirectConfig finalState, double timestep) {
         dt = timestep;
@@ -16,7 +16,6 @@ public class DirectFeedProfile implements IProfiler {
         this.maxAccel = maxAccel;
         this.initState = initState;
         this.finalState = finalState;
-        this.curVel = 0;
         this.stateCounter = 0;
     }
 
@@ -40,20 +39,11 @@ public class DirectFeedProfile implements IProfiler {
         } 
     }
 
-    //should always be called before calculate
-    public void setCurVel(double vel) {
-        this.curVel = vel;
-    }
-
     @Override
-    public double calculate() {
-        double initTime = System.currentTimeMillis();
-        //if the current velocity setpoint still hasn't been reached, keep returning it
-        if (!setpointReached(curVel, setpoints[stateCounter], 0.5) && System.currentTimeMillis() - initTime < dt) {
-            return setpoints[stateCounter];
-        }
-        stateCounter++;
-        return setpoints[stateCounter];
+    public double calculate(double curTime) {
+        int setpointLoc = (int) Math.ceil(curTime*getNumVelSamples()/getTotalProfileTime());
+        stateCounter = setpointLoc;
+        return setpoints[setpointLoc];
     }
 
     @Override
@@ -68,9 +58,19 @@ public class DirectFeedProfile implements IProfiler {
         this.setpoints = setpoints;
     }
 
-    public double[] sampleAlongProfile() {
+    public int getNumVelSamples() {
         int numSamples = (int) Math.floor((finalState.position - initState.position)/dt) + 1;
+        return numSamples;
+    }
+
+    public double getTotalProfileTime() {
         double totalTime = ((finalState.position - initState.position) + 0.5*Math.pow(initState.velocity,2)/maxVel)/maxVel; //last term accounts for profile truncation if starting at nonzero initial velocity
+        return totalTime;
+    }
+
+    public double[] sampleAlongProfile() {
+        int numSamples = getNumVelSamples();
+        double totalTime = getTotalProfileTime();
         double fullSpeedDist = (finalState.position - initState.position) - Math.pow(maxVel, 2)/maxAccel + 0.5*(maxVel-initState.velocity)*initState.velocity/maxAccel;
         double rampUpTime = (maxVel - initState.velocity)/maxAccel;
         double[] samples = new double[numSamples];

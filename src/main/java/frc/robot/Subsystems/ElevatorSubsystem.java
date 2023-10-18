@@ -170,5 +170,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     public RelativeEncoder getDrivingEncoder() {
       return m_encoder1;
     }
+
+    public SparkMaxPIDController getController() {
+      return m_pidController1;
+    }
     
 }
