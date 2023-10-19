@@ -1,5 +1,6 @@
 package frc.Lib.MotionProfiles;
 
+//without profile truncation
 public class DirectFeedProfile implements IProfiler {
     private double[] setpoints;
     private double dt;
@@ -9,6 +10,11 @@ public class DirectFeedProfile implements IProfiler {
     private DirectConfig finalState;
     private int stateCounter;
 
+    private int numSamples; //number of velocity samples taken along the profile
+    private double totalTime; 
+    private double rampUpTime; //time taken to reach maximum velocity
+    private double fullSpeedDist;
+
 
     public DirectFeedProfile(double maxVel, double maxAccel, DirectConfig initState, DirectConfig finalState, double timestep) {
         dt = timestep;
@@ -17,6 +23,20 @@ public class DirectFeedProfile implements IProfiler {
         this.initState = initState;
         this.finalState = finalState;
         this.stateCounter = 0;
+
+        this.numSamples = (int) Math.floor((this.finalState.position - this.initState.position)/dt) + 1;
+
+        //area of trapezoid = position difference = maxVel*totalTime
+        this.totalTime = (this.finalState.position - this.initState.position)/maxVel;
+        //this.totalTime = ((finalState.position - initState.position) + 0.5*Math.pow(initState.velocity,2)/maxVel)/maxVel; //last term accounts for profile truncation if starting at nonzero initial velocity
+
+        this.rampUpTime = maxVel/maxAccel;
+        //this.rampUpTime = (maxVel - this.initState.velocity)/maxAccel;
+
+        //area of trapezoid - area ramp up + ramp down sections
+        this.fullSpeedDist = (this.finalState.position - this.initState.position) - this.rampUpTime*maxVel;
+        //this.fullSpeedDist = (finalState.position - initState.position) - Math.pow(maxVel, 2)/maxAccel + 0.5*(maxVel-initState.velocity)*initState.velocity/maxAccel;
+
     }
 
     public class DirectConfig implements Config {
@@ -41,12 +61,12 @@ public class DirectFeedProfile implements IProfiler {
 
     @Override
     public double calculate(double curTime) {
-        int setpointLoc = (int) Math.ceil(curTime*getNumVelSamples()/getTotalProfileTime());
+        //current setpoint is the velocity at the lowest time greater than the current time
+        int setpointLoc = (int) Math.ceil(curTime*numSamples/totalTime);
         stateCounter = setpointLoc;
         return setpoints[setpointLoc];
     }
 
-    @Override
     public boolean setpointReached(double cur, double setpoint, double error) {
        if ((cur >= setpoint - error) && (cur <= setpoint + error)) {
         return true;
@@ -58,27 +78,14 @@ public class DirectFeedProfile implements IProfiler {
         this.setpoints = setpoints;
     }
 
-    public int getNumVelSamples() {
-        int numSamples = (int) Math.floor((finalState.position - initState.position)/dt) + 1;
-        return numSamples;
-    }
-
-    public double getTotalProfileTime() {
-        double totalTime = ((finalState.position - initState.position) + 0.5*Math.pow(initState.velocity,2)/maxVel)/maxVel; //last term accounts for profile truncation if starting at nonzero initial velocity
-        return totalTime;
-    }
 
     public double[] sampleAlongProfile() {
-        int numSamples = getNumVelSamples();
-        double totalTime = getTotalProfileTime();
-        double fullSpeedDist = (finalState.position - initState.position) - Math.pow(maxVel, 2)/maxAccel + 0.5*(maxVel-initState.velocity)*initState.velocity/maxAccel;
-        double rampUpTime = (maxVel - initState.velocity)/maxAccel;
         double[] samples = new double[numSamples];
 
         for (int i = 0; i < numSamples; i++) {
             double curTime = i*dt;
             if (curTime < rampUpTime) {
-                samples[i] = maxAccel*curTime;
+                samples[i] = maxAccel*curTime; //velocity increasing
             } else if (curTime < rampUpTime + fullSpeedDist/maxVel) {
                 samples[i] = maxVel;
             } else {
@@ -86,7 +93,6 @@ public class DirectFeedProfile implements IProfiler {
             }
             
         }
-
         return samples;
     }
 
@@ -96,5 +102,4 @@ public class DirectFeedProfile implements IProfiler {
         }
         return false;
     }
-
 }

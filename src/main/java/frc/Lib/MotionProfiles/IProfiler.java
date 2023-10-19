@@ -9,6 +9,4 @@ public interface IProfiler {
 
     public double calculate(double time);
 
-    public boolean setpointReached(double curPos, double setpoint, double error);
-
 }
