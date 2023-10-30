@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -50,6 +51,8 @@ public class DriveSubsystem extends SubsystemBase {
         DriveConstants.kRearRightTurningCanId,
         DriveConstants.kBackRightChassisAngularOffset
     );
+
+    private final Field2d m_field = new Field2d();
 
     // The gyro sensor
     public WPI_Pigeon2 m_gyro = new WPI_Pigeon2(
@@ -92,6 +95,7 @@ public class DriveSubsystem extends SubsystemBase {
     public DriveSubsystem() {
         powerDistribution.clearStickyFaults();
         SmartDashboard.putNumber("driveVelocity", 0);
+        SmartDashboard.putData("game field", m_field);
     }
 
     @Override
@@ -106,6 +110,9 @@ public class DriveSubsystem extends SubsystemBase {
                 m_rearRight.getPosition(),
             }
         );
+        Pose2d robotPositionMeters = m_odometry.getPoseMeters();
+        SmartDashboard.putNumber("Robot X Position", robotPositionMeters.getX());
+        SmartDashboard.putNumber("Robot Y Position", robotPositionMeters.getY());
 
         double ang = m_gyro.getRotation2d().getDegrees();
 
@@ -113,6 +120,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         prevAngle = ang;
         SmartDashboard.putNumber("heading", ang - headingOffset);
+        m_field.setRobotPose(robotPositionMeters.getX(), robotPositionMeters.getY(), m_gyro.getRotation2d());
 
         SmartDashboard.putNumber("right stick angle", rightAngGoal);
         SmartDashboard.putNumber("turn direction", turnDir);
