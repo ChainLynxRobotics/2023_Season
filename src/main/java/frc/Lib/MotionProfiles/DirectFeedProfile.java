@@ -80,7 +80,7 @@ public class DirectFeedProfile implements IProfiler {
 
 
     public double[] sampleAlongProfile() {
-        double[] samples = new double[numSamples];
+        double[] samples = new double[numSamples+1];
 
         for (int i = 0; i < numSamples; i++) {
             double curTime = i*dt;
@@ -89,10 +89,11 @@ public class DirectFeedProfile implements IProfiler {
             } else if (curTime < rampUpTime + fullSpeedDist/maxVel) {
                 samples[i] = maxVel;
             } else {
-                samples[i] = maxVel - (totalTime-curTime)*maxAccel;
+                samples[i] = maxVel - (curTime - (rampUpTime + fullSpeedDist/maxVel))*maxAccel; //curTime - (rampUpTime + maxVelTime)
             }
-            
         }
+        
+        samples[numSamples] = 0; //final velocity setpoint should always be 0
         return samples;
     }
 

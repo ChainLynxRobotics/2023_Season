@@ -53,3 +53,6 @@ public class ElevatorDirectProfileCommand extends CommandBase {
     }
     
 }
+
+
+//simulate profile, tune vel pid, feed single velocities, feed simple velocity array
