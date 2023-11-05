@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch profile",
+      "request": "launch",
+      "mainClass": "frc.utils.Simulation.profile",
+      "projectName": "2023_Season-1"
+    },
+    {
+      "type": "java",
       "name": "Launch MotionProfileSim",
       "request": "launch",
       "mainClass": "frc.utils.Simulation.MotionProfileSim",

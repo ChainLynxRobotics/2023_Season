@@ -13,7 +13,6 @@ public class DirectFeedProfile implements IProfiler {
     private int numSamples; //number of velocity samples taken along the profile
     private double totalTime; 
     private double rampUpTime; //time taken to reach maximum velocity
-    private double fullSpeedDist;
 
 
     public DirectFeedProfile(double maxVel, double maxAccel, DirectConfig initState, DirectConfig finalState, double timestep) {
@@ -24,22 +23,17 @@ public class DirectFeedProfile implements IProfiler {
         this.finalState = finalState;
         this.stateCounter = 0;
 
-        this.numSamples = (int) Math.floor((this.finalState.position - this.initState.position)/dt) + 1;
-
         //area of trapezoid = position difference = maxVel*totalTime
         this.totalTime = (this.finalState.position - this.initState.position)/maxVel;
         //this.totalTime = ((finalState.position - initState.position) + 0.5*Math.pow(initState.velocity,2)/maxVel)/maxVel; //last term accounts for profile truncation if starting at nonzero initial velocity
 
+        this.numSamples = (int) Math.floor(this.totalTime/dt);
+
         this.rampUpTime = maxVel/maxAccel;
         //this.rampUpTime = (maxVel - this.initState.velocity)/maxAccel;
-
-        //area of trapezoid - area ramp up + ramp down sections
-        this.fullSpeedDist = (this.finalState.position - this.initState.position) - this.rampUpTime*maxVel;
-        //this.fullSpeedDist = (finalState.position - initState.position) - Math.pow(maxVel, 2)/maxAccel + 0.5*(maxVel-initState.velocity)*initState.velocity/maxAccel;
-
     }
 
-    public class DirectConfig implements Config {
+    public static class DirectConfig implements Config {
 
         public double position; //rotations
         public double velocity; //rpm
@@ -86,10 +80,10 @@ public class DirectFeedProfile implements IProfiler {
             double curTime = i*dt;
             if (curTime < rampUpTime) {
                 samples[i] = maxAccel*curTime; //velocity increasing
-            } else if (curTime < rampUpTime + fullSpeedDist/maxVel) {
+            } else if (curTime < totalTime - rampUpTime) {
                 samples[i] = maxVel;
             } else {
-                samples[i] = maxVel - (curTime - (rampUpTime + fullSpeedDist/maxVel))*maxAccel; //curTime - (rampUpTime + maxVelTime)
+                samples[i] = maxVel - (curTime - (totalTime - rampUpTime))*maxAccel; //curTime - (rampUpTime + maxVelTime)
             }
         }
         
