@@ -1,6 +1,6 @@
 package frc.Lib.MotionProfiles;
 
-import org.apache.commons.lang3.Range;
+//import org.apache.commons.lang3.Range;
 
 import frc.robot.Constants;
 
@@ -106,11 +106,11 @@ public class SCurveProfile extends TrapezoidalProfile {
     }
 
     public void isInRange(double curCheckpoint, double checkpoint, double curr, double t) {
-        Range<Double> range = Range.between(curCheckpoint - Constants.GLOBAL_TIMESTEP, curCheckpoint + Constants.GLOBAL_TIMESTEP);
+        /*Range<Double> range = Range.between(curCheckpoint - Constants.GLOBAL_TIMESTEP, curCheckpoint + Constants.GLOBAL_TIMESTEP);
     
         if (range.contains(t)) {
             checkpoint = curr;
-        }
+        }*/
     }
 
     

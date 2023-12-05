@@ -44,6 +44,7 @@ public class Robot extends LoggedRobot {
         // autonomous chooser on the dashboard.
         m_robotContainer = new RobotContainer();
         
+        
         DataLogManager.start();
         DriverStation.startDataLog(DataLogManager.getLog());
 
@@ -51,9 +52,9 @@ public class Robot extends LoggedRobot {
         Logger.recordMetadata("ProjectName", "2023_Season");
 
         if (isReal()) {
-            Logger.addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
+            Logger.addDataReceiver(new WPILOGWriter("/media/sda1")); // Log to a USB stick plugged into rio
             Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-            new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+            new PowerDistribution(1, ModuleType.kRev).close(); // Enables power distribution logging
         } else {
             setUseTiming(false); // Run as fast as possible
             String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)

@@ -3,6 +3,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/auto choices": "String Chooser",
+      "/SmartDashboard/game field": "Field2d",
       "/SmartDashboard/init score choices": "String Chooser"
     }
   }
