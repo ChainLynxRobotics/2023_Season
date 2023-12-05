@@ -1,16 +1,22 @@
 package frc.robot;
 
+import java.util.Map;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.VisionTurnCommand;
+import frc.robot.Constants.AutoConstants.AutoModes;
 import frc.robot.Constants.Bindings;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.GamePiece;
 import frc.robot.Commands.IntakeCommand;
 import frc.robot.Commands.ChargeStationBalanceCommand;
@@ -20,12 +26,16 @@ import frc.robot.Commands.ReleaseCommand;
 import frc.robot.Commands.SimpleDriveCommand;
 import frc.robot.Commands.VisionTranslateCommand;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.Pairings;
+import frc.robot.PathPlanningCode.AutoRoutine;
 import frc.robot.PathPlanningCode.AutoUtils;
 import frc.robot.Subsystems.ArmSubsystem;
 import frc.robot.Subsystems.DriveSubsystem;
 import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.IntakeSubsystem;
 import frc.robot.Subsystems.VisionSubsystem;
+import frc.robot.Commands.ModifiedCSBalanceCommand;
+
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -62,8 +72,8 @@ public class RobotContainer {
     m_intake = new IntakeSubsystem();
 
     configureButtonBindings();
-    //TODO check this is the right port (ask Jairen)
     CameraServer.startAutomaticCapture("intake camera", 0);
+
     // Configure default commands
     m_robotDrive.setDefaultCommand(
       // The left stick controls translation of the robot.
@@ -149,54 +159,36 @@ public class RobotContainer {
     upPOV.onTrue(new InstantCommand(m_arm::expand));
     downPOV.onTrue(new InstantCommand(m_arm::retract));
 
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.groundPickUp))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.groundPickUp));
-  
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.lowScoreElevatorSetpoint))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.lowScoreElevatorSetpoint));
-
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.midScoreElevatorSetpoint))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.midScoreElevatorSetpoint));
-        
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.highScoreElevatorSetpoint))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.highScoreElevatorSetpoint));
-
-
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.doubleSubstationSetpoint))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.doubleSubstationSetpoint));
-
-    new Trigger(() -> m_operatorController.getRawButton(Bindings.fullRetraction))
-      .onTrue(
-        new ElevatorCommand(
-          m_elevator,
-          m_intake,
-          Bindings.fullRetraction));
+    int[] positionBindings = new int[]{Bindings.groundPickUp, Bindings.lowScoreElevatorSetpoint, Bindings.midScoreElevatorSetpoint, Bindings.highScoreElevatorSetpoint, Bindings.doubleSubstationSetpoint, Bindings.fullRetraction};
+    for (int binding : positionBindings) {
+      instantiateTriggerBinding(binding);
+    }
 
     new Trigger(() -> m_operatorController.getRawButton(Bindings.manualElevatorControl))
       .whileTrue(new ElevatorManualControlCommand(m_operatorController, m_elevator));
 
     new Trigger(() -> m_operatorController.getRawButton(Bindings.chargeStationBalance))
-      .onTrue(new ChargeStationBalanceCommand(m_robotDrive, m_elevator));
+      .onTrue(new ModifiedCSBalanceCommand(m_robotDrive, m_elevator, m_operatorController, true));
+  }
+
+  private Trigger instantiateTriggerBinding(int binding) {
+    double setpoint;
+
+    if (binding == Bindings.highScoreElevatorSetpoint) {
+      setpoint = ElevatorConstants.highElevatorConeSetpoint; //default
+    } else if (Pairings.bindingsToSetpoints.containsKey(binding)) {
+      setpoint = Pairings.bindingsToSetpoints.get(binding);
+    } else {
+      setpoint = m_intake.getState() == GamePiece.CONE ? ElevatorConstants.highElevatorConeSetpoint : ElevatorConstants.highElevatorCubeSetpoint;
+    }
+
+    return new Trigger(() -> m_operatorController.getRawButton(binding))
+      .onTrue(
+          //replace with ElevatorDirectFeedProfileCommand to test motion profile
+          new ElevatorCommand( 
+          m_elevator,
+          m_intake,
+          setpoint));
   }
 
 
@@ -241,4 +233,31 @@ public class RobotContainer {
   public AutoUtils getAutoUtils() {
     return autoUtils;
   }
-}
+
+  public Command getAutoCommand() {
+    SendableChooser<AutoModes> autoChooser = new SendableChooser<>();
+    autoChooser.setDefaultOption("Score preloaded, mobility", AutoModes.PRIORITY_1_AUTO);
+    autoChooser.addOption("Basic balance", AutoModes.BASIC_BALANCE);
+
+    AutoRoutine.Builder builder = new AutoRoutine.Builder();
+    AutoRoutine routine = builder.build();
+
+    switch(autoChooser.getSelected()) {
+      case BASIC_BALANCE:
+        routine = builder
+          .withPathCommand(this, "Basic balance", true,
+          Map.of(
+            "init retract", new IntakeCommand(m_intake, 0.5).withTimeout(0.8),
+            "auto balance", new ChargeStationBalanceCommand(m_robotDrive, m_elevator)))
+          .build();
+      default:
+        routine = builder
+          .withPathCommand(this, "Priority 1 auto", true, 
+          Map.of("init retract", new IntakeCommand(m_intake, 0.5).withTimeout(0.8)))
+          .build();
+      }
+
+      autoChooser.close();
+      return routine.getCommandGroup();
+    }
+  }

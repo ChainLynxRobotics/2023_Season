@@ -1,10 +1,15 @@
 package frc.robot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -19,6 +24,8 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    public static final double GLOBAL_TIMESTEP = 0.02;
 
     public static final class DriveConstants {
 
@@ -176,6 +183,22 @@ public final class Constants {
             kMaxAngularSpeedRadiansPerSecond,
             kMaxAngularSpeedRadiansPerSecondSquared
         );
+
+        public enum AutoModes {
+            BASIC_BALANCE,
+            SIMPLE_DRIVE,
+            SIMPLE_TRAJECTORY,
+            AUTO_ALIGN_TRAJECTORY, 
+            PRIORITY_1_AUTO,
+            PRIORITY_1_ALT_AUTO,
+            PRIORITY_2_AUTO,
+            PRIORITY_3_AUTO,
+            PRIORITY_4_AUTO,
+            PRIORITY_5_AUTO,
+            PRIORITY_6_AUTO,
+            CS_TESTING_AUTO,
+            SCORE_CHARGESTATION_AUTO
+        }
     }
 
     //TO DO: check these are the correct values (meters)
@@ -194,7 +217,7 @@ public final class Constants {
       public static final double coneDrivingWithLift = 3;
       public static final double midElevatorGamepiece = 7.5;
       public static final double highElevatorConeSetpoint = 15.5;
-      public static final double highElevatorCubeSetpoint = 13.5;
+      public static final double highElevatorCubeSetpoint = 14.5;
       public static final double doubleSubstationSetpoint = 14.2;
       public static final double fullRetractionSetpoint = 0;
 
@@ -247,5 +270,39 @@ public final class Constants {
       public static final int midScoreElevatorSetpoint = 12;
       public static final int highScoreElevatorSetpoint = 11;
       public static final int doubleSubstationSetpoint = 16;
+    }
+
+    //map buttons on operator joystick to elevator extension distances
+    public static class Pairings {
+        public static final Map<Integer, Double> bindingsToSetpoints = new HashMap<>()
+            {{ put(Bindings.groundPickUp, ElevatorConstants.groundPickupCubeHybrid); }
+            { put(Bindings.lowScoreElevatorSetpoint, ElevatorConstants.coneDrivingWithLift); }
+            { put(Bindings.midScoreElevatorSetpoint, ElevatorConstants.midElevatorGamepiece); }
+            { put(Bindings.doubleSubstationSetpoint, ElevatorConstants.doubleSubstationSetpoint); }
+            { put(Bindings.fullRetraction, ElevatorConstants.fullRetractionSetpoint); }};
+
+    }
+
+    public enum CONTROL_TYPES {
+        POSITION,
+        TRAPEZOIDAL,
+        SCURVE
+    }
+
+    public final static class EventMapper {
+        public static EventMapper instance;
+        private static HashMap<String, Command> eventMap;
+
+        public static synchronized EventMapper getInstance() {
+            if (instance == null) {
+                instance = new EventMapper();
+                eventMap = new HashMap<>();
+            }
+            return instance;
+        }
+
+        public static HashMap<String, Command> getEventMap() {
+            return eventMap;
+        }
     }
 }

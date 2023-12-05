@@ -42,7 +42,7 @@ public class ChargeStationStates {
     }
 
     public void overrideState() {
-        this.state = States.ON_CHARGE_STATION;
+        this.state = States.CLIMBING_CHARGE_STATION; //once pitch starts to change, go to climbing state
     }
 
     public States getState() {

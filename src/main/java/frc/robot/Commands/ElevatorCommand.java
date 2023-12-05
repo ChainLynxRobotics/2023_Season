@@ -1,7 +1,6 @@
 package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.Bindings;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.GamePiece;
 import frc.robot.Subsystems.ElevatorSubsystem;
@@ -12,15 +11,12 @@ public class ElevatorCommand extends CommandBase {
     private ElevatorSubsystem elevator;
     private IntakeSubsystem intake;
     private double setpoint;
-    private int setpointLocation;
+    private double startTime;
 
-    double startTime;
-
-    public ElevatorCommand(ElevatorSubsystem elevator, IntakeSubsystem intake, int setpointLocation) {
+    public ElevatorCommand(ElevatorSubsystem elevator, IntakeSubsystem intake, double setpoint) {
         this.elevator = elevator;
         this.intake = intake;
-        this.setpointLocation = setpointLocation;
-        this.setpoint = 0;
+        this.setpoint = setpoint;
 
         addRequirements(elevator, intake);
     }
@@ -29,33 +25,22 @@ public class ElevatorCommand extends CommandBase {
     public void initialize() {
         startTime = System.currentTimeMillis();
 
+        /*check if wrong setpoint and adjust; in RobotContainer the state is only checked on initialization
+        one button is bound to 2 setpoints depending on intake state*/
+        if (intake.getState() == GamePiece.CONE && setpoint == ElevatorConstants.highElevatorCubeSetpoint) {
+            setpoint = ElevatorConstants.highElevatorConeSetpoint;
+        } else if (intake.getState() == GamePiece.CUBE && setpoint == ElevatorConstants.highElevatorConeSetpoint) {
+            setpoint = ElevatorConstants.highElevatorCubeSetpoint;
+        }
     }
-
-    //TODO: fix elevator setpoint logic (not broken, but directly pass in setpoint it's too verbose)
+  
     @Override
     public void execute() {
-        if (setpointLocation == Bindings.groundPickUp) {
-            setpoint = ElevatorConstants.groundPickupCubeHybrid;
-        } else if (setpointLocation == Bindings.lowScoreElevatorSetpoint) {
-            setpoint = ElevatorConstants.coneDrivingWithLift;
-        } else if (setpointLocation == Bindings.midScoreElevatorSetpoint) {
-            setpoint = ElevatorConstants.midElevatorGamepiece;
-        } else if (setpointLocation == Bindings.highScoreElevatorSetpoint) {
-            if (intake.getState() == GamePiece.CONE) {
-                setpoint = ElevatorConstants.highElevatorConeSetpoint;
-            } else {
-                setpoint = ElevatorConstants.highElevatorCubeSetpoint;
-            }
-        } else if (setpointLocation == Bindings.doubleSubstationSetpoint) {
-            setpoint = ElevatorConstants.doubleSubstationSetpoint;
-        } else if (setpointLocation == Bindings.fullRetraction) {
-            setpoint = ElevatorConstants.fullRetractionSetpoint;
-        }
+        elevator.moveElevator(setpoint);
 
-        //to avoid elevator slamming and excessive acceleration, ramp according to "triangular" velocity motion profile
         if (setpoint-elevator.getDrivingEncoder().getPosition() > ElevatorConstants.MAX_TRAVEL_LIMIT) {
             elevator.moveElevator(setpoint-ElevatorConstants.ELEVATOR_RAMP_DIST);
-    
+
             if (System.currentTimeMillis()-startTime > 300) {
                 elevator.moveElevator(setpoint);
             }

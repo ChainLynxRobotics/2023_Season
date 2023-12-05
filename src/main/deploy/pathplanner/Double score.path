@@ -64,7 +64,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "end score p3a"
+          "end score"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "after",
@@ -77,16 +77,15 @@
   "isReversed": false,
   "markers": [
     {
-      "position": 0.765127840909091,
+      "position": 0.023295454545454536,
       "names": [
-        "event",
-        "intake p3a"
+        "init retract"
       ]
     },
     {
-      "position": 0.023295454545454536,
+      "position": 1.0863636363636358,
       "names": [
-        "init retract p3a"
+        "pickup"
       ]
     }
   ]

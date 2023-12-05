@@ -45,7 +45,7 @@ public class ChargeStationBalanceCommand extends CommandBase {
 
         pitchChanged = false;
 
-        elevator.moveElevator(ELEVATOR_SETPOINT);
+        elevator.setElevatorSetpoint(ELEVATOR_SETPOINT);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ChargeStationBalanceCommand extends CommandBase {
         }
 
         if (pitchChanged) {
-            drive.mainDrive(-1*speed, 0, 0);
+            drive.mainDrive(-1.1*speed, 0, 0);
         } else {
             drive.mainDrive(-0.6,0,0);
         }

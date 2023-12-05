@@ -6,6 +6,34 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch profile",
+      "request": "launch",
+      "mainClass": "frc.utils.Simulation.profile",
+      "projectName": "2023_Season-1"
+    },
+    {
+      "type": "java",
+      "name": "Launch MotionProfileSim",
+      "request": "launch",
+      "mainClass": "frc.utils.Simulation.MotionProfileSim",
+      "projectName": "2023_Season-1"
+    },
+    {
+      "type": "java",
+      "name": "Launch Graph",
+      "request": "launch",
+      "mainClass": "frc.utils.Simulation.Graph",
+      "projectName": "2023_Season-1"
+    },
+    {
+      "type": "java",
+      "name": "Launch ShooterSim",
+      "request": "launch",
+      "mainClass": "frc.utils.Simulation.ShooterSim",
+      "projectName": "2023_Season-1"
+    },
+    {
+      "type": "java",
       "name": "Launch Main",
       "request": "launch",
       "mainClass": "frc.robot.Main",

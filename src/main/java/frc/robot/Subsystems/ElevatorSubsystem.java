@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
@@ -20,6 +21,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final RelativeEncoder m_encoder1;
     private final RelativeEncoder m_encoder2;
     public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, elevatorSpeed, allowedErr;
+
+    private double elevatorSetpoint;
+
+    public void setElevatorSetpoint(double elevatorSetpoint) {
+      this.elevatorSetpoint = elevatorSetpoint;
+    }
+
+    public double getElevatorSetpoint() {
+      return elevatorSetpoint;
+    }
 
     public ElevatorSubsystem() {
       elevatorMotor1 = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_MASTER, MotorType.kBrushless);
@@ -41,6 +52,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       
 
       m_pidController1 = elevatorMotor1.getPIDController();
+
 
       // PID coefficients
       kP = 0.07; 
@@ -73,10 +85,13 @@ public class ElevatorSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Max Output", kMaxOutput);
       SmartDashboard.putNumber("Min Output", kMinOutput);
       SmartDashboard.putNumber("Elevator Setpoint (rotations)", 0);
+
+      elevatorSetpoint = m_encoder1.getPosition();
     }
     
     @Override
     public void periodic() {
+      //debugging
       SmartDashboard.putNumber("elevator/motor 17/position value", m_encoder1.getPosition());
       SmartDashboard.putNumber("elevator/motor 16/position value", m_encoder2.getPosition());
       SmartDashboard.putNumber("elevator/motor 17/output A", elevatorMotor1.getOutputCurrent());
@@ -87,7 +102,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("elevator/motor 16/raw output power", elevatorMotor2.get());
     }
 
-    public void moveElevator(Double setpoint) {
+    public void moveElevator(double setpoint) {
       // read PID coefficients from SmartDashboard
       double p = SmartDashboard.getNumber("P Gain", 1);
       double i = SmartDashboard.getNumber("I Gain", 0);
@@ -148,7 +163,16 @@ public class ElevatorSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Elevator Setpoint (rotations)", 0);
     }
 
+    public double getEncoderVelocityRPM() {
+      return m_encoder1.getVelocity();
+    }
+
     public RelativeEncoder getDrivingEncoder() {
       return m_encoder1;
     }
+
+    public SparkMaxPIDController getController() {
+      return m_pidController1;
+    }
+    
 }

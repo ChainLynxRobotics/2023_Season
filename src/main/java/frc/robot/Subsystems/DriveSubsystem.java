@@ -4,18 +4,26 @@
 
 package frc.robot.Subsystems;
 
+import java.util.List;
+
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -50,6 +58,8 @@ public class DriveSubsystem extends SubsystemBase {
         DriveConstants.kRearRightTurningCanId,
         DriveConstants.kBackRightChassisAngularOffset
     );
+
+    private final Field2d m_field = new Field2d();
 
     // The gyro sensor
     public WPI_Pigeon2 m_gyro = new WPI_Pigeon2(
@@ -92,6 +102,15 @@ public class DriveSubsystem extends SubsystemBase {
     public DriveSubsystem() {
         powerDistribution.clearStickyFaults();
         SmartDashboard.putNumber("driveVelocity", 0);
+        SmartDashboard.putData("game field", m_field);
+
+        Trajectory m_trajectory = TrajectoryGenerator.generateTrajectory(
+            new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+            List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+            new Pose2d(3, 0, Rotation2d.fromDegrees(0)),
+            new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0)));
+        
+        m_field.getObject("test trajectory").setTrajectory(m_trajectory);
     }
 
     @Override
@@ -106,6 +125,9 @@ public class DriveSubsystem extends SubsystemBase {
                 m_rearRight.getPosition(),
             }
         );
+        Pose2d robotPositionMeters = m_odometry.getPoseMeters();
+        SmartDashboard.putNumber("Robot X Position", robotPositionMeters.getX());
+        SmartDashboard.putNumber("Robot Y Position", robotPositionMeters.getY());
 
         double ang = m_gyro.getRotation2d().getDegrees();
 
@@ -113,6 +135,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         prevAngle = ang;
         SmartDashboard.putNumber("heading", ang - headingOffset);
+        m_field.setRobotPose(robotPositionMeters.getX(), robotPositionMeters.getY(), m_gyro.getRotation2d());
 
         SmartDashboard.putNumber("right stick angle", rightAngGoal);
         SmartDashboard.putNumber("turn direction", turnDir);
