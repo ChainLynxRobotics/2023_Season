@@ -8,6 +8,7 @@ import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 
 
@@ -15,11 +16,9 @@ import frc.robot.Constants.ElevatorConstants;
 public class ElevatorSubsystem extends SubsystemBase {
 
     private final CANSparkMax elevatorMotor1;
-    private final CANSparkMax elevatorMotor2;
 
     private final SparkMaxPIDController m_pidController1;
     private final RelativeEncoder m_encoder1;
-    private final RelativeEncoder m_encoder2;
     public static double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, elevatorSpeed, allowedErr;
 
     private double elevatorSetpoint;
@@ -34,23 +33,17 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public ElevatorSubsystem() {
       elevatorMotor1 = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_MASTER, MotorType.kBrushless);
-      elevatorMotor2 = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_ID_SLAVE, MotorType.kBrushless);
-
       elevatorMotor1.restoreFactoryDefaults();
 
       m_encoder1 = elevatorMotor1.getEncoder();
-      m_encoder2 = elevatorMotor2.getEncoder();
+      //so setpoints can be set in terms of rotations
+      m_encoder1.setPositionConversionFactor(Constants.NeoMotorConstants.countsPerRev); 
       m_encoder1.setPosition(0);
-      m_encoder2.setPosition(0);
 
       elevatorMotor1.setIdleMode(IdleMode.kBrake);
-      elevatorMotor2.setIdleMode(IdleMode.kBrake);
       elevatorMotor1.setInverted(true);
-      elevatorMotor2.follow(elevatorMotor1, true);
       elevatorMotor1.clearFaults();
-      elevatorMotor2.clearFaults();
       
-
       m_pidController1 = elevatorMotor1.getPIDController();
 
 
@@ -93,13 +86,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void periodic() {
       //debugging
       SmartDashboard.putNumber("elevator/motor 17/position value", m_encoder1.getPosition());
-      SmartDashboard.putNumber("elevator/motor 16/position value", m_encoder2.getPosition());
       SmartDashboard.putNumber("elevator/motor 17/output A", elevatorMotor1.getOutputCurrent());
-      SmartDashboard.putNumber("elevator/motor 16/output A", elevatorMotor2.getOutputCurrent());
       SmartDashboard.putNumber("elevator/motor 17/output power", elevatorMotor1.getAppliedOutput());
-      SmartDashboard.putNumber("elevator/motor 16/output power", elevatorMotor2.getAppliedOutput());
       SmartDashboard.putNumber("elevator/motor 17/raw output power", elevatorMotor1.get());
-      SmartDashboard.putNumber("elevator/motor 16/raw output power", elevatorMotor2.get());
     }
 
     public void moveElevator(double setpoint) {
@@ -159,7 +148,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public void zeroEncoders() {
       m_encoder1.setPosition(0);
-      m_encoder2.setPosition(0);
       SmartDashboard.putNumber("Elevator Setpoint (rotations)", 0);
     }
 

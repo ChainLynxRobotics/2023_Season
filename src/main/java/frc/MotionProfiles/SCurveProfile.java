@@ -1,4 +1,4 @@
-package frc.Lib.MotionProfiles;
+package frc.MotionProfiles;
 
 //import org.apache.commons.lang3.Range;
 

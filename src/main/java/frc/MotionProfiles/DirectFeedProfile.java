@@ -1,4 +1,4 @@
-package frc.Lib.MotionProfiles;
+package frc.MotionProfiles;
 
 //without profile truncation
 public class DirectFeedProfile implements IProfiler {

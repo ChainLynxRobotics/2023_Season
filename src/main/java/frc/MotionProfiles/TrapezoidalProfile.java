@@ -1,4 +1,4 @@
-package frc.Lib.MotionProfiles;
+package frc.MotionProfiles;
 
 public class TrapezoidalProfile {
     protected int direction;
