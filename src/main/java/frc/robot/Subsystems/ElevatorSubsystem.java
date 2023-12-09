@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.NeoMotorConstants;
 
 
 //TO DO: error handling for if pid controllers get misaligned
@@ -42,6 +43,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
       elevatorMotor1.setIdleMode(IdleMode.kBrake);
       elevatorMotor1.setInverted(true);
+      elevatorMotor1.setSmartCurrentLimit(NeoMotorConstants.currentLimit);
       elevatorMotor1.clearFaults();
       
       m_pidController1 = elevatorMotor1.getPIDController();

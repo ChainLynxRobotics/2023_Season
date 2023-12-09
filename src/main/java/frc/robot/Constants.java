@@ -28,6 +28,7 @@ public final class Constants {
         public static final double kFreeSpeedRpm = 5676;
         public static final double kMaxAccel = 50;
         public static final double countsPerRev = 42;
+        public static final int currentLimit = 25; //amps
     }
 
     public class ElevatorConstants {
