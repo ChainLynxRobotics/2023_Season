@@ -29,6 +29,7 @@ public class ElevatorDirectProfileCommand extends CommandBase {
     public void initialize() {
         //initialize profile according to initial conditions and maximas
         vel_samples = mProfile.sampleAlongProfile();
+        System.out.printf("velocities: %f", vel_samples);
         mProfile.setVelocityArray(vel_samples);
 
         timeCounter = 0;
@@ -41,6 +42,7 @@ public class ElevatorDirectProfileCommand extends CommandBase {
 
         //apply this control effort to elevator motors
         double velSetpoint = mProfile.calculate(timeCounter*Constants.GLOBAL_TIMESTEP);
+        System.out.printf("current velocity setpoint: %f%n", velSetpoint);
         controller.setReference(velSetpoint, ControlType.kVelocity);
     }
 
@@ -49,8 +51,10 @@ public class ElevatorDirectProfileCommand extends CommandBase {
         //set to true once last setpoint is reached
         return mProfile.isProfileFinished();
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        System.out.println("finished command!");
+    }
     
 }
-
-
-//simulate profile, tune vel pid, feed single velocities, feed simple velocity array

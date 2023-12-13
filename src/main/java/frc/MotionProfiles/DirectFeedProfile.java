@@ -44,12 +44,11 @@ public class DirectFeedProfile implements IProfiler {
         }
 
         @Override
-        public boolean atConfig() {
-            if (this.position == this.position && this.velocity == this.velocity) {
+        public boolean atConfig(double curPos, double curVel) {
+            if (this.position == curPos && this.velocity == curVel) {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         } 
     }
 
